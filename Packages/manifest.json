@@ -1,6 +1,19 @@
 {
+  "scopedRegistries":
+  [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": 
+      [
+        "org.nuget",
+        "com.amazonaws"
+      ]
+    }
+  ],
   "dependencies": {
     "com.amazonaws.gamelift": "file:C:/Users/user/Downloads/amazon-gamelift-plugin-unity-release-3.2.1/com.amazonaws.gamelift-3.2.1.tgz",
+    "com.amazonaws.gameliftserver.sdk": "file:C:/Users/user/Downloads/amazon-gamelift-plugin-unity-release-3.2.1/com.amazonaws.gameliftserver.sdk-5.4.0.tgz",
     "com.unity.ai.navigation": "2.0.9",
     "com.unity.burst": "1.8.28",
     "com.unity.collab-proxy": "2.9.3",
