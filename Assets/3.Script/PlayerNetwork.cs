@@ -17,6 +17,7 @@ public class PlayerNetwork : MonoBehaviour
     [SerializeField] private float dashCooldown = 1f; //대쉬 쿨타임
 
     private float lastDashTime; // 마지막 대쉬한 시간
+    private float jumpPressTime; //점프버튼을 누른 시간
 
     private bool isJetpacking; // 제트팩 사용 중인지
     private bool isDashing;    // 대쉬 중인지
@@ -27,7 +28,17 @@ public class PlayerNetwork : MonoBehaviour
         TryGetComponent<Animator>(out animator);
     }
 
-    void FixedUpdate()
+    private void Update()
+    {
+        // jumpPressTime이 0보다 크고 0.4초 지났으면 제트팩 발동
+        if (jumpPressTime > 0 && Time.time - jumpPressTime > 0.4f)
+        {
+            isJetpacking = true;
+            Debug.Log("제트팩 발동!");
+        }
+    }
+
+    private void FixedUpdate()
     {
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
@@ -45,7 +56,8 @@ public class PlayerNetwork : MonoBehaviour
 
         if (isJetpacking)
         {
-            rb.AddForce(Vector3.up * jetpackForce * Time.fixedDeltaTime, ForceMode.Force);
+            rb.AddForce(-Physics.gravity * rb.mass, ForceMode.Force); // 중력 상쇄
+            rb.AddForce(Vector3.up * jetpackForce, ForceMode.Force);
         }
     }
 
@@ -57,13 +69,22 @@ public class PlayerNetwork : MonoBehaviour
 
     public void SendJumpInput()
     {
-        if (!IsGrounded()) return;
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        jumpPressTime = Time.time;
+        if (IsGrounded())
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
     }
 
     public void SendJetpackInput(bool active)
     {
-        isJetpacking = active;
+        if (!active)
+        {
+            isJetpacking = false;
+            jumpPressTime = 0; // 리셋
+            Debug.Log("제트팩 꺼짐");
+            return;
+        }
     }
 
     public void SendDashInput()
@@ -83,7 +104,7 @@ public class PlayerNetwork : MonoBehaviour
             dashDir = transform.forward;
         }
         // 기본 속도 초기화 후 대시
-        rb.linearVelocity = Vector3.zero;
+        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         rb.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
 
         // 마지막에 대쉬한 시간 기록
