@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/NetcodeForEntitiesSetup/Scenes/Gameplay.unity
     guid: e4d923a5dc825c04789d2587c3693369
-  - enabled: 1
+  - enabled: 0
     path: Assets/NGO_Minimal_Setup/NGO_Setup.unity
     guid: 7952ef2bb4227c84d953cef12cd70282
   m_configObjects:

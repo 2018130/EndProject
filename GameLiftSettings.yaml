@@ -1,0 +1,89 @@
+version: 1
+CurrentProfileName: EndProject
+CurrentRegion: ap-northeast-2
+UserProfiles: >+
+  - Region: ap-northeast-2
+
+    Name: EndProject
+
+    BucketName: gamelift-bootstrap-851382689546-ap-northeast-2
+
+    AnywhereFleetName: 
+
+    AnywhereFleetId: 
+
+    AnywhereFleetLocation: 
+
+    ComputeName: 
+
+    IpAddress: 
+
+    WebSocketUrl: 
+
+    ContainerDeploymentInProgress: false
+
+    ContainersDeploymentComplete: false
+
+    ContainerQuestionnaireScenario: NoContainerImageNoExistingEcrRepo
+
+    ContainerDeploymentScenario: SingleRegion
+
+    ContainerEnableMetrics: false
+
+    ContainerGameServerBuildPath: 
+
+    ContainerGameServerExecutable: 
+
+    ContainerDockerImageId: 
+
+    ContainerECRRepositoryName: 
+
+    ContainerECRRepositoryUri: 
+
+    ContainerECRImageUri: 
+
+    ContainerECRImageId: 
+
+    ContainerPortRange: 
+
+    ContainerTotalMemory: 
+
+    ContainerTotalVcpu: 
+
+    ContainerGameName: 
+
+    ContainerImageTag: 
+
+    IsContainerImageBuilding: false
+
+    IsContainerImageBuilt: false
+
+    IsECRRepoCreated: false
+
+    IsContainerPushedToECR: false
+
+    IsCGDDeploying: false
+
+    IsCGDDeployed: false
+
+    DeploymentScenario: SingleRegion
+
+    DeploymentGameName: 
+
+    ManagedEC2FleetName: 
+
+    BuildName: 
+
+    LaunchParameters: 
+
+    BuildOperatingSystem: 
+
+    EnableMetrics: false
+
+    DeploymentBuildFilePath: 
+
+    DeploymentBuildFolderPath: 
+
+CurrentBucketName: gamelift-bootstrap-851382689546-ap-northeast-2
+LastOpenTab: Credentials
+...
