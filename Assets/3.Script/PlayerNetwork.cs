@@ -48,7 +48,6 @@ public class PlayerNetwork : NetworkBehaviour
         if (jumpPressTime > 0 && Time.time - jumpPressTime > 0.4f)
         {
             isJetpacking = true;
-            Debug.Log("Á¦Æ®ÆÑ ¹ßµ¿!");
         }
     }
 
@@ -98,7 +97,6 @@ public class PlayerNetwork : NetworkBehaviour
         {
             isJetpacking = false;
             jumpPressTime = 0; // ¸®¼Â
-            Debug.Log("Á¦Æ®ÆÑ ²¨Áü");
             return;
         }
     }
