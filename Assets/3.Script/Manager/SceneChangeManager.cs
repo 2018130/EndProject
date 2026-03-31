@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,6 +19,22 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
 
     [SerializeField]
     private float minLoadingTime = 3f;
+
+    private void Start()
+    {
+        // Test line
+        SceneContext sceneContext = FindAnyObjectByType<SceneContext>();
+
+        if (sceneContext != null)
+        {
+            sceneContext.Initialize();
+            BroadcastingSceneContextBuilt();
+            GameManager.Instance.SceneContext = sceneContext;
+        }
+        //
+
+        NetworkManager.Singleton.OnClientStarted += BroadcastingNetworkSceneContextBuilt;
+    }
 
     public void ChangeSceneForSinglePlay(SceneType sceneType)
     {
@@ -68,5 +85,17 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
         {
             item.OnSceneContextBuilt();
         }
+    }
+
+    private void BroadcastingNetworkSceneContextBuilt()
+    {
+        INetworkContextListener[] myInterfaces = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).
+                                            OfType<INetworkContextListener>().ToArray();
+
+        foreach (var item in myInterfaces)
+        {
+            item.OnNetworkSceneContextBuilt();
+        }
+        Debug.Log($"Calling network scene conext built");
     }
 }
