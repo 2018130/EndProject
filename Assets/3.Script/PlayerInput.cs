@@ -16,6 +16,11 @@ public class PlayerInput : MonoBehaviour
 
     private void Start()
     {
+        if (!network.IsOwner)
+        {
+            enabled = false;
+            return;
+        }
 
         inputActions.Player.Enable();
         

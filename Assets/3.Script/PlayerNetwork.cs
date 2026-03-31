@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerNetwork : MonoBehaviour
+public class PlayerNetwork : NetworkBehaviour
 {
     private Rigidbody rb;   // RigidBody
     private Animator animator;      // 애니메이터
@@ -28,8 +30,20 @@ public class PlayerNetwork : MonoBehaviour
         TryGetComponent<Animator>(out animator);
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner) return;
+
+        // 시네머신 카메라 연결
+        CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
+        if (virtualCam != null)
+            virtualCam.Target.TrackingTarget = transform;
+    }
+
     private void Update()
     {
+        if (!IsOwner) return;
+
         // jumpPressTime이 0보다 크고 0.4초 지났으면 제트팩 발동
         if (jumpPressTime > 0 && Time.time - jumpPressTime > 0.4f)
         {
@@ -40,11 +54,13 @@ public class PlayerNetwork : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         // 이동 방향으로 회전
-        if (move != Vector3.zero)
+        if (move.magnitude > 0.1f)
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 Quaternion.LookRotation(move),
