@@ -42,7 +42,8 @@ public class RangedWeapon : BaseWeapon
 
     public override void Attack()
     {
-        if(DateTime.Now.Subtract(lastShootTime) >= TimeSpan.FromSeconds(1 / weaponData.FireRate))
+
+        if (DateTime.Now.Subtract(lastShootTime) >= TimeSpan.FromSeconds(1 / weaponData.FireRate))
         {
             Shoot(transform.forward);
             lastShootTime = DateTime.Now;
@@ -70,6 +71,11 @@ public class RangedWeapon : BaseWeapon
     [Rpc(SendTo.Server)]
     private void ShootProjectileRpc(ulong shooterClientId)
     {
+        PlayerWater playerWater = NetworkManager.Singleton.ConnectedClients[OwnerClientId]
+    .PlayerObject.GetComponent<PlayerWater>();
+
+        if (playerWater == null || !playerWater.UseWaterForShot(weaponData.WaterPerShot)) return;
+
         // ½ºÆù
         NetworkObject projectile = Instantiate(waterPrefab, waterSpawnPoint.position, waterSpawnPoint.rotation);
         projectile.Spawn();

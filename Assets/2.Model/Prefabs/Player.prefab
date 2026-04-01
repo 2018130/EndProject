@@ -80,6 +80,7 @@ GameObject:
   - component: {fileID: -4028447985207414986}
   - component: {fileID: 1107492190783903303}
   - component: {fileID: 7874395101249434512}
+  - component: {fileID: -1029112328027385072}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -287,6 +288,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a0549ebc915a29429a43fa939505147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClientIdChecker
+--- !u!114 &-1029112328027385072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4293558174537636908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50aebb623e0ea124db7a616030bd9c40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWater
+  ShowTopMostFoldoutHeaderGroup: 1
+  maxWater: 100
+  jetpackDrain: 20
+  Water:
+    m_InternalValue: 100
 --- !u!1001 &1207129730647578492
 PrefabInstance:
   m_ObjectHideFlags: 0

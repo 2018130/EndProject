@@ -2,6 +2,7 @@
   "dependencies": {
     "com.amazonaws.gamelift": "file:C:/Users/user/Downloads/com.amazonaws.gamelift-3.2.0.tgz",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.9",
     "com.unity.burst": "1.8.28",
     "com.unity.cinemachine": "3.1.6",
