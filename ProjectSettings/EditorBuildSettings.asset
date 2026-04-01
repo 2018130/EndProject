@@ -32,6 +32,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1.Scene/SongTest/TestCombat.unity
     guid: cd6c801a3b8074943baee128661ebc3a
+  - enabled: 1
+    path: Assets/1.Scene/JangTest/TestCombat 1.unity
+    guid: ed2c749996205124b92799f8aa4c7ae7
+  - enabled: 1
+    path: Assets/1.Scene/JangTest/TestCombat.unity
+    guid: cdd52df66db15824fb3c37948e6ac037
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

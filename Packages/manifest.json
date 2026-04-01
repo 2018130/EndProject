@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.amazonaws.gamelift": "file:C:/Users/user/Downloads/amazon-gamelift-plugin-unity-release-3.2.0/com.amazonaws.gamelift-3.2.0.tgz",
+    "com.amazonaws.gamelift": "file:C:/Users/user/Downloads/com.amazonaws.gamelift-3.2.0.tgz",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.unity.ai.navigation": "2.0.9",
     "com.unity.burst": "1.8.28",

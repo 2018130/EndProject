@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.amazonaws.gamelift": {
-      "version": "file:C:/Users/user/Downloads/amazon-gamelift-plugin-unity-release-3.2.0/com.amazonaws.gamelift-3.2.0.tgz",
+      "version": "file:C:/Users/user/Downloads/com.amazonaws.gamelift-3.2.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {

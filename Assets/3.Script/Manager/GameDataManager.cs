@@ -39,12 +39,36 @@ public class GameDataManager : NetworkBehaviour
         {
             BaseWeapon baseWeapon = Instantiate(weaponData.WeaponPrefab).GetComponent<BaseWeapon>();
             NetworkObject weaponNO = baseWeapon.GetComponent<NetworkObject>();
-            weaponNO.transform.position = new Vector3(clientId, 0, 0);
             weaponNO.SpawnWithOwnership(clientId);
+
+            if (NetworkManager.Singleton.ConnectedClients
+                .TryGetValue(clientId, out NetworkClient client))
+            {
+
+                weaponNO.TrySetParent(client.PlayerObject, false);
+
+                EquipWeapon_ClientRpc(weaponNO.NetworkObjectId, clientId);
+            }
         }
         else
         {
             Debug.Log($"{weaponId}인 Weapon Data가 존재하지 않습니다.");
         }
+
+
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void EquipWeapon_ClientRpc(ulong weaponNetworkId, ulong clientId)
+    {
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
+            .TryGetValue(weaponNetworkId, out NetworkObject weaponNO)) return;
+
+        if (!NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(clientId, out NetworkClient client)) return;
+
+        BaseWeapon weapon = weaponNO.GetComponent<BaseWeapon>();
+        weapon.transform.localPosition = new Vector3(0.7f, 0.7f, 0f);
+        weapon.transform.localRotation = Quaternion.identity;
     }
 }

@@ -16,9 +16,18 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "3300ee97-5f4c-4ffd-b45e-04bc2cb29913",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Fire",
                     "type": "Button",
-                    "id": "833299c7-3276-493a-ac0e-1ed7cd5e19bb",
+                    "id": "e60a2810-1cf2-4fd3-9439-160dc6ba2593",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -110,17 +119,6 @@
                 },
                 {
                     "name": "",
-                    "id": "6d09d7c0-dcb2-4f24-9157-8f5ec496ad6f",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "17fe36ea-01e9-44e8-aee7-fcdd5cedbc93",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -149,6 +147,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1197d9c9-3260-4fc0-9a05-c9005713105b",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d96dbe90-a58c-4326-a9a3-caa36c03c5e5",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

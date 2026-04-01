@@ -134,11 +134,6 @@ public class PlayerNetwork : NetworkBehaviour
         isDashing = false;
     }
 
-    public void SendFireInput()
-    {
-        Debug.Log("น฿ป็!");
-    }
-
     private bool IsGrounded()
     {
         int layerMask = ~LayerMask.GetMask("Player");

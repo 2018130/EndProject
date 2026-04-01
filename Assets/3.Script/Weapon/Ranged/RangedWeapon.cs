@@ -13,6 +13,8 @@ public class RangedWeapon : BaseWeapon
     private NetworkObject networkObject;
 
     private DateTime lastShootTime = DateTime.MinValue;
+    private PlayerInput playerInput;
+
 
     protected override void Awake()
     {
@@ -20,16 +22,22 @@ public class RangedWeapon : BaseWeapon
 
         networkObject = GetComponent<NetworkObject>();
     }
-
-    private void Update()
+    public override void OnNetworkSpawn()
     {
-        if (!IsSpawned || !IsOwner)
-            return;
+        if (!IsOwner) return;
 
-        if(InputManager.Instance.OnClicked)
-        {
-            Attack();
-        }
+        // PlayerInput에서 Fire 이벤트 구독
+        playerInput = FindAnyObjectByType<PlayerInput>();
+        if (playerInput != null)
+            playerInput.OnFirePerformed += Attack;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (!IsOwner) return;
+
+        if (playerInput != null)
+            playerInput.OnFirePerformed -= Attack;
     }
 
     public override void Attack()
