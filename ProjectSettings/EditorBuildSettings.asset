@@ -30,7 +30,7 @@ EditorBuildSettings:
     path: Assets/NGO_Minimal_Setup/NGO_Setup.unity
     guid: 7952ef2bb4227c84d953cef12cd70282
   - enabled: 1
-    path: Assets/1.Scene/SongTest/TestLobby.unity
+    path: Assets/1.Scene/SongTest/TestCombat.unity
     guid: cd6c801a3b8074943baee128661ebc3a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
