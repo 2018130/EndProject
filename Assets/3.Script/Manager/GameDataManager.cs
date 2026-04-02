@@ -12,11 +12,20 @@ public class GameDataManager : NetworkBehaviour
 
     private Dictionary<string, WeaponData> weaponDataDictionary = new Dictionary<string, WeaponData>();
 
+    [Header("Card Datas")]
+    public List<CardData> cardDatas = new List<CardData>();
+
+    private Dictionary<string, CardData> cardDataDictionary = new Dictionary<string, CardData>();
+
     private void Awake()
     {
         foreach(WeaponData weaponData in weaponDatas)
         {
             weaponDataDictionary.Add(weaponData.ID, weaponData);
+        }
+        foreach(CardData cardData in cardDatas)
+        {
+            cardDataDictionary.Add(cardData.ID, cardData);
         }
     }
 
