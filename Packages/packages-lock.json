@@ -8,6 +8,18 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1"
       }
     },
+    "com.amazonaws.gameliftserver.sdk": {
+      "version": "file:C:/Users/user/Downloads/amazon-gamelift-plugin-unity-release-3.2.0/com.amazonaws.gameliftserver.sdk-5.4.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "org.nuget.log4net": "2.0.15",
+        "org.nuget.polly": "7.2.3",
+        "org.nuget.websocketsharp.core": "1.0.0",
+        "org.nuget.system.configuration.configurationmanager": "7.0.0"
+      }
+    },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
       "depth": 0,
@@ -477,6 +489,71 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "org.nuget.log4net": {
+      "version": "2.0.15",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.configuration.configurationmanager": "4.5.0"
+      },
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.polly": {
+      "version": "7.2.3",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.system.configuration.configurationmanager": {
+      "version": "7.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.security.cryptography.protecteddata": "7.0.0",
+        "org.nuget.system.security.permissions": "7.0.0"
+      },
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.system.security.accesscontrol": {
+      "version": "6.0.0",
+      "depth": 3,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.security.principal.windows": "5.0.0"
+      },
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.system.security.cryptography.protecteddata": {
+      "version": "7.0.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.system.security.permissions": {
+      "version": "7.0.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.security.accesscontrol": "6.0.0"
+      },
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.system.security.principal.windows": {
+      "version": "5.0.0",
+      "depth": 4,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.openupm.com"
+    },
+    "org.nuget.websocketsharp.core": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.openupm.com"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

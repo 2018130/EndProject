@@ -1,5 +1,5 @@
 version: 1
-LastOpenTab: Credentials
+LastOpenTab: Anywhere
 CurrentProfileName: GameLiftUnityUser
 CurrentRegion: ap-northeast-2
 UserProfiles: >+
@@ -9,17 +9,17 @@ UserProfiles: >+
 
     BucketName: aws-gamelift-unity-477223649536-ap-northeast-2-an
 
-    AnywhereFleetName: 
+    AnywhereFleetName: GameLiftUnityFleet
 
-    AnywhereFleetId: 
+    AnywhereFleetId: fleet-77cffd0b-c8ce-460b-8582-39c198f5dee0
 
-    AnywhereFleetLocation: 
+    AnywhereFleetLocation: custom-TestSong
 
-    ComputeName: 
+    ComputeName: ComputerName-ProfileName
 
-    IpAddress: 
+    IpAddress: 127.0.0.1
 
-    WebSocketUrl: 
+    WebSocketUrl: wss://ap-northeast-2.api.amazongamelift.com
 
     ContainerDeploymentInProgress: false
 
