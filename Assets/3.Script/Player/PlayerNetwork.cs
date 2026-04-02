@@ -162,7 +162,7 @@ public class PlayerNetwork : NetworkBehaviour
         isDashing = false;
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         int layerMask = ~LayerMask.GetMask("Player");
 
