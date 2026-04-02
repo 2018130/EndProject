@@ -9,7 +9,7 @@ public enum CardType
     WaterBalloon,   // ¹°Ç³¼±
     DuckTube,       // ¿À¸® Æ©ºê
     SharkTube,      // »ó¾î Æ©ºê
-    ChlorineDisinfectant, // ¿°¼Ò ¼Òµ¶Á¦
+    GoatDisinfectant, // ¿°¼Ò ¼Òµ¶Á¦
     MalrangBong     // ¹ÖÅ°ÀÇ ¸»¶ûºÀ
 }
 public enum CardSkillType

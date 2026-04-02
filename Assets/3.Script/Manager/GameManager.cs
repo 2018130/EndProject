@@ -7,4 +7,9 @@ using UnityEngine;
 public class GameManager : SingletonBehaviour<GameManager>
 {
     public SceneContext SceneContext { get; set; } = null;
+
+    public void StartGame()
+    {
+        SceneContext.GameDataManager.StartCardSelection();
+    }
 }

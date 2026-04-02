@@ -10,6 +10,9 @@ public class GameUIManager : MonoBehaviour, INetworkContextListener
     [SerializeField]
     private List<Button> spawnBtn = new List<Button>();
 
+    [SerializeField]
+    private CardSelectionUI cardSelectionUI;
+
     public void OnNetworkSceneContextBuilt()
     {
         for (int i = 0; i < spawnBtn.Count; i++)
@@ -21,5 +24,13 @@ public class GameUIManager : MonoBehaviour, INetworkContextListener
                 Debug.Log($"Spawn weapon id : {weaponId} owner client id : {ClientIdChecker.OwnedClientId}");
             });
         }
+
+        GameDataManager dataManager = GameManager.Instance.SceneContext.GameDataManager;
+        cardSelectionUI.Initialize(dataManager);
+        dataManager.OnCardSelectionRequested += (cardIds, clientId) =>
+        {
+            cardSelectionUI.ShowCards(cardIds);
+        };
+
     }
 }
