@@ -6,6 +6,8 @@ public class PlayerWater : NetworkBehaviour
     [SerializeField] private float maxWater = 100f;
     [SerializeField] private float jetpackDrain = 20f;
 
+    private WaterUI waterUI;
+
     public NetworkVariable<float> Water = new NetworkVariable<float>(
         100f,
         NetworkVariableReadPermission.Everyone,
@@ -17,10 +19,18 @@ public class PlayerWater : NetworkBehaviour
         Water.OnValueChanged += OnWaterChanged;
 
         // 내 캐릭터일 때만 UI 초기화
-        if (IsOwner)
+        if (IsOwner && IsLocalPlayer)
         {
-            WaterUI.Instance?.SetVisible(true);
-            WaterUI.Instance?.UpdateWater(Water.Value, maxWater);
+            waterUI = FindAnyObjectByType<WaterUI>();
+
+            Debug.Log($"WaterUI 찾음: {waterUI != null}");
+
+            waterUI?.SetVisible(true);
+            waterUI?.UpdateWater(Water.Value, maxWater);
+        }
+        else
+        {
+            Debug.Log($"[{OwnerClientId}] IsOwner:False - UI 숨김");
         }
     }
 
@@ -28,7 +38,7 @@ public class PlayerWater : NetworkBehaviour
     {
         // 내 캐릭터일 때만 UI 업데이트
         if (!IsOwner) return;
-        WaterUI.Instance?.UpdateWater(newVal, maxWater);
+        waterUI?.UpdateWater(newVal, maxWater);
     }
 
     public bool UseWaterForShot(float amount)

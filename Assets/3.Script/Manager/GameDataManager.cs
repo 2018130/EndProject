@@ -70,5 +70,8 @@ public class GameDataManager : NetworkBehaviour
         BaseWeapon weapon = weaponNO.GetComponent<BaseWeapon>();
         weapon.transform.localPosition = new Vector3(0.7f, 0.7f, 0f);
         weapon.transform.localRotation = Quaternion.identity;
+
+        if (weapon is RangedWeapon rangedWeapon)
+            rangedWeapon.InitializeAfterEquip();
     }
 }
