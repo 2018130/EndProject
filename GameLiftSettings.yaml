@@ -85,5 +85,87 @@ UserProfiles: >+
 
     DeploymentBuildFolderPath: 
 
+  - Region: 
+
+    Name: default
+
+    BucketName: 
+
+    AnywhereFleetName: 
+
+    AnywhereFleetId: 
+
+    AnywhereFleetLocation: 
+
+    ComputeName: 
+
+    IpAddress: 
+
+    WebSocketUrl: 
+
+    ContainerDeploymentInProgress: false
+
+    ContainersDeploymentComplete: false
+
+    ContainerQuestionnaireScenario: NoContainerImageNoExistingEcrRepo
+
+    ContainerDeploymentScenario: SingleRegion
+
+    ContainerEnableMetrics: false
+
+    ContainerGameServerBuildPath: 
+
+    ContainerGameServerExecutable: 
+
+    ContainerDockerImageId: 
+
+    ContainerECRRepositoryName: 
+
+    ContainerECRRepositoryUri: 
+
+    ContainerECRImageUri: 
+
+    ContainerECRImageId: 
+
+    ContainerPortRange: 
+
+    ContainerTotalMemory: 
+
+    ContainerTotalVcpu: 
+
+    ContainerGameName: 
+
+    ContainerImageTag: 
+
+    IsContainerImageBuilding: false
+
+    IsContainerImageBuilt: false
+
+    IsECRRepoCreated: false
+
+    IsContainerPushedToECR: false
+
+    IsCGDDeploying: false
+
+    IsCGDDeployed: false
+
+    DeploymentScenario: SingleRegion
+
+    DeploymentGameName: 
+
+    ManagedEC2FleetName: 
+
+    BuildName: 
+
+    LaunchParameters: 
+
+    BuildOperatingSystem: 
+
+    EnableMetrics: false
+
+    DeploymentBuildFilePath: 
+
+    DeploymentBuildFolderPath: 
+
 CurrentBucketName: aws-gamelift-unity-477223649536-ap-northeast-2-an
 ...

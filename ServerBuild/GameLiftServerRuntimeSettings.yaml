@@ -1,3 +1,6 @@
 version: 1
 CurrentRegion: ap-northeast-2
+FleetId: fleet-77cffd0b-c8ce-460b-8582-39c198f5dee0
+ComputeName: ComputerName-ProfileName
+WebSocketUrl: wss://ap-northeast-2.api.amazongamelift.com
 ...
