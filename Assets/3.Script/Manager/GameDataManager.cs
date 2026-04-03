@@ -136,6 +136,17 @@ public class GameDataManager : NetworkBehaviour
     {
         CardData card = GetCardData(cardId);
         Debug.Log($"[{clientId}] 카드 선택: {card.CardName}");
-        // 나중에 PlayerSkill에 적용
+        ApplySkill_ClientRpc(cardId, clientId);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void ApplySkill_ClientRpc(string cardId, ulong clientId)
+    {
+        if (NetworkManager.Singleton.LocalClientId != clientId) return;
+
+        CardData card = GetCardData(cardId);
+        PlayerSkill playerSkill = NetworkManager.Singleton.LocalClient
+                                    .PlayerObject.GetComponent<PlayerSkill>();
+        playerSkill.SetSkill(card);
     }
 }

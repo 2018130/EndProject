@@ -936,6 +936,7 @@ MonoBehaviour:
   weaponDatas:
   - ID: 01
     WeaponType: 0
+    WaterPerShot: 2
     FireRate: 5
     FireMode: 1
     BulletSpeed: 20
@@ -947,6 +948,7 @@ MonoBehaviour:
     MuzzleFlash: {fileID: 0}
   - ID: 02
     WeaponType: 0
+    WaterPerShot: 10
     FireRate: 1
     FireMode: 1
     BulletSpeed: 40
@@ -958,6 +960,7 @@ MonoBehaviour:
     MuzzleFlash: {fileID: 0}
   - ID: 03
     WeaponType: 0
+    WaterPerShot: 0
     FireRate: 5
     FireMode: 1
     BulletSpeed: 10
@@ -967,6 +970,103 @@ MonoBehaviour:
     WeaponPrefab: {fileID: 8456758896228530781, guid: a0dc1e7ec08c20348827c33afefef198, type: 3}
     FireSound: {fileID: 0}
     MuzzleFlash: {fileID: 0}
+  cardDatas:
+  - ID: 01
+    CardName: "\uACE0\uC591\uC774 \uBA38\uC2E0\uAC74"
+    Description: 
+    CardType: 0
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: 7869b37a060f66c4cb1b66b8cd3423c4, type: 3}
+    Cooldown: 25
+    Duration: 2
+    Damage: 25
+    Range: 0
+    Speed: 0
+    SkillPrefab: {fileID: 1771360741641001961, guid: 7135a5916f940954aa7aecbe20b431d8, type: 3}
+  - ID: 02
+    CardName: "\uBC84\uBE14\uAC74"
+    Description: 
+    CardType: 1
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: 69730eb277b32784db2ea0892461c641, type: 3}
+    Cooldown: 15
+    Duration: 5
+    Damage: 0
+    Range: 0
+    Speed: 0
+    SkillPrefab: {fileID: 0}
+  - ID: 03
+    CardName: "\uD3AD\uD0C0\uC6B0\uB85C\uC2A4\uC758 \uB3CC\uC9C4"
+    Description: 
+    CardType: 2
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: cee0a86994e6a344bb52ac40d87b2ec7, type: 3}
+    Cooldown: 30
+    Duration: 3
+    Damage: 0
+    Range: 0
+    Speed: 20
+    SkillPrefab: {fileID: 0}
+  - ID: 04
+    CardName: "\uBB3C\uD48D\uC120"
+    Description: 
+    CardType: 3
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: d1559996de2055f4d8844a135f5fcbc0, type: 3}
+    Cooldown: 20
+    Duration: 0
+    Damage: 65
+    Range: 2
+    Speed: 0
+    SkillPrefab: {fileID: 0}
+  - ID: 05
+    CardName: "\uC624\uB9AC\uD29C\uBE0C"
+    Description: 
+    CardType: 4
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: dfaae201c43f1c44fac95f9926cb92a2, type: 3}
+    Cooldown: 20
+    Duration: 0
+    Damage: 65
+    Range: 2
+    Speed: 20
+    SkillPrefab: {fileID: 0}
+  - ID: 06
+    CardName: "\uC0C1\uC5B4\uD29C\uBE0C"
+    Description: 
+    CardType: 5
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: 51e38d3dcd3070b49baff4ca3da53b8c, type: 3}
+    Cooldown: 20
+    Duration: 15
+    Damage: 0
+    Range: 0
+    Speed: 20
+    SkillPrefab: {fileID: 0}
+  - ID: 07
+    CardName: "\uC5FC\uC18C\uC18C\uB3C5\uC81C"
+    Description: 
+    CardType: 6
+    SkillType: 0
+    CardIcon: {fileID: 21300000, guid: 73b6d66bdbaa8f04588ef46293df59d4, type: 3}
+    Cooldown: 25
+    Duration: 5
+    Damage: 65
+    Range: 1.5
+    Speed: 0
+    SkillPrefab: {fileID: 0}
+  - ID: 08
+    CardName: "\uBC0D\uD0A4\uC758 \uB9D0\uB791\uBD09"
+    Description: 
+    CardType: 7
+    SkillType: 1
+    CardIcon: {fileID: 21300000, guid: 4db4701e0532b0c4ab195b151e2d195c, type: 3}
+    Cooldown: 20
+    Duration: -1
+    Damage: 65
+    Range: 1
+    Speed: 10
+    SkillPrefab: {fileID: 0}
 --- !u!4 &263370921
 Transform:
   m_ObjectHideFlags: 0
@@ -2593,7 +2693,6 @@ GameObject:
   - component: {fileID: 1963308878}
   - component: {fileID: 1963308877}
   - component: {fileID: 1963308880}
-  - component: {fileID: 1963308881}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2719,38 +2818,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1963308881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1963308876}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBrain
-  ShowDebugText: 0
-  ShowCameraFrustum: 1
-  IgnoreTimeScale: 0
-  WorldUpOverride: {fileID: 0}
-  ChannelMask: -1
-  UpdateMethod: 2
-  BlendUpdateMethod: 1
-  LensModeOverride:
-    Enabled: 0
-    DefaultMode: 2
-  DefaultBlend:
-    Style: 1
-    Time: 2
-    CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  CustomBlends: {fileID: 0}
 --- !u!1 &2132667198
 GameObject:
   m_ObjectHideFlags: 0
@@ -2928,63 +2995,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1001 &7350210891059138230
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 810822280789695857, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7489677035311258648, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
-      propertyPath: m_Name
-      value: CinemachineCamera
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d2108147a1fac7645998fd01ec4f167e, type: 3}
 --- !u!23 &7880277177155686878
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3064,5 +3074,4 @@ SceneRoots:
   - {fileID: 80851837}
   - {fileID: 48529667}
   - {fileID: 9091501473086826768}
-  - {fileID: 7350210891059138230}
   - {fileID: 70725925}

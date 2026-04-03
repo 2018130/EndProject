@@ -747,6 +747,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 88234433}
   m_CullTransparentMesh: 1
+--- !u!1 &95328011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 95328012}
+  - component: {fileID: 95328014}
+  - component: {fileID: 95328013}
+  m_Layer: 5
+  m_Name: BubbleEffectImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &95328012
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95328011}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1880088110}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &95328013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95328011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6666667}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 5ec31c72ba205064dad6c2192101be29, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &95328014
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95328011}
+  m_CullTransparentMesh: 1
 --- !u!1 &196423887
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,12 +847,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196423887}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 514271964}
+  m_Father: {fileID: 1363364535}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -806,8 +881,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 15
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1001,89 +1076,97 @@ MonoBehaviour:
     Description: 
     CardType: 0
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: 7869b37a060f66c4cb1b66b8cd3423c4, type: 3}
     Cooldown: 25
     Duration: 2
     Damage: 25
     Range: 0
     Speed: 0
+    SkillPrefab: {fileID: 1771360741641001961, guid: 7135a5916f940954aa7aecbe20b431d8, type: 3}
   - ID: 02
     CardName: "\uBC84\uBE14\uAC74"
     Description: 
     CardType: 1
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: 69730eb277b32784db2ea0892461c641, type: 3}
     Cooldown: 15
     Duration: 5
     Damage: 0
     Range: 0
-    Speed: 0
+    Speed: 10
+    SkillPrefab: {fileID: 4645323743532487819, guid: bea2b39007af3084fadf74607b82b180, type: 3}
   - ID: 03
     CardName: "\uD3AD\uD0C0\uC6B0\uB85C\uC2A4\uC758 \uB3CC\uC9C4"
     Description: 
     CardType: 2
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: cee0a86994e6a344bb52ac40d87b2ec7, type: 3}
     Cooldown: 30
     Duration: 3
     Damage: 0
     Range: 0
     Speed: 20
+    SkillPrefab: {fileID: 0}
   - ID: 04
     CardName: "\uBB3C\uD48D\uC120"
     Description: 
     CardType: 3
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: d1559996de2055f4d8844a135f5fcbc0, type: 3}
     Cooldown: 20
     Duration: 0
     Damage: 65
     Range: 2
     Speed: 0
+    SkillPrefab: {fileID: 0}
   - ID: 05
     CardName: "\uC624\uB9AC\uD29C\uBE0C"
     Description: 
     CardType: 4
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: dfaae201c43f1c44fac95f9926cb92a2, type: 3}
     Cooldown: 20
     Duration: 0
     Damage: 65
     Range: 2
     Speed: 20
+    SkillPrefab: {fileID: 0}
   - ID: 06
     CardName: "\uC0C1\uC5B4\uD29C\uBE0C"
     Description: 
     CardType: 5
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: 51e38d3dcd3070b49baff4ca3da53b8c, type: 3}
     Cooldown: 20
     Duration: 15
     Damage: 0
     Range: 0
     Speed: 20
+    SkillPrefab: {fileID: 0}
   - ID: 07
     CardName: "\uC5FC\uC18C\uC18C\uB3C5\uC81C"
     Description: 
     CardType: 6
     SkillType: 0
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: 73b6d66bdbaa8f04588ef46293df59d4, type: 3}
     Cooldown: 25
     Duration: 5
     Damage: 65
     Range: 1.5
     Speed: 0
+    SkillPrefab: {fileID: 0}
   - ID: 08
     CardName: "\uBC0D\uD0A4\uC758 \uB9D0\uB791\uBD09"
     Description: 
     CardType: 7
     SkillType: 1
-    CardIcon: {fileID: 0}
+    CardIcon: {fileID: 21300000, guid: 4db4701e0532b0c4ab195b151e2d195c, type: 3}
     Cooldown: 20
     Duration: -1
     Damage: 65
     Range: 1
     Speed: 10
+    SkillPrefab: {fileID: 0}
 --- !u!4 &263370921
 Transform:
   m_ObjectHideFlags: 0
@@ -1369,8 +1452,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 651030649}
-  - {fileID: 196423888}
+  - {fileID: 1363364535}
   m_Father: {fileID: 1781915185}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1390,7 +1472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e80ce14bc64460d42a34261297d11c73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardSelectionUI
-  panel: {fileID: 651030648}
+  panel: {fileID: 1363364534}
   cardSlots:
   - {fileID: 1714570358}
   - {fileID: 642822117}
@@ -1456,8 +1538,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: CardName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1592,8 +1674,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Card Description
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1834,7 +1916,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651030648}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1842,7 +1924,7 @@ RectTransform:
   - {fileID: 1714570354}
   - {fileID: 642822115}
   - {fileID: 391797707}
-  m_Father: {fileID: 514271964}
+  m_Father: {fileID: 1363364535}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2160,10 +2242,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 391797707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &807908931
 MonoBehaviour:
@@ -2262,8 +2344,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: StartClient
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2398,8 +2480,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: CardName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2667,8 +2749,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Card Description
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2878,8 +2960,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: StartServer
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3014,8 +3096,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3150,8 +3232,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3488,8 +3570,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3624,8 +3706,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Card Description
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3701,6 +3783,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1330698844}
   m_CullTransparentMesh: 1
+--- !u!1 &1363364534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1363364535}
+  m_Layer: 5
+  m_Name: CardSelectionPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1363364535
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363364534}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 651030649}
+  - {fileID: 196423888}
+  m_Father: {fileID: 514271964}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1428107847
 GameObject:
   m_ObjectHideFlags: 0
@@ -3733,10 +3852,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1714570354}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1428107849
 MonoBehaviour:
@@ -4241,10 +4360,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 642822115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1662073923
 MonoBehaviour:
@@ -4601,6 +4720,7 @@ RectTransform:
   - {fileID: 88234434}
   - {fileID: 804473436}
   - {fileID: 514271964}
+  - {fileID: 1880088110}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4624,7 +4744,6 @@ MonoBehaviour:
   - {fileID: 1552653790}
   - {fileID: 1459190359}
   - {fileID: 88234435}
-  cardSelectionUI: {fileID: 514271965}
 --- !u!1 &1854474863
 GameObject:
   m_ObjectHideFlags: 0
@@ -4684,8 +4803,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: CardName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
+  m_sharedMaterial: {fileID: 2839012138433673637, guid: af941bd2741cfeb43ab5604f4f00145c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4761,6 +4880,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1854474863}
   m_CullTransparentMesh: 1
+--- !u!1 &1880088109
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1880088110}
+  - component: {fileID: 1880088111}
+  m_Layer: 5
+  m_Name: BubbleEffectUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1880088110
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880088109}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 95328012}
+  m_Father: {fileID: 1781915185}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1880088111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880088109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8fe7da07960114aa46241c1d8e4911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleEffectUI
+  bubbleImage: {fileID: 95328013}
 --- !u!1 &1948232192
 GameObject:
   m_ObjectHideFlags: 0

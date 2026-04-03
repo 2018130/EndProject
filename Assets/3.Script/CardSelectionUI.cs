@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CardSelectionUI : MonoBehaviour
+public class CardSelectionUI : MonoBehaviour, IContextListener
 {
     [SerializeField] private GameObject panel;
     [SerializeField] private CardSlotUI[] cardSlots = new CardSlotUI[3];
@@ -15,13 +15,38 @@ public class CardSelectionUI : MonoBehaviour
     private Coroutine timerCoroutine;
     private GameDataManager gameDataManager;
 
-    public void Initialize(GameDataManager dataManager)
+    private bool isSelected = false;
+
+    private void Awake()
     {
-        gameDataManager = dataManager;
+        panel.SetActive(false);
+    }
+
+    public void OnSceneContextBuilt()
+    {
+        Debug.Log($"GameManager.Instance: {GameManager.Instance}");
+        Debug.Log($"SceneContext: {GameManager.Instance?.SceneContext}");
+        Debug.Log($"GameDataManager: {GameManager.Instance?.SceneContext?.GameDataManager}");
+
+        gameDataManager = GameManager.Instance.SceneContext.GameDataManager;
+        gameDataManager.OnCardSelectionRequested += OnCardSelectionRequestedHandler;
+    }
+
+    private void OnDestroy()
+    {
+        if (gameDataManager != null)
+            gameDataManager.OnCardSelectionRequested -= OnCardSelectionRequestedHandler;
+    }
+
+    private void OnCardSelectionRequestedHandler(string[] cardIds, ulong clientId)
+    {
+        ShowCards(cardIds);
     }
 
     public void ShowCards(string[] cardIds)
     {
+        isSelected = false;
+
         currentCardIds = cardIds;
         panel.SetActive(true);
 
@@ -55,6 +80,9 @@ public class CardSelectionUI : MonoBehaviour
 
     private void OnCardSelected(string cardId)
     {
+        if (isSelected) return;
+        isSelected = true;
+
         if (timerCoroutine != null)
             StopCoroutine(timerCoroutine);
 

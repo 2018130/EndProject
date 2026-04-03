@@ -11,6 +11,8 @@ public class PlayerInput : MonoBehaviour
     public event Action OnFirePerformed;
     public event Action OnFireCanceled;
 
+    public event Action OnSkillPerformed;
+
     private void Awake()
     {
         TryGetComponent<PlayerNetwork>(out network);
@@ -36,6 +38,9 @@ public class PlayerInput : MonoBehaviour
         // 발사
         inputActions.Player.Fire.performed += context => OnFirePerformed?.Invoke();
         inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
+
+        // 스킬
+        inputActions.Player.Skill.performed += context => OnSkillPerformed?.Invoke();
 
         // 점프
         inputActions.Player.Jump.performed += context =>
