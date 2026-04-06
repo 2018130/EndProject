@@ -180,4 +180,58 @@ public class PlayerNetwork : NetworkBehaviour
         Debug.Log($"IsGrounded: {grounded} / 거리: {hit.distance}");
         return grounded;
     }
+
+    [ServerRpc]
+    public void UseSkill_ServerRpc(string cardId)
+    {
+        CardData card = GameManager.Instance.SceneContext
+                            .GameDataManager.GetCardData(cardId);
+        Debug.Log($"UseSkill_ServerRpc 호출됨: {cardId}");
+        switch (card.CardType)
+        {
+            case CardType.CatGun:
+                // 고양이 머신건 스폰
+                GameObject catGunObj = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                catGunObj.GetComponent<NetworkObject>().Spawn();
+                catGunObj.GetComponent<CatGunObject>().Initialize(card.Duration, card.Damage);
+                break;
+            case CardType.BubbleGun:
+                GameObject bubbleObj = Instantiate(card.SkillPrefab, transform.position + Vector3.up, transform.rotation);
+                NetworkObject bubbleNo = bubbleObj.GetComponent<NetworkObject>();
+                bubbleNo.Spawn();
+                BubbleProjectile bubble = bubbleObj.GetComponent<BubbleProjectile>();
+                bubble.Initialize(card.Speed, OwnerClientId, transform.forward);
+                break;
+            case CardType.PenguinCharge:
+                // 펭귄 돌진 처리
+                break;
+            case CardType.WaterBalloon:
+                break;
+            case CardType.DuckTube:
+                // 오리 튜브 스폰
+                break;
+            case CardType.SharkTube:
+                // 상어 튜브 스폰
+                break;
+            case CardType.GoatDisinfectant:
+                break;
+            case CardType.MalrangBong:
+                break;
+                // ...
+        }
+    }
+
+    [ClientRpc]
+    public void ApplyKnockback_ClientRpc(Vector3 force)
+    {
+        rb.AddForce(force, ForceMode.Impulse);
+    }
+
+    [ClientRpc]
+    public void ApplyBubbleEffect_ClientRpc(float duration)
+    {
+        if (!IsOwner) return;
+        // BubbleEffectUI 띄우기
+        BubbleEffectUI.Instance.Show(duration);
+    }
 }
