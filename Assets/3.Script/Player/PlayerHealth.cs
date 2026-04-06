@@ -32,6 +32,12 @@ public class PlayerHealth : NetworkBehaviour
     {
         Hp.OnValueChanged += onHPChanged;
         State.OnValueChanged += OnStateChanged;
+
+        if (IsOwner)
+        {
+            HealthUI healthUI = FindAnyObjectByType<HealthUI>();
+            healthUI?.SetPlayer(this);
+        }
     }
 
     private void onHPChanged(float oldVal, float newVal)
