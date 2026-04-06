@@ -8,6 +8,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     [SerializeField] GameObject[] seats;
     private PlayerNetwork[] passengers;
     [SerializeField] private float knockbackPower = 3f;
+    [SerializeField] private float bumperPower = 10f;
 
     private PlayerNetwork driver;
     [SerializeField] GameObject driverPos;
