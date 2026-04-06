@@ -14,7 +14,7 @@ public enum PlayerState
 
 public class PlayerHealth : NetworkBehaviour
 {
-    [SerializeField] private float maxHp = 100f;    // 기본 체력
+    [SerializeField] public float maxHp = 100f;    // 기본 체력
     [SerializeField] private float downedHpDrain = 10f; // 기절 중 초당 체력 감소
 
     public NetworkVariable<float> Hp = new NetworkVariable<float>(
@@ -55,6 +55,7 @@ public class PlayerHealth : NetworkBehaviour
                 break;
             case PlayerState.OnVehicle:
                 // 이동, 공격 불가 처리
+                // PlayerNetwork의 IsGrounded 체크 후 state = alive로 변경
                 break;
         }
     }

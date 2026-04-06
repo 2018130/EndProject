@@ -1,40 +1,70 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ShipDuckNotSsipDuck : MonoBehaviour
+
+public class ShipDuckNotSsipDuck : NetworkBehaviour
 {
     [SerializeField] GameObject[] seats;
-    [SerializeField] GameObject prefab;
+    private PlayerNetwork[] passengers;
+    [SerializeField] private float knockbackPower = 3f;
 
+    private PlayerNetwork driver;
+    [SerializeField] GameObject driverPos;
     private Rigidbody rb;
     private Vector2 moveInput;
-    private float moveSpeed;
     private int seatNumb;
-    private int duration;
-    private PlayerNetwork player;
 
-    private void OnEnable()
+    private float moveSpeed;
+    private float duration;
+
+
+    public override void OnNetworkSpawn()
     {
-        //moveSpeed = CardData.Speed;
-        //duration = CardData.duration;
         seatNumb = 0;
-        StartCoroutine(StopSkill());
-        TryGetComponent(out player);
+        passengers = new PlayerNetwork[seats.Length];
+        rb = GetComponent<Rigidbody>();
     }
 
-    private void OnDisable()
+    public override void OnNetworkDespawn()
     {
-        //터져서 모든 승객들 날라감 
-        if(!player.IsGrounded())
+        if (driver != null)
         {
-            //공격 불가 판정
+            driver.GetComponent<Collider>().isTrigger = false;
         }
+
+        //터져서 모든 승객들 날라감
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            if (passengers[i] == null) continue;
+
+            Vector3 flyingDir = (passengers[i].transform.position - transform.position).normalized;
+            passengers[i].ApplyKnockback_ClientRpc(flyingDir * knockbackPower);
+
+            passengers[i].GetComponent<Collider>().isTrigger = false;
+            passengers[i] = null;
+        }
+    }
+
+    public void Initialize(float duration, float moveSpeed, PlayerNetwork driver)
+    {
+        this.duration = duration;
+        this.moveSpeed = moveSpeed;
+        this.driver = driver;
+
+        if (IsServer)
+        {
+            driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
+            driver.GetComponent<Collider>().isTrigger = true;
+        }
+
+        StartCoroutine(StopSkill());
     }
 
     private void FixedUpdate()
     {
+        if (driver != null) moveInput = driver.GetMoveInput();
+
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
@@ -48,16 +78,69 @@ public class ShipDuckNotSsipDuck : MonoBehaviour
         //animator.SetBool("IsMoving", move != Vector3.zero);
     }
 
-    private void TakePassengers()
+    private void LateUpdate()
     {
-        //스킬시 일정 범위 + 닿을 시에 차량 탑승
-        //애들 정보 저장
-        //승객들 state = onvehicle 로 변경
+        if (driver != null)
+        {
+            driver.transform.position = driverPos.transform.position;
+        }
+
+        for (int i = 0; i < seatNumb; i++)
+        {
+            if (passengers[i] != null)
+            {
+                passengers[i].transform.position = seats[i].transform.position;
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!IsServer) return;
+
+        if (other.CompareTag("Player"))
+        {
+            PlayerNetwork passenger = other.GetComponent<PlayerNetwork>();
+
+            if (passenger != null && passenger != driver && seatNumb < seats.Length)
+            {
+                TakePassengers(passenger);
+            }
+        }
+        if (other.GetComponent<SharkTube>() != null || other.GetComponent<ShipDuckNotSsipDuck>() != null)
+        {
+            ApplyBumperRecoil(other.transform.position);
+        }
+    }
+
+    private void ApplyBumperRecoil(Vector3 hitPoint)
+    {
+        Vector3 recoilDir = (transform.position - hitPoint).normalized;
+        recoilDir.y = 0;
+
+        rb.AddForce(recoilDir * bumperPower, ForceMode.Impulse);
+    }
+
+    private void TakePassengers(PlayerNetwork passenger)
+    {
+        for (int i = 0; i < seatNumb; i++)
+        {
+            if (passengers[i] == passenger) return;
+        }
+
+        passengers[seatNumb] = passenger;
+        passenger.GetComponent<Collider>().isTrigger = true;
+        passenger.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
+
+        seatNumb++;
     }
 
     private IEnumerator StopSkill()
     {
         yield return new WaitForSeconds(duration);
-        Destroy(gameObject);
+        if (IsServer)
+        {
+            GetComponent<NetworkObject>().Despawn();
+        }
     }
 }

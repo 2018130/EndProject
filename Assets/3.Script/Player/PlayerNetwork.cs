@@ -110,6 +110,11 @@ public class PlayerNetwork : NetworkBehaviour
         moveInput = input;
     }
 
+    public Vector2 GetMoveInput()
+    {
+        return moveInput;
+    }
+
     public void SendJumpInput()
     {
         jumpPressTime = Time.time;
@@ -208,10 +213,14 @@ public class PlayerNetwork : NetworkBehaviour
             case CardType.WaterBalloon:
                 break;
             case CardType.DuckTube:
-                // 오리 튜브 스폰
+                GameObject duckTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                duckTube.GetComponent<NetworkObject>().Spawn();
+                duckTube.GetComponent<ShipDuckNotSsipDuck>().Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.SharkTube:
-                // 상어 튜브 스폰
+                GameObject sharkTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                sharkTube.GetComponent<NetworkObject>().Spawn();
+                sharkTube.GetComponent<SharkTube>().Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.GoatDisinfectant:
                 break;
@@ -224,6 +233,7 @@ public class PlayerNetwork : NetworkBehaviour
     [ClientRpc]
     public void ApplyKnockback_ClientRpc(Vector3 force)
     {
+        if (!IsOwner) return;
         rb.AddForce(force, ForceMode.Impulse);
     }
 
