@@ -50,9 +50,9 @@ public class ShipDuckNotSsipDuck : MonoBehaviour
 
     private void TakePassengers()
     {
-        //범위 안의 애들 스킬 사용시 싣는지
+        //스킬시 일정 범위 + 닿을 시에 차량 탑승
         //애들 정보 저장
-        //승객들 state = down 으로 변경 -> down은 조금씩 움직임 가능해서 새로운 state를 만들거나 움직임을 막는 방향으로 가기
+        //승객들 state = onvehicle 로 변경
     }
 
     private IEnumerator StopSkill()

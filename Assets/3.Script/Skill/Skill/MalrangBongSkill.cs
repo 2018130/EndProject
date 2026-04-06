@@ -9,5 +9,6 @@ public class MalrangBongSkill : BaseSkill
         // 스킬 카드의 황청 카드로 구성
         // Execute 호출 안 됨 - SetSkill에서 패시브 처리 필요
 
+        // GameDataManager , GameUIManager 의 무기 장착 method 이용해서 무기 교체
     }
 }

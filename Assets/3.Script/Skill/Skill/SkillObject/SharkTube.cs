@@ -46,13 +46,8 @@ public class SharkTube : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-
+            //playernetwork 의 ApplyKnockback_ClientRpc 사용
         }
-    }
-
-    private void KnockBack()
-    {
-        //닿았을 때 애들 밀기
     }
 
     private IEnumerator StopSkill()

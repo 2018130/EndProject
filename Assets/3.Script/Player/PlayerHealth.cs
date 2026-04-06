@@ -8,7 +8,8 @@ public enum PlayerState
 {
     Alive,     // 살아있음 0
     Down,      // 기절     1
-    Dead       // 처형당함 2
+    Dead,       // 처형당함 2
+    OnVehicle,
 }
 
 public class PlayerHealth : NetworkBehaviour
@@ -51,6 +52,9 @@ public class PlayerHealth : NetworkBehaviour
                 break;
             case PlayerState.Dead:
                 // 부활 처리
+                break;
+            case PlayerState.OnVehicle:
+                // 이동, 공격 불가 처리
                 break;
         }
     }

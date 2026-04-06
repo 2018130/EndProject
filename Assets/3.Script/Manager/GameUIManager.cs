@@ -21,6 +21,5 @@ public class GameUIManager : MonoBehaviour, INetworkContextListener
                 Debug.Log($"Spawn weapon id : {weaponId} owner client id : {ClientIdChecker.OwnedClientId}");
             });
         }
-
     }
 }
