@@ -8,6 +8,9 @@ public class PlayerInput : MonoBehaviour
     private PlayerInputAction inputActions;
     private PlayerNetwork network;
 
+    public event Action OnFirePerformed;
+    public event Action OnFireCanceled;
+
     private void Awake()
     {
         TryGetComponent<PlayerNetwork>(out network);
@@ -29,7 +32,11 @@ public class PlayerInput : MonoBehaviour
            network.SendMoveInput(context.ReadValue<Vector2>());
         inputActions.Player.Move.canceled += context =>
            network.SendMoveInput(Vector2.zero);
-        
+
+        // 발사
+        inputActions.Player.Fire.performed += context => OnFirePerformed?.Invoke();
+        inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
+
         // 점프
         inputActions.Player.Jump.performed += context =>
            network.SendJumpInput();
@@ -43,11 +50,6 @@ public class PlayerInput : MonoBehaviour
         // 대쉬
         inputActions.Player.Dash.performed += context =>
            network.SendDashInput();
-
-        // 발사
-        inputActions.Player.Fire.performed += context =>
-           network.SendFireInput();
-
     }
 
     void OnDisable()

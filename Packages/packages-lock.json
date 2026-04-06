@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.amazonaws.gamelift": {
-      "version": "file:C:/Users/user/Downloads/amazon-gamelift-plugin-unity-release-3.2.0/com.amazonaws.gamelift-3.2.0.tgz",
+      "version": "file:C:/Users/user/Downloads/com.amazonaws.gamelift-3.2.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
@@ -26,6 +26,12 @@
       "source": "git",
       "dependencies": {},
       "hash": "c2af83c9d4f8cdaada9d4a0e94de2f195d8e1d01"
+    },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
     },
     "com.unity.ai.navigation": {
       "version": "2.0.9",

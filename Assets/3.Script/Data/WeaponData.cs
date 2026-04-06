@@ -13,6 +13,9 @@ public struct WeaponData
     public string ID;
     public WeaponType WeaponType;
 
+    [Header("물 소모량")]
+    public float WaterPerShot;
+
     [Header("발사 메커니즘")]
     public float FireRate;
     public FireMode FireMode;

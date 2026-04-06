@@ -49,6 +49,11 @@ public class PlayerNetwork : NetworkBehaviour
         {
             isJetpacking = true;
         }
+
+        if (isJetpacking)
+        {
+            UseJetpackWaterServerRpc();
+        }
     }
 
     private void FixedUpdate()
@@ -71,9 +76,32 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (isJetpacking)
         {
-            rb.AddForce(-Physics.gravity * rb.mass, ForceMode.Force); // 중력 상쇄
+            rb.AddForce(-Physics.gravity * rb.mass, ForceMode.Force);
             rb.AddForce(Vector3.up * jetpackForce, ForceMode.Force);
         }
+    }
+
+    [ServerRpc]
+    private void UseJetpackWaterServerRpc()
+    {
+        PlayerWater playerWater = GetComponent<PlayerWater>();
+        if (playerWater == null) return;
+
+        if (!playerWater.HasWater())
+        {
+            // 물 없으면 클라이언트한테 제트팩 끄라고 알려줌
+            StopJetpackClientRpc();
+            return;
+        }
+
+        playerWater.UseWaterForJetpack();
+    }
+
+    [ClientRpc]
+    private void StopJetpackClientRpc()
+    {
+        isJetpacking = false;
+        jumpPressTime = 0;
     }
 
     // PlayerInput에서 호출
@@ -132,11 +160,6 @@ public class PlayerNetwork : NetworkBehaviour
         isDashing = true;
         yield return new WaitForSeconds(dashDuration);
         isDashing = false;
-    }
-
-    public void SendFireInput()
-    {
-        Debug.Log("발사!");
     }
 
     private bool IsGrounded()

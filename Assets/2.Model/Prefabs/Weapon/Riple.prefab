@@ -368,6 +368,7 @@ MonoBehaviour:
   weaponData:
     ID: 01
     WeaponType: 0
+    WaterPerShot: 2
     FireRate: 2
     FireMode: 0
     BulletSpeed: 100
