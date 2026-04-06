@@ -28,6 +28,7 @@ public struct CardData
     public CardType CardType;
     public CardSkillType SkillType;
     public Sprite CardIcon;
+    public Sprite SkillIcon;
 
     [Header("스킬 설정")]
     public float Cooldown;

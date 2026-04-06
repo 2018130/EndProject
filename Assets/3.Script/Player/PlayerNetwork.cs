@@ -196,11 +196,13 @@ public class PlayerNetwork : NetworkBehaviour
         {
             case CardType.CatGun:
                 // 고양이 머신건 스폰
+                Debug.Log($"CatGun SkillPrefab: {card.SkillPrefab}");
                 GameObject catGunObj = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
                 catGunObj.GetComponent<NetworkObject>().Spawn();
                 catGunObj.GetComponent<CatGunObject>().Initialize(card.Duration, card.Damage);
                 break;
             case CardType.BubbleGun:
+                // 버블건
                 GameObject bubbleObj = Instantiate(card.SkillPrefab, transform.position + Vector3.up, transform.rotation);
                 NetworkObject bubbleNo = bubbleObj.GetComponent<NetworkObject>();
                 bubbleNo.Spawn();
@@ -209,8 +211,11 @@ public class PlayerNetwork : NetworkBehaviour
                 break;
             case CardType.PenguinCharge:
                 // 펭귄 돌진 처리
-                break;
-            case CardType.WaterBalloon:
+                GameObject penguinObj = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
+                NetworkObject penguinNo = penguinObj.GetComponent<NetworkObject>();
+                penguinNo.Spawn();
+                PenguinChargeObject penguin = penguinObj.GetComponent<PenguinChargeObject>();
+                penguin.Initialize(card.Speed, card.Damage, transform.forward, OwnerClientId);
                 break;
             case CardType.DuckTube:
                 GameObject duckTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
@@ -230,6 +235,28 @@ public class PlayerNetwork : NetworkBehaviour
         }
     }
 
+    [ServerRpc]
+    public void UseSkillWithDir_ServerRpc(string cardId, Vector3 throwDir)
+    {
+        Debug.Log($"UseSkillWithDir_ServerRpc 호출됨: {cardId}, 방향: {throwDir}");
+
+        CardData card = GameManager.Instance.SceneContext
+                            .GameDataManager.GetCardData(cardId);
+
+        switch (card.CardType)
+        {
+            case CardType.WaterBalloon:
+                Vector3 spawnPos = transform.position + Vector3.up * 1.5f + transform.forward * 1f;
+                GameObject balloonObj = Instantiate(card.SkillPrefab, spawnPos, transform.rotation);
+                NetworkObject balloonNo = balloonObj.GetComponent<NetworkObject>();
+                balloonNo.Spawn();
+                WaterBalloonObject balloon = balloonObj.GetComponent<WaterBalloonObject>();
+                balloon.Initialize(card.Range, card.Damage, OwnerClientId);
+                balloon.Throw(throwDir, card.Speed);
+                break;
+        }
+    }
+
     [ClientRpc]
     public void ApplyKnockback_ClientRpc(Vector3 force)
     {
@@ -244,4 +271,5 @@ public class PlayerNetwork : NetworkBehaviour
         // BubbleEffectUI 띄우기
         BubbleEffectUI.Instance.Show(duration);
     }
+
 }
