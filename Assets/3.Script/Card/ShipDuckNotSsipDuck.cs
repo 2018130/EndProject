@@ -26,7 +26,7 @@ public class ShipDuckNotSsipDuck : MonoBehaviour
 
     private void OnDisable()
     {
-        //터져서 모든 승객들 날라감
+        //터져서 모든 승객들 날라감 
         if(!player.IsGrounded())
         {
             //공격 불가 판정
@@ -50,9 +50,9 @@ public class ShipDuckNotSsipDuck : MonoBehaviour
 
     private void TakePassengers()
     {
-        //닿았을 때 애들 싣는지 스킬 썻을때 싣는지
-        //승객들 state = down 으로 변경
+        //범위 안의 애들 스킬 사용시 싣는지
         //애들 정보 저장
+        //승객들 state = down 으로 변경 -> down은 조금씩 움직임 가능해서 새로운 state를 만들거나 움직임을 막는 방향으로 가기
     }
 
     private IEnumerator StopSkill()
@@ -60,5 +60,4 @@ public class ShipDuckNotSsipDuck : MonoBehaviour
         yield return new WaitForSeconds(duration);
         Destroy(gameObject);
     }
-
 }
