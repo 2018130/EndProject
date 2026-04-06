@@ -4,8 +4,6 @@ using System.Text;
 using UnityEngine;
 using MySql.Data.MySqlClient;
 
-
-
 public class DB_Controller
 {
     private MySqlConnection connection;
@@ -24,11 +22,11 @@ public class DB_Controller
         try
         {
             connection.Open();
-            Debug.Log("DB 연결 성공");
+            Debug.Log("DB connection successful.");
         }
         catch (Exception e)
         {
-            Debug.Log("DB 연결 실패 : " + e.Message);
+            Debug.Log("DB connection failed: " + e.Message);
         }
     }
 
@@ -38,7 +36,7 @@ public class DB_Controller
         {
             connection.Close();
             connection = null;
-            Debug.Log("DB 연결 종료");
+            Debug.Log("DB connection closed.");
         }
     }
 
@@ -68,13 +66,13 @@ public class DB_Controller
     {
         if (connection == null)
         {
-            Debug.LogError("DB 연결 없음");
+            Debug.LogError("No DB connection.");
             return false;
         }
 
         if (CheckIdExists(id))
         {
-            Debug.LogError("이미 존재하는 ID");
+            Debug.LogError("ID already exists.");
             return false;
         }
 
@@ -96,7 +94,7 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("회원가입 실패 : " + e.Message);
+                Debug.LogError("Registration failed: " + e.Message);
                 return false;
             }
         }
@@ -106,13 +104,13 @@ public class DB_Controller
     {
         if (connection == null)
         {
-            Debug.LogError("DB 연결 없음");
+            Debug.LogError("No DB connection.");
             return false;
         }
 
         if (CheckNicknameExists(nickname))
         {
-            Debug.LogError("이미 존재하는 닉네임");
+            Debug.LogError("Nickname already exists.");
             return false;
         }
 
@@ -130,10 +128,9 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("닉네임 설정 실패 : " + e.Message);
+                Debug.LogError("Nickname setting failed: " + e.Message);
                 return false;
             }
-
         }
     }
 
@@ -152,7 +149,7 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("ID 중복 체크 실패 : " + e.Message);
+                Debug.LogError("ID duplication check failed: " + e.Message);
                 return false;
             }
         }
@@ -173,7 +170,7 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("닉네임 중복 체크 실패 : " + e.Message);
+                Debug.LogError("Nickname duplication check failed: " + e.Message);
                 return false;
             }
         }
@@ -183,10 +180,9 @@ public class DB_Controller
     {
         if (connection == null)
         {
-            Debug.LogError("DB 연결 없음");
+            Debug.LogError("No DB connection.");
             return false;
         }
-
 
         string saltQuery = "SELECT salt FROM users WHERE id=@id";
         string salt;
@@ -213,7 +209,7 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("로그인 실패 : " + e.Message);
+                Debug.LogError("Login failed: " + e.Message);
                 return false;
             }
         }
@@ -234,7 +230,7 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("데이터 조회 실패 : " + e.Message);
+                Debug.LogError("Data retrieval failed: " + e.Message);
                 return null;
             }
         }
@@ -256,7 +252,7 @@ public class DB_Controller
             }
             catch (Exception e)
             {
-                Debug.LogError("데이터 수정 실패 : " + e.Message);
+                Debug.LogError("Data update failed: " + e.Message);
                 return false;
             }
         }

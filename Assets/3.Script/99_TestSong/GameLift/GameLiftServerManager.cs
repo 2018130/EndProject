@@ -15,20 +15,26 @@ public class ClientConnectionPayload
     public string playerSessionId;
 }
 
-public class GameLiftServerManager : MonoBehaviour
+public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
 {
-    private void Awake()
+    private bool isInitialized = false;
+
+    protected override void Awake()
     {
+        base.Awake();
+
         NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+    }
 
-        System.IO.File.AppendAllText("ServerLog.txt", "Awake Called!\n");
-
+    private void Start()
+    {
+        if(!isInitialized)
+        {
+            isInitialized = true;
 #if UNITY_SERVER || UNITY_EDITOR
-        System.IO.File.AppendAllText("ServerLog.txt", "Initializing GameLift...\n");
-        InitializeGameLift();
-#else
-        System.IO.File.AppendAllText("ServerLog.txt", "Not a Server Build!\n");
+            InitializeGameLift();
 #endif
+        }
     }
 
     #region GameLift

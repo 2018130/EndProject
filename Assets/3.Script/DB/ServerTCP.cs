@@ -10,6 +10,8 @@ public class ServerTCP
     private TcpListener listener;
     private DB_Controller db;
 
+    private TcpClient tcpClient;
+
     public void StartServer(int port)
     {
         db = new DB_Controller();
@@ -17,17 +19,38 @@ public class ServerTCP
 
         listener = new TcpListener(IPAddress.Any, port);
         listener.Start();
-        Console.WriteLine("서버 시작 : 포트 " + port);
+        Console.WriteLine("start server : port " + port);
 
         listener.BeginAcceptTcpClient(OnClientConnect, null);
     }
 
     private void OnClientConnect(IAsyncResult ar)
     {
-        TcpClient client = listener.EndAcceptTcpClient(ar);
+        tcpClient = listener.EndAcceptTcpClient(ar);
         listener.BeginAcceptTcpClient(OnClientConnect, null);
 
-        ThreadPool.QueueUserWorkItem(HandleClient, client);
+        ThreadPool.QueueUserWorkItem(HandleClient, tcpClient);
+    }
+    public void SendRequest(string msg)
+    {
+        if (tcpClient == null)
+            return;
+
+        try
+        {
+            NetworkStream stream = tcpClient.GetStream();
+            byte[] data = Encoding.UTF8.GetBytes(msg);
+            stream.Write(data, 0, data.Length);
+
+            byte[] buffer = new byte[1024];
+            int byteCount = stream.Read(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, byteCount);
+            Debug.Log($"client request ({msg.Split('|')[0]}) : " + response);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Server Send error : " + e.Message);
+        }
     }
 
     private void HandleClient(object obj)
@@ -46,7 +69,7 @@ public class ServerTCP
         }
         catch (Exception e)
         {
-            Debug.LogError("클라이언트 처리 오류" + e.Message);
+            Debug.LogError("Client handle error" + e.Message);
         }
         finally
         {
@@ -88,8 +111,11 @@ public class ServerTCP
 
     public void StopServer()
     {
+        tcpClient.Close();
+        tcpClient = null;
+
         listener.Stop();
         db.Disconnect();
-        Console.WriteLine("서버 종료");
+        Console.WriteLine("Stop server!");
     }
 }

@@ -8,7 +8,7 @@ public class DB_Connection_Test : MonoBehaviour
     {
         serverTcp = new ServerTCP();
 
-        Debug.Log("게임 서버 구동을 시도합니다...");
+        Debug.Log("Connect to server...");
         serverTcp.StartServer(7777);
     }
 

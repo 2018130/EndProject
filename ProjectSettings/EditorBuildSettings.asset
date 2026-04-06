@@ -38,9 +38,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/1.Scene/SongTest/TestCombat.unity
     guid: cd6c801a3b8074943baee128661ebc3a
-  - enabled: 1
+  - enabled: 0
     path: Assets/1.Scene/SongTest/GameLiftServer.unity
     guid: c46405d6c64395f4fb1f38dd05726b04
+  - enabled: 1
+    path: Assets/1.Scene/SongTest/SignInServer.unity
+    guid: d2681abac91590b40999a0632799c30e
   - enabled: 1
     path: Assets/1.Scene/BootstrapScene.unity
     guid: 99c9720ab356a0642a771bea13969a05

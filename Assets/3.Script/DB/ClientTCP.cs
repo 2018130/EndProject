@@ -5,18 +5,6 @@ using UnityEngine;
 
 public class ClientTCP : MonoBehaviour
 {
-    private void Start()
-    {
-        Debug.Log("--- 1. 회원가입 테스트 ---");
-        TestRegister();
-
-        Debug.Log("--- 2. 로그인 테스트 시작 ---");
-        TestLogin();
-
-        Debug.Log("--- 3. 점수 업데이트 테스트 시작 ---");
-        TestUpdaterScore();
-    }
-
     public void SendRequest(string msg)
     {
         try
@@ -39,18 +27,18 @@ public class ClientTCP : MonoBehaviour
         }
     }
 
-    public void TestLogin()
+    public void SignIn(string id, string pwd)
     {
-        SendRequest("LOGIN|newUser|1234");
+        SendRequest($"LOGIN|{id}|{pwd}");
     }
 
-    public void TestRegister()
+    public void Register(string id, string pwd, string nickname)
     {
-        SendRequest("REGISTER|newUser|1234|Nickname");
+        SendRequest($"REGISTER|{id}|{pwd}|{nickname}");
     }
 
-    public void TestUpdaterScore()
+    public void UpdaterScore(string id, string score)
     {
-        SendRequest("UPDATE_SCORE|newUser|500");
+        SendRequest($"UPDATE_SCORE|{id}|{score}");
     }
 }

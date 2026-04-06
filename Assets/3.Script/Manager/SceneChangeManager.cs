@@ -33,7 +33,10 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
         }
         //
 
-        NetworkManager.Singleton.OnClientStarted += BroadcastingNetworkSceneContextBuilt;
+        if(NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientStarted += BroadcastingNetworkSceneContextBuilt;
+        }
     }
 
     public void ChangeSceneForSinglePlay(SceneType sceneType)
