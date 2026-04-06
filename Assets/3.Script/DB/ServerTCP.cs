@@ -31,27 +31,6 @@ public class ServerTCP
 
         ThreadPool.QueueUserWorkItem(HandleClient, tcpClient);
     }
-    public void SendRequest(string msg)
-    {
-        if (tcpClient == null)
-            return;
-
-        try
-        {
-            NetworkStream stream = tcpClient.GetStream();
-            byte[] data = Encoding.UTF8.GetBytes(msg);
-            stream.Write(data, 0, data.Length);
-
-            byte[] buffer = new byte[1024];
-            int byteCount = stream.Read(buffer, 0, buffer.Length);
-            string response = Encoding.UTF8.GetString(buffer, 0, byteCount);
-            Debug.Log($"client request ({msg.Split('|')[0]}) : " + response);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("Server Send error : " + e.Message);
-        }
-    }
 
     private void HandleClient(object obj)
     {
@@ -87,13 +66,31 @@ public class ServerTCP
 
         switch (command.ToUpper())
         {
-            case "REGISTER":
-                if (parts.Length < 4) return "ERROR";
-                if(db.Register(parts[1],parts[2]))
+            case "CHECKID":
+                if (parts.Length < 2) return "ERROR";
+                if (!db.CheckIdExists(parts[1]))
                 {
-                    return db.SetNickname(parts[1], parts[3]) ? "OK" : "REGISTER_OK_BUT_NICKNAME_FAIL";
+                    return "SUCCESS_ID_CHECK";
+                }
+                return "FAIL_ID_CHECK";
+
+            case "SIGNUP":
+                if (parts.Length < 3) return "ERROR";
+                if (db.Register(parts[1], parts[2]))
+                {
+                    return "OK";
                 }
                 return "FAIL";
+
+            case "CHECKNICKNAME":
+                if (parts.Length < 4) return "ERROR";
+
+                return db.CheckNicknameExists(parts[3]) ? "FAIL_NICKNAME_CHECK" : "SUCCESS_NICKNAME_CHECK";
+
+            case "SETNICKNAME":
+                if (parts.Length < 4) return "ERROR";
+
+                return db.SetNickname(parts[1], parts[3]) ? "SUCCESS_NICKNAME_SET" : "FAIL_NICKNAME_SET";
 
             case "LOGIN":
                 if (parts.Length < 3) return "ERROR";
