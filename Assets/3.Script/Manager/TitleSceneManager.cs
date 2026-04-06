@@ -1,12 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class TitleSceneManager : MonoBehaviour
 {
-    private void Start()
+    public void StartServer()
     {
-        //SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.LobbyScene);
+        NetworkManager.Singleton.StartServer();
     }
+
+    public void StartClient()
+    {
+        NetworkManager.Singleton.StartClient();
+    }
+
 }
