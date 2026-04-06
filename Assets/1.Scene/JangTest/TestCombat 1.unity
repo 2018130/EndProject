@@ -1106,7 +1106,7 @@ MonoBehaviour:
     Damage: 0
     Range: 0
     Speed: 20
-    SkillPrefab: {fileID: 0}
+    SkillPrefab: {fileID: 8843121812433261822, guid: b2e648b30fef6394b9b9c159e88ce7df, type: 3}
   - ID: 04
     CardName: "\uBB3C\uD48D\uC120"
     Description: 
@@ -1117,8 +1117,8 @@ MonoBehaviour:
     Duration: 0
     Damage: 65
     Range: 2
-    Speed: 0
-    SkillPrefab: {fileID: 0}
+    Speed: 15
+    SkillPrefab: {fileID: 2331626696356453978, guid: ac2a0c97698cd32488db683998a588de, type: 3}
   - ID: 05
     CardName: "\uC624\uB9AC\uD29C\uBE0C"
     Description: 
@@ -4151,7 +4151,7 @@ GameObject:
   - component: {fileID: 1572520251}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4244,7 +4244,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.67}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -5433,7 +5433,6 @@ GameObject:
   - component: {fileID: 5066473406794132374}
   - component: {fileID: 2954563731657407044}
   - component: {fileID: 4943222620064487120}
-  - component: {fileID: 5979538358157495219}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -5519,40 +5518,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5979538358157495219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3098346514464680703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d54399b04b4fa48a73e121d4937dd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachinePanTilt
-  ReferenceFrame: 0
-  RecenterTarget: 0
-  PanAxis:
-    Value: 0
-    Center: 0
-    Range: {x: -180, y: 180}
-    Wrap: 1
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
-  TiltAxis:
-    Value: 0
-    Center: 0
-    Range: {x: -70, y: 70}
-    Wrap: 0
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

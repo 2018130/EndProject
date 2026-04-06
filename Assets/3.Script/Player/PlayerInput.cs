@@ -13,6 +13,8 @@ public class PlayerInput : MonoBehaviour
 
     public event Action OnSkillPerformed;
 
+    public event Action<Vector2> OnLookPerformed;   // ¹°Ç³¼±
+
     private void Awake()
     {
         TryGetComponent<PlayerNetwork>(out network);
@@ -41,6 +43,9 @@ public class PlayerInput : MonoBehaviour
 
         // ½ºÅ³
         inputActions.Player.Skill.performed += context => OnSkillPerformed?.Invoke();
+
+        // ¹°Ç³¼±
+        inputActions.Player.Look.performed += context => OnLookPerformed?.Invoke(context.ReadValue<Vector2>());
 
         // Á¡ÇÁ
         inputActions.Player.Jump.performed += context =>
