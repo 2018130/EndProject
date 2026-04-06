@@ -20,21 +20,24 @@ public class GameLiftServerManager : MonoBehaviour
     private void Awake()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-    }
 
-    private void Start()
-    {
+        System.IO.File.AppendAllText("ServerLog.txt", "Awake Called!\n");
+
 #if UNITY_SERVER || UNITY_EDITOR
+        System.IO.File.AppendAllText("ServerLog.txt", "Initializing GameLift...\n");
         InitializeGameLift();
+#else
+        System.IO.File.AppendAllText("ServerLog.txt", "Not a Server Build!\n");
 #endif
     }
 
     #region GameLift
     private void InitializeGameLift()
     {
+        Debug.Log($"Initialize gamelift called");
         // 1. SDK 초기화
         GenericOutcome initOutcome = GameLiftServerAPI.InitSDK();
-        if(!initOutcome.Success)
+        if (!initOutcome.Success)
         {
             Debug.LogError($"GameLift SDK 초기화 실패 : {initOutcome.Error}");
             return;
@@ -52,7 +55,7 @@ public class GameLiftServerManager : MonoBehaviour
 
         // 3. AWS에 준비 완료 보고
         GenericOutcome processReadyOutcome = GameLiftServerAPI.ProcessReady(processParams);
-        if(processReadyOutcome.Success)
+        if (processReadyOutcome.Success)
         {
             Debug.Log($"GameLift Process Ready 성공!! 대기중...");
         }
@@ -76,7 +79,7 @@ public class GameLiftServerManager : MonoBehaviour
 
         GenericOutcome activeSessionOutcome = GameLiftServerAPI.ActivateGameSession();
 
-        if(activeSessionOutcome.Success)
+        if (activeSessionOutcome.Success)
         {
             Debug.Log($"게임 세션 활성화 성공");
         }
@@ -88,7 +91,7 @@ public class GameLiftServerManager : MonoBehaviour
 
     private void OnUpdateGameSession(UpdateGameSession updateGameSession)
     {
-        
+
     }
 
     private void OnProcessTerminate()
@@ -111,7 +114,7 @@ public class GameLiftServerManager : MonoBehaviour
 
         GenericOutcome outcome = GameLiftServerAPI.AcceptPlayerSession(payloadData.playerSessionId);
 
-        if(outcome.Success)
+        if (outcome.Success)
         {
             Debug.Log($"유저 접속 승인 완료! playerId : {payloadData.playerId}");
             response.Approved = true;
