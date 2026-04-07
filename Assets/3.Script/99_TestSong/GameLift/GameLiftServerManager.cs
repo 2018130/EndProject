@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Aws.GameLift.Server;
-using Aws.GameLift.Server.Model; // UpdateGameSession 모델을 사용하기 위해 필요할 수 있습니다.
+using Aws.GameLift.Server.Model;
 using Unity.Netcode;
 using System.Text;
 using Aws.GameLift;
@@ -17,18 +17,19 @@ public class ClientConnectionPayload
 
 public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
 {
-    private bool isInitialized = false;
+    private bool isInitialized = false; 
+    private bool _sessionStartRequested = false;
 
     protected override void Awake()
     {
         base.Awake();
-
+        // Register the callback to validate incoming players via GameLift
         NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
     }
 
     private void Start()
     {
-        if(!isInitialized)
+        if (!Instance.isInitialized)
         {
             isInitialized = true;
 #if UNITY_SERVER || UNITY_EDITOR
@@ -37,98 +38,161 @@ public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
         }
     }
 
-    #region GameLift
+    private void Update()
+    {
+        if (_sessionStartRequested)
+        {
+            _sessionStartRequested = false;
+            StartNGOServerAndActivate(); // 메인 스레드에서 안전하게 실행!
+        }
+    }
+
+    #region GameLift Core Logic
     private void InitializeGameLift()
     {
-        Debug.Log($"Initialize gamelift called");
-        // 1. SDK 초기화
-        GenericOutcome initOutcome = GameLiftServerAPI.InitSDK();
-        if (!initOutcome.Success)
+        Debug.Log("[GameLift] Starting SDK Initialization sequence...");
+
+        // 1. Fetch Environment Variables (Crucial for Managed EC2 / SDK 5.x)
+        string websocketUrl = Environment.GetEnvironmentVariable("GAMELIFT_SDK_WEBSOCKET_URL");
+        string authToken = Environment.GetEnvironmentVariable("GAMELIFT_SDK_AUTH_TOKEN");
+        string processId = Environment.GetEnvironmentVariable("GAMELIFT_PROCESS_ID");
+        string hostId = Environment.GetEnvironmentVariable("GAMELIFT_ANYWHERE_HOST_ID");
+        string fleetId = Environment.GetEnvironmentVariable("GAMELIFT_ANYWHERE_FLEET_ID");
+
+        // Log variable status (Do not log the actual AuthToken for security)
+        Debug.Log($"[GameLift] Environment Variables Load Result: \n" +
+                  $"- WebSocketURL: {(!string.IsNullOrEmpty(websocketUrl) ? "LOADED" : "MISSING!")}\n" +
+                  $"- AuthToken: {(!string.IsNullOrEmpty(authToken) ? "LOADED" : "MISSING!")}\n" +
+                  $"- ProcessId: {processId}\n" +
+                  $"- FleetId: {fleetId}");
+
+        ServerParameters serverParameters = new ServerParameters(
+            websocketUrl,
+            authToken,
+            fleetId,
+            hostId,
+            processId
+        );
+
+        // 2. Initialize SDK
+        GenericOutcome initOutcome = GameLiftServerAPI.InitSDK(serverParameters);
+        if (initOutcome.Success)
         {
-            Debug.LogError($"GameLift SDK 초기화 실패 : {initOutcome.Error}");
+            Debug.Log("[GameLift] InitSDK successful.");
+        }
+        else
+        {
+            Debug.LogError($"[GameLift] InitSDK FAILED: {initOutcome.Error.ErrorMessage}");
             return;
         }
 
-        // 2. 콜백 함수 설정
+        // 3. Setup Process Parameters
         ProcessParameters processParams = new ProcessParameters(
             OnStartGameSession,
             OnUpdateGameSession,
             OnProcessTerminate,
             OnHealthCheck,
-            7777,
+            7777, // Port your server is listening on
             new LogParameters(new List<string> { "/local/game/logs/myserver.log" })
-            );
+        );
 
-        // 3. AWS에 준비 완료 보고
+        // 4. Report Process Ready to AWS
         GenericOutcome processReadyOutcome = GameLiftServerAPI.ProcessReady(processParams);
         if (processReadyOutcome.Success)
         {
-            Debug.Log($"GameLift Process Ready 성공!! 대기중...");
+            Debug.Log("[GameLift] ProcessReady successful! Server is now waiting for a GameSession.");
         }
         else
         {
-            Debug.LogError($"GameLift Process Ready 실패!! {processReadyOutcome.Error.ErrorMessage}");
+            Debug.LogError($"[GameLift] ProcessReady FAILED: {processReadyOutcome.Error.ErrorMessage}");
         }
     }
 
-
     private void OnStartGameSession(GameSession gameSession)
     {
-        Debug.Log($"GameLift로부터 게임 세션 시작 요청 받음");
+        Debug.Log($"[GameLift] Game Session Start Request Received.\n" +
+                  $"- Session ID: {gameSession.GameSessionId}");
 
+        // 주의: 여기서는 유니티 API를 호출하면 안 됩니다! 
+        // 메인 스레드(Update)에서 처리하도록 플래그만 true로 바꿔줍니다.
+        _sessionStartRequested = true;
+    }
+    private void StartNGOServerAndActivate()
+    {
+        // 1. Configure Transport
         UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-        // 서버는 자신의 IP를 몰라도 됨.
-        // Client가 요청을 보내고 요청을 보낸 클라이언트의 IP를 알면 쏘기만 하면 되기 때문
         transport.SetConnectionData("0.0.0.0", 7777, "0.0.0.0");
 
-        NetworkManager.Singleton.StartServer();
-
-        GenericOutcome activeSessionOutcome = GameLiftServerAPI.ActivateGameSession();
-
-        if (activeSessionOutcome.Success)
+        // 2. Start the NGO Server
+        if (NetworkManager.Singleton.StartServer())
         {
-            Debug.Log($"게임 세션 활성화 성공");
+            Debug.Log("[Netcode] NGO Server started successfully on port 7777.");
         }
         else
         {
-            Debug.LogError($"게임 세션 활성화 실패 : {activeSessionOutcome.Error.ErrorMessage}");
+            Debug.LogError("[Netcode] NGO Server failed to start!");
+            return;
+        }
+
+        // 3. Activate the session so GameLift knows players can join
+        GenericOutcome activeSessionOutcome = GameLiftServerAPI.ActivateGameSession();
+        if (activeSessionOutcome.Success)
+        {
+            Debug.Log("[GameLift] ActivateGameSession successful. Session is now ACTIVE.");
+        }
+        else
+        {
+            Debug.LogError($"[GameLift] ActivateGameSession FAILED: {activeSessionOutcome.Error.ErrorMessage}");
         }
     }
 
     private void OnUpdateGameSession(UpdateGameSession updateGameSession)
     {
-
+        Debug.Log($"[GameLift] Game Session Update received. Reason: {updateGameSession.UpdateReason}");
     }
 
     private void OnProcessTerminate()
     {
-        Debug.Log("GameLift가 프로세스 종료를 요청함");
+        Debug.LogWarning("[GameLift] Termination request received from AWS. Shutting down...");
         GameLiftServerAPI.ProcessEnding();
         Application.Quit();
     }
 
     private bool OnHealthCheck()
     {
+        // Return true if the server is healthy. AWS will terminate the process if this returns false repeatedly.
         return true;
     }
     #endregion
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        string jsonPayload = Encoding.UTF8.GetString(request.Payload);
-        ClientConnectionPayload payloadData = JsonUtility.FromJson<ClientConnectionPayload>(jsonPayload);
-
-        GenericOutcome outcome = GameLiftServerAPI.AcceptPlayerSession(payloadData.playerSessionId);
-
-        if (outcome.Success)
+        try
         {
-            Debug.Log($"유저 접속 승인 완료! playerId : {payloadData.playerId}");
-            response.Approved = true;
-            response.CreatePlayerObject = true;
+            string jsonPayload = Encoding.UTF8.GetString(request.Payload);
+            ClientConnectionPayload payloadData = JsonUtility.FromJson<ClientConnectionPayload>(jsonPayload);
+
+            Debug.Log($"[Netcode] Connection request: PlayerID={payloadData.playerId}, PlayerSessionID={payloadData.playerSessionId}");
+
+            // Validate the Player Session with GameLift
+            GenericOutcome outcome = GameLiftServerAPI.AcceptPlayerSession(payloadData.playerSessionId);
+
+            if (outcome.Success)
+            {
+                Debug.Log($"[GameLift] Player session ACCEPTED: {payloadData.playerId}");
+                response.Approved = true;
+                response.CreatePlayerObject = true;
+            }
+            else
+            {
+                Debug.LogError($"[GameLift] Player session REJECTED: {outcome.Error.ErrorMessage}");
+                response.Approved = false;
+                response.Reason = "GameLift validation failed.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Debug.LogError($"비정상적인 유저 접속 차단!");
+            Debug.LogError($"[Netcode] Exception in ApprovalCheck: {ex.Message}");
             response.Approved = false;
         }
     }
