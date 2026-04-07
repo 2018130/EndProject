@@ -37,7 +37,10 @@ public class PlayerNetwork : NetworkBehaviour
         // 시네머신 카메라 연결
         CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
         if (virtualCam != null)
+        {
             virtualCam.Target.TrackingTarget = transform;
+            virtualCam.Target.LookAtTarget = transform;
+        }
     }
 
     private void Update()
@@ -60,7 +63,12 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+        Camera cam = Camera.main;
+        Vector3 camForward = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
+        Vector3 camRight = Vector3.ProjectOnPlane(cam.transform.right, Vector3.up).normalized;
+        Vector3 move = (camForward * moveInput.y + camRight * moveInput.x);
+
+        //Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         // 이동 방향으로 회전

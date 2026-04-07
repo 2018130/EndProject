@@ -106,17 +106,22 @@ public class GameDataManager : NetworkBehaviour
         return shuffled.GetRange(0, Mathf.Min(count, shuffled.Count));
     }
 
+    public void StartCardSelectionForClient(ulong clientId)
+    {
+        if (!IsServer) return;
+
+        List<CardData> cards = GetRandomCards(3);
+        string cardIds = string.Join(",", cards.ConvertAll(c => c.ID));
+        ShowCardSelection_ClientRpc(cardIds, clientId);
+    }
+
     public void StartCardSelection()
     {
         if (!IsServer) return;
 
         foreach (var client in NetworkManager.Singleton.ConnectedClients)
         {
-            ulong clientId = client.Key;
-            List<CardData> cards = GetRandomCards(3);
-
-            string cardIds = string.Join(",", cards.ConvertAll(c => c.ID));
-            ShowCardSelection_ClientRpc(cardIds, clientId);
+            StartCardSelectionForClient(client.Key);
         }
     }
 
