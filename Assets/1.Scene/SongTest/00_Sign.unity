@@ -4604,6 +4604,9 @@ MonoBehaviour:
   nicknameCheck_Btn: {fileID: 1192892245}
   nicknameConfirm_Btn: {fileID: 1145865749}
   nicknameError_Text: {fileID: 1071277988}
+  signInId_InputField: {fileID: 549772880}
+  signInPwd_InputField: {fileID: 1166578550}
+  signIn_Btn: {fileID: 697510721}
 --- !u!1 &1604003376
 GameObject:
   m_ObjectHideFlags: 0

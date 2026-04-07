@@ -48,6 +48,14 @@ public class SignSceneUIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text nicknameError_Text;
 
+    [Header("SignIn"), Space]
+    [SerializeField]
+    private TMP_InputField signInId_InputField;
+    [SerializeField]
+    private TMP_InputField signInPwd_InputField;
+    [SerializeField]
+    private Button signIn_Btn;
+
     private void Start()
     {
         checkId_Btn.onClick.AddListener(() => {
@@ -56,7 +64,7 @@ public class SignSceneUIManager : MonoBehaviour
 
         signUp_Btn.onClick.AddListener(() =>
         {
-            ClientTCP.Instance.SignUp(signUpId_InputField.text, signUpPwd_InputField.text);
+            ClientTCP.Instance.SetNickname(signUpId_InputField.text, signUpPwd_InputField.text, nickname_InputField.text);
         });
 
         nicknameCheck_Btn.onClick.AddListener(() =>
@@ -66,7 +74,13 @@ public class SignSceneUIManager : MonoBehaviour
 
         nicknameConfirm_Btn.onClick.AddListener(() =>
         {
-            ClientTCP.Instance.SetNickname(signUpId_InputField.text, signUpPwd_InputField.text, nickname_InputField.text);
+            //ClientTCP.Instance.SetNickname(signUpId_InputField.text, signUpPwd_InputField.text, nickname_InputField.text);
+            ToggleNicknamePopup();
+        });
+
+        signIn_Btn.onClick.AddListener(() =>
+        {
+            ClientTCP.Instance.SignIn(signInId_InputField.text, signInPwd_InputField.text);
         });
     }
 
@@ -95,5 +109,4 @@ public class SignSceneUIManager : MonoBehaviour
     {
         nicknameError_Text.text = text;
     }
-
 }

@@ -90,7 +90,11 @@ public class ServerTCP
             case "SETNICKNAME":
                 if (parts.Length < 4) return "ERROR";
 
-                return db.SetNickname(parts[1], parts[3]) ? "SUCCESS_NICKNAME_SET" : "FAIL_NICKNAME_SET";
+                if (db.Register(parts[1], parts[2]))
+                {
+                    return db.SetNickname(parts[1], parts[3]) ? "SUCCESS_NICKNAME_SET" : "FAIL_NICKNAME_SET";
+                }
+                return "FAIL_REGISTER_ID";
 
             case "LOGIN":
                 if (parts.Length < 3) return "ERROR";

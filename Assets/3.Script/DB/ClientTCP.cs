@@ -50,11 +50,15 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
                 break;
 
             case "SUCCESS_NICKNAME_SET":
-                SignSceneUIManager.Instance.ToggleNicknamePopup();
+                SignSceneUIManager.Instance.SetErrorText($"Create id successfully");
                 break;
 
             case "FAIL_NICKNAME_SET":
                 SignSceneUIManager.Instance.SetNicknameErrorText("Error to set nickname");
+                break;
+
+            case "OK":
+                SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.TitleScene);
                 break;
         }
     }
