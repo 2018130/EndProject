@@ -218,14 +218,20 @@ public class PlayerNetwork : NetworkBehaviour
                 penguin.Initialize(card.Speed, card.Damage, transform.forward, OwnerClientId);
                 break;
             case CardType.DuckTube:
+                Debug.Log($"DuckTube SkillPrefab: {card.SkillPrefab}");
                 GameObject duckTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                NetworkObject duckNo = duckTube.GetComponent<NetworkObject>();
                 duckTube.GetComponent<NetworkObject>().Spawn();
-                duckTube.GetComponent<ShipDuckNotSsipDuck>().Initialize(card.Duration, card.Speed, this);
+                ShipDuckNotSsipDuck duck = duckTube.GetComponent<ShipDuckNotSsipDuck>();
+                duck.Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.SharkTube:
+                Debug.Log($"SharkTube SkillPrefab: {card.SkillPrefab}");
                 GameObject sharkTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                NetworkObject sharkNo = sharkTube.GetComponent<NetworkObject>();
                 sharkTube.GetComponent<NetworkObject>().Spawn();
-                sharkTube.GetComponent<SharkTube>().Initialize(card.Duration, card.Speed, this);
+                SharkTube shark = sharkTube.GetComponent<SharkTube>();
+                shark.Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.GoatDisinfectant:
                 break;

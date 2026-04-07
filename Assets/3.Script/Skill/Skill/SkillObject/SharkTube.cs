@@ -20,6 +20,9 @@ public class SharkTube : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
+
+        Debug.Log("shark spawn");
+
     }
 
     public override void OnNetworkDespawn()
@@ -32,6 +35,9 @@ public class SharkTube : NetworkBehaviour
 
     public void Initialize(float duration, float moveSpeed, PlayerNetwork driver)
     {
+
+        Debug.Log("shark spawn");
+
         this.duration = duration;
         this.moveSpeed = moveSpeed;
         this.driver = driver;

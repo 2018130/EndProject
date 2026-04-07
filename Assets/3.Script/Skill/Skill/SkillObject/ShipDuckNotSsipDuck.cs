@@ -25,6 +25,8 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         seatNumb = 0;
         passengers = new PlayerNetwork[seats.Length];
         rb = GetComponent<Rigidbody>();
+
+        Debug.Log("duck spawn");
     }
 
     public override void OnNetworkDespawn()
@@ -49,6 +51,8 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
     public void Initialize(float duration, float moveSpeed, PlayerNetwork driver)
     {
+        Debug.Log("duck initialize");
+
         this.duration = duration;
         this.moveSpeed = moveSpeed;
         this.driver = driver;

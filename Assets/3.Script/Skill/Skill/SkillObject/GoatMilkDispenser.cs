@@ -85,6 +85,7 @@ public class GoatMilkDispenser : NetworkBehaviour
 
         if (IsServer)
         {
+            StopCoroutine(BrightenEverySecond());
             GetComponent<NetworkObject>().Despawn();
         }
     }
