@@ -19,7 +19,8 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
 
     private void OnClientConnected(ulong clientId)
     {
-        StartGame();
+        //StartGame();
+        SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
     }
 
     public void StartGame()
