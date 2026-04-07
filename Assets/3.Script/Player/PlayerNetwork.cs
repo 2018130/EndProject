@@ -24,6 +24,9 @@ public class PlayerNetwork : NetworkBehaviour
     private bool isJetpacking; // 제트팩 사용 중인지
     private bool isDashing;    // 대쉬 중인지
 
+    private ZoneInteraction currentZone; // 살리기, 처형
+
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -40,6 +43,13 @@ public class PlayerNetwork : NetworkBehaviour
         {
             virtualCam.Target.TrackingTarget = transform;
             virtualCam.Target.LookAtTarget = transform;
+        }
+
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            playerInput.OnRevivePerformed += () => currentZone?.TryRevive();
+            playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
     }
 
@@ -295,6 +305,44 @@ public class PlayerNetwork : NetworkBehaviour
         if (!IsOwner) return;
         // BubbleEffectUI 띄우기
         BubbleEffectUI.Instance.Show(duration);
+    }
+
+    [ServerRpc]
+    public void ReviveAlly_ServerRpc(ulong targetClientId)
+    {
+        if (!NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(targetClientId, out NetworkClient client)) return;
+
+        PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
+        if (targetHealth == null) return;
+        if (targetHealth.State.Value != PlayerState.Down) return;
+
+        targetHealth.Revive();
+    }
+
+    [ServerRpc]
+    public void ExecuteEnemy_ServerRpc(ulong targetClientId)
+    {
+        if (!NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(targetClientId, out NetworkClient client)) return;
+
+        PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
+        if (targetHealth == null) return;
+        if (targetHealth.State.Value != PlayerState.Down) return;
+
+        // Dead 상태로 변경
+        targetHealth.State.Value = PlayerState.Dead;
+    }
+
+    public void SetCurrentZone(ZoneInteraction zone)
+    {
+        currentZone = zone;
+    }
+
+    public void ClearCurrentZone(ZoneInteraction zone)
+    {
+        if (currentZone == zone)
+            currentZone = null;
     }
 
 }
