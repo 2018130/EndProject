@@ -10,8 +10,6 @@ public class RangedWeapon : BaseWeapon
     [SerializeField]
     private NetworkObject waterPrefab;
 
-    private NetworkObject networkObject;
-
     private DateTime lastShootTime = DateTime.MinValue;
     private PlayerInput playerInput;
 
@@ -19,8 +17,6 @@ public class RangedWeapon : BaseWeapon
     protected override void Awake()
     {
         base.Awake();
-
-        networkObject = GetComponent<NetworkObject>();
     }
     public override void OnNetworkSpawn()
     {

@@ -11,6 +11,14 @@ public class PlayerInput : MonoBehaviour
     public event Action OnFirePerformed;
     public event Action OnFireCanceled;
 
+    public event Action OnSkillPerformed;
+
+    public event Action<Vector2> OnLookPerformed;   // 물풍선
+
+    public event Action OnExecutePerformed;
+    public event Action OnSkipPerformed;
+    public event Action OnRevivePerformed;
+
     private void Awake()
     {
         TryGetComponent<PlayerNetwork>(out network);
@@ -36,6 +44,21 @@ public class PlayerInput : MonoBehaviour
         // 발사
         inputActions.Player.Fire.performed += context => OnFirePerformed?.Invoke();
         inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
+
+        // 스킬
+        inputActions.Player.Skill.performed += context => OnSkillPerformed?.Invoke();
+
+        // 처형
+        inputActions.Player.Execute.performed += context => OnExecutePerformed?.Invoke();
+
+        // 처형 스킵
+        inputActions.Player.Skip.performed += context => OnSkipPerformed?.Invoke();
+
+        // 살리기
+        inputActions.Player.Revive.performed += context => OnRevivePerformed?.Invoke();
+
+        // 물풍선 LookAt
+        inputActions.Player.Look.performed += context => OnLookPerformed?.Invoke(context.ReadValue<Vector2>());
 
         // 점프
         inputActions.Player.Jump.performed += context =>
