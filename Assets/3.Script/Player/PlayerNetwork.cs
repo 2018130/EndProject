@@ -24,6 +24,9 @@ public class PlayerNetwork : NetworkBehaviour
     private bool isJetpacking; // 제트팩 사용 중인지
     private bool isDashing;    // 대쉬 중인지
 
+    private ZoneInteraction currentZone; // 살리기, 처형
+
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -40,6 +43,13 @@ public class PlayerNetwork : NetworkBehaviour
         {
             virtualCam.Target.TrackingTarget = transform;
             virtualCam.Target.LookAtTarget = transform;
+        }
+
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            playerInput.OnRevivePerformed += () => currentZone?.TryRevive();
+            playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
     }
 
@@ -63,12 +73,7 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        Camera cam = Camera.main;
-        Vector3 camForward = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
-        Vector3 camRight = Vector3.ProjectOnPlane(cam.transform.right, Vector3.up).normalized;
-        Vector3 move = (camForward * moveInput.y + camRight * moveInput.x);
-
-        //Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         // 이동 방향으로 회전
@@ -162,6 +167,11 @@ public class PlayerNetwork : NetworkBehaviour
         if (Time.time - lastDashTime < dashCooldown) return;
 
 
+        PlayerWater playerWater = GetComponent<PlayerWater>();
+
+        Debug.Log($"대쉬 시도 - 물 충분: {playerWater?.HasEnoughWater(25f)}, 현재 물: {playerWater?.Water.Value}");
+        if (playerWater == null || !playerWater.HasEnoughWater(25f)) return;
+
         Vector3 dashDir;
         if (moveInput != Vector2.zero)
         {
@@ -178,6 +188,8 @@ public class PlayerNetwork : NetworkBehaviour
         // 마지막에 대쉬한 시간 기록
         lastDashTime = Time.time;
         StartCoroutine(Dash_Co());
+
+        UseDashWater_ServerRpc();
 
     }
 
@@ -205,6 +217,15 @@ public class PlayerNetwork : NetworkBehaviour
 
         Debug.Log($"IsGrounded: {grounded} / 거리: {hit.distance}");
         return grounded;
+    }
+
+    [ServerRpc]
+    private void UseDashWater_ServerRpc()
+    {
+        PlayerWater playerWater = GetComponent<PlayerWater>();
+        if (playerWater == null) return;
+
+        bool result = playerWater.UseWaterForShot(25f);
     }
 
     [ServerRpc]
@@ -300,6 +321,44 @@ public class PlayerNetwork : NetworkBehaviour
         if (!IsOwner) return;
         // BubbleEffectUI 띄우기
         BubbleEffectUI.Instance.Show(duration);
+    }
+
+    [ServerRpc]
+    public void ReviveAlly_ServerRpc(ulong targetClientId)
+    {
+        if (!NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(targetClientId, out NetworkClient client)) return;
+
+        PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
+        if (targetHealth == null) return;
+        if (targetHealth.State.Value != PlayerState.Down) return;
+
+        targetHealth.Revive();
+    }
+
+    [ServerRpc]
+    public void ExecuteEnemy_ServerRpc(ulong targetClientId)
+    {
+        if (!NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(targetClientId, out NetworkClient client)) return;
+
+        PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
+        if (targetHealth == null) return;
+        if (targetHealth.State.Value != PlayerState.Down) return;
+
+        // Dead 상태로 변경
+        targetHealth.State.Value = PlayerState.Dead;
+    }
+
+    public void SetCurrentZone(ZoneInteraction zone)
+    {
+        currentZone = zone;
+    }
+
+    public void ClearCurrentZone(ZoneInteraction zone)
+    {
+        if (currentZone == zone)
+            currentZone = null;
     }
 
 }

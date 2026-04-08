@@ -16,6 +16,9 @@ public class PlayerHealth : NetworkBehaviour
 {
     [SerializeField] public float maxHp = 100f;    // 기본 체력
     [SerializeField] private float downedHpDrain = 10f; // 기절 중 초당 체력 감소
+    [SerializeField] private GameObject actionZone;     // 처형, 살리기 존
+
+    private Coroutine downedCoroutine;
 
     public NetworkVariable<float> Hp = new NetworkVariable<float>(
         100f, 
@@ -28,6 +31,13 @@ public class PlayerHealth : NetworkBehaviour
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server
     );
+
+    public NetworkVariable<int> PlayerFactionInt = new NetworkVariable<int>(
+    (int)Faction.None,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server
+);
+
 
     public override void OnNetworkSpawn()
     {
@@ -52,12 +62,29 @@ public class PlayerHealth : NetworkBehaviour
         {
             case PlayerState.Down:
                 // 이동속도 감소, 공격 불가 처리
+                Debug.Log("죽음");
+                actionZone.SetActive(true);
+                if (IsServer)
+                    downedCoroutine = StartCoroutine(DownedDrainRoutine());
                 break;
             case PlayerState.Alive:
-
+                actionZone.SetActive(false);
+                if (downedCoroutine != null)
+                {
+                    StopCoroutine(downedCoroutine);
+                    downedCoroutine = null;
+                }
                 break;
             case PlayerState.Dead:
                 // 부활 처리
+                actionZone.SetActive(false);
+                if (downedCoroutine != null)
+                {
+                    StopCoroutine(downedCoroutine);
+                    downedCoroutine = null;
+                }
+                if (IsServer)
+                    OnPlayerDead();
                 break;
             case PlayerState.OnVehicle:
                 // 이동, 공격 불가 처리
@@ -66,9 +93,14 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Faction attackerFaction = Faction.None)
     {
         if (!IsServer) return;
+
+        if (attackerFaction != Faction.None &&
+            attackerFaction == (Faction)PlayerFactionInt.Value) return;
+
+
         Hp.Value -= damage;
 
         if (Hp.Value <= 0 && State.Value == PlayerState.Alive)
@@ -78,14 +110,55 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
+    private IEnumerator DownedDrainRoutine()
+    {
+        while (State.Value == PlayerState.Down)
+        {
+            Hp.Value -= downedHpDrain * Time.deltaTime;
+            if (Hp.Value <= 0)
+            {
+                Hp.Value = 0;
+                State.Value = PlayerState.Dead;
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
     // 아군이 부활시킬 때 호출
     public void Revive()
     {
         if (!IsServer) return;
         if (State.Value != PlayerState.Down) return;
-
-        Hp.Value = maxHp;
+        Debug.Log("살렸다.");
+        Hp.Value = 50f;
         State.Value = PlayerState.Alive;
     }
 
+    public void Kill()
+    {
+        if (!IsServer) return;
+        if (State.Value != PlayerState.Down) return;
+        State.Value = PlayerState.Dead;
+    }
+    private void OnPlayerDead()
+    {
+        if (!IsServer) return;
+        StartCoroutine(RespawnRoutine());
+    }
+
+    private IEnumerator RespawnRoutine()
+    {
+        // 잠깐 대기 후 리스폰 (연출용)
+        yield return new WaitForSeconds(5f);
+        Respawn();
+    }
+
+    private void Respawn()
+    {
+        if (!IsServer) return;
+        if (State.Value != PlayerState.Dead) return; // Dead일 때만
+        Hp.Value = maxHp;
+        State.Value = PlayerState.Alive;
+    }
 }
