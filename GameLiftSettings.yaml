@@ -1,5 +1,5 @@
 version: 1
-LastOpenTab: Credentials
+LastOpenTab: Anywhere
 CurrentProfileName: GameLiftUnityUser
 CurrentRegion: ap-northeast-2
 UserProfiles: >+
@@ -8,6 +8,88 @@ UserProfiles: >+
     Name: GameLiftUnityUser
 
     BucketName: aws-gamelift-unity-477223649536-ap-northeast-2-an
+
+    AnywhereFleetName: GameLiftUnityFleet
+
+    AnywhereFleetId: fleet-77cffd0b-c8ce-460b-8582-39c198f5dee0
+
+    AnywhereFleetLocation: custom-TestSong
+
+    ComputeName: ComputerName-ProfileName
+
+    IpAddress: 127.0.0.1
+
+    WebSocketUrl: wss://ap-northeast-2.api.amazongamelift.com
+
+    ContainerDeploymentInProgress: false
+
+    ContainersDeploymentComplete: false
+
+    ContainerQuestionnaireScenario: NoContainerImageNoExistingEcrRepo
+
+    ContainerDeploymentScenario: SingleRegion
+
+    ContainerEnableMetrics: false
+
+    ContainerGameServerBuildPath: 
+
+    ContainerGameServerExecutable: 
+
+    ContainerDockerImageId: 
+
+    ContainerECRRepositoryName: 
+
+    ContainerECRRepositoryUri: 
+
+    ContainerECRImageUri: 
+
+    ContainerECRImageId: 
+
+    ContainerPortRange: 
+
+    ContainerTotalMemory: 
+
+    ContainerTotalVcpu: 
+
+    ContainerGameName: 
+
+    ContainerImageTag: 
+
+    IsContainerImageBuilding: false
+
+    IsContainerImageBuilt: false
+
+    IsECRRepoCreated: false
+
+    IsContainerPushedToECR: false
+
+    IsCGDDeploying: false
+
+    IsCGDDeployed: false
+
+    DeploymentScenario: SingleRegion
+
+    DeploymentGameName: 
+
+    ManagedEC2FleetName: 
+
+    BuildName: 
+
+    LaunchParameters: 
+
+    BuildOperatingSystem: 
+
+    EnableMetrics: false
+
+    DeploymentBuildFilePath: 
+
+    DeploymentBuildFolderPath: 
+
+  - Region: 
+
+    Name: default
+
+    BucketName: 
 
     AnywhereFleetName: 
 

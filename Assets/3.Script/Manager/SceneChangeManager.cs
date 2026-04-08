@@ -32,9 +32,13 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
             BroadcastingSceneContextBuilt();
         }
         //
-        Debug.Log("OnServerStarted 등록함");
-        NetworkManager.Singleton.OnClientStarted += BroadcastingNetworkSceneContextBuilt;
-        NetworkManager.Singleton.OnServerStarted += BroadcastingNetworkSceneContextBuilt; // 추가
+
+        if(NetworkManager.Singleton != null)
+        {
+            Debug.Log("OnServerStarted 등록함");
+            NetworkManager.Singleton.OnClientStarted += BroadcastingNetworkSceneContextBuilt;
+            NetworkManager.Singleton.OnServerStarted += BroadcastingNetworkSceneContextBuilt; // 추가
+        }
     }
 
     public void ChangeSceneForSinglePlay(SceneType sceneType)
