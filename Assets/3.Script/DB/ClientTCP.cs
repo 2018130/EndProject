@@ -3,8 +3,10 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-public class ClientTCP : MonoBehaviour
+public class ClientTCP : SingletonBehaviour<ClientTCP>
 {
+    private bool isIdChecked = false;
+
     public void SendRequest(string msg)
     {
         try
@@ -18,6 +20,7 @@ public class ClientTCP : MonoBehaviour
             int byteCount = stream.Read(buffer, 0, buffer.Length);
             string response = Encoding.UTF8.GetString(buffer, 0, byteCount);
             Debug.Log($"서버 응답 ({msg.Split('|')[0]}) : " + response);
+            ProcessMessage(response);
 
             client.Close();
         }
@@ -27,14 +30,73 @@ public class ClientTCP : MonoBehaviour
         }
     }
 
+    private void ProcessMessage(string msg)
+    {
+        switch(msg)
+        {
+            case "SUCCESS_ID_CHECK":
+                SignSceneUIManager.Instance.SetInteractIdInputField(false);
+                //SignSceneUIManager.Instance.ToggleNicknamePopup();
+                isIdChecked = true;
+                break;
+
+            case "FAIL_ID_CHECK":
+                SignSceneUIManager.Instance.SetErrorText("Already exist id");
+                break;
+
+            case "SUCCESS_NICKNAME_CHECK":
+                SignSceneUIManager.Instance.SetInteractNicknameInputField(false);
+                break;
+
+            case "FAIL_NICKNAME_CHECK":
+                SignSceneUIManager.Instance.SetNicknameErrorText("Already exist nickname");
+                break;
+
+            case "SUCCESS_NICKNAME_SET":
+                SignSceneUIManager.Instance.SetErrorText($"Create id successfully");
+                break;
+
+            case "FAIL_NICKNAME_SET":
+                SignSceneUIManager.Instance.SetNicknameErrorText("Error to set nickname");
+                break;
+
+            case "SUCCESS_SIGNUP":
+                SignSceneUIManager.Instance.ToggleNicknamePopup();
+                break;
+
+            case "SUCCESS_LOGIN":
+                SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.TitleScene);
+                break;
+        }
+    }
+    public void CheckId(string id)
+    {
+        SendRequest($"CHECKID|{id}");
+    }
+
+    public void SignUp(string id, string pwd)
+    {
+        if(!isIdChecked)
+        {
+            SignSceneUIManager.Instance.SetErrorText("Check ID first");
+            return;
+        }
+
+        SendRequest($"SIGNUP|{id}|{pwd}");
+    }
+
     public void SignIn(string id, string pwd)
     {
         SendRequest($"LOGIN|{id}|{pwd}");
     }
 
-    public void Register(string id, string pwd, string nickname)
+    public void CheckNickname(string id, string pwd, string nickname)
     {
-        SendRequest($"REGISTER|{id}|{pwd}|{nickname}");
+        SendRequest($"CHECKNICKNAME|{id}|{pwd}|{nickname}");
+    }
+    public void SetNickname(string id, string pwd, string nickname)
+    {
+        SendRequest($"SETNICKNAME|{id}|{pwd}|{nickname}");
     }
 
     public void UpdaterScore(string id, string score)
