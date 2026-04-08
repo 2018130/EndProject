@@ -78,7 +78,7 @@ public class ServerTCP
                 if (parts.Length < 3) return "ERROR";
                 if (db.Register(parts[1], parts[2]))
                 {
-                    return "OK";
+                    return "SUCCESS_SIGNUP";
                 }
                 return "FAIL";
 
@@ -98,7 +98,7 @@ public class ServerTCP
 
             case "LOGIN":
                 if (parts.Length < 3) return "ERROR";
-                return db.Login(parts[1], parts[2]) ? "OK" : "FAIL";
+                return db.Login(parts[1], parts[2]) ? "SUCCESS_LOGIN" : "FAIL";
 
             case "UPDATE_SCORE":
                 if (parts.Length < 3) return "ERROR";

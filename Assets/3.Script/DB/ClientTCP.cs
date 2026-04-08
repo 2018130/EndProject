@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ClientTCP : SingletonBehaviour<ClientTCP>
 {
+    private bool isIdChecked = false;
+
     public void SendRequest(string msg)
     {
         try
@@ -34,7 +36,8 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
         {
             case "SUCCESS_ID_CHECK":
                 SignSceneUIManager.Instance.SetInteractIdInputField(false);
-                SignSceneUIManager.Instance.ToggleNicknamePopup();
+                //SignSceneUIManager.Instance.ToggleNicknamePopup();
+                isIdChecked = true;
                 break;
 
             case "FAIL_ID_CHECK":
@@ -57,7 +60,11 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
                 SignSceneUIManager.Instance.SetNicknameErrorText("Error to set nickname");
                 break;
 
-            case "OK":
+            case "SUCCESS_SIGNUP":
+                SignSceneUIManager.Instance.ToggleNicknamePopup();
+                break;
+
+            case "SUCCESS_LOGIN":
                 SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.TitleScene);
                 break;
         }
@@ -69,6 +76,12 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
 
     public void SignUp(string id, string pwd)
     {
+        if(!isIdChecked)
+        {
+            SignSceneUIManager.Instance.SetErrorText("Check ID first");
+            return;
+        }
+
         SendRequest($"SIGNUP|{id}|{pwd}");
     }
 

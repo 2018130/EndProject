@@ -64,7 +64,7 @@ public class SignSceneUIManager : MonoBehaviour
 
         signUp_Btn.onClick.AddListener(() =>
         {
-            ClientTCP.Instance.SetNickname(signUpId_InputField.text, signUpPwd_InputField.text, nickname_InputField.text);
+            ClientTCP.Instance.SignUp(signUpId_InputField.text, signUpPwd_InputField.text);
         });
 
         nicknameCheck_Btn.onClick.AddListener(() =>
