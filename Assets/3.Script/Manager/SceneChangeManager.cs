@@ -28,14 +28,16 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
         if (sceneContext != null)
         {
             sceneContext.Initialize();
-            BroadcastingSceneContextBuilt();
             GameManager.Instance.SceneContext = sceneContext;
+            BroadcastingSceneContextBuilt();
         }
         //
 
         if(NetworkManager.Singleton != null)
         {
+            Debug.Log("OnServerStarted 등록함");
             NetworkManager.Singleton.OnClientStarted += BroadcastingNetworkSceneContextBuilt;
+            NetworkManager.Singleton.OnServerStarted += BroadcastingNetworkSceneContextBuilt; // 추가
         }
     }
 
@@ -92,7 +94,7 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
 
     private void BroadcastingNetworkSceneContextBuilt()
     {
-        INetworkContextListener[] myInterfaces = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).
+        INetworkContextListener[] myInterfaces = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None).
                                             OfType<INetworkContextListener>().ToArray();
 
         foreach (var item in myInterfaces)

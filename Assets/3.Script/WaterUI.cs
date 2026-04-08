@@ -5,7 +5,6 @@ public class WaterUI : MonoBehaviour
 {
     [SerializeField] private Image[] waterTanks = new Image[4]; // π∞≈Î 4∞≥
 
-
     public void UpdateWater(float currentWater, float maxWater)
     {
         float tankSize = maxWater / waterTanks.Length;
