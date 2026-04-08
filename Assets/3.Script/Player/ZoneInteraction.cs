@@ -8,12 +8,24 @@ public class ZoneInteraction : MonoBehaviour
     private PlayerHealth ownerHealth;
     private PlayerHealth interactor;
 
+    [SerializeField] private SpriteRenderer circleZone;
+
+    private Color allyColor = new Color(0f, 1f, 0f, 0.4f);   // 초록 - 살리기
+    private Color enemyColor = new Color(1f, 0f, 0f, 0.4f);  // 빨강 - 처형
+    private Color defaultColor = new Color(0f, 0.8f, 1f, 0.4f); // 하늘색 - 기본
+
     private void OnEnable()
     {
         ownerHealth = GetComponentInParent<PlayerHealth>();
         Debug.Log($"ownerHealth 찾음: {ownerHealth != null}");
+        circleZone?.gameObject.SetActive(true);
+        UpdateCircleZoneColor();
     }
 
+    private void OnDisable()
+    {
+        circleZone?.gameObject.SetActive(false);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -22,6 +34,7 @@ public class ZoneInteraction : MonoBehaviour
 
         interactor = other.GetComponent<PlayerHealth>();
         player.SetCurrentZone(this); // 플레이어에게 현재 Zone 알려주기
+        UpdateCircleZoneColor();
     }
 
     private void OnTriggerExit(Collider other)
@@ -31,6 +44,30 @@ public class ZoneInteraction : MonoBehaviour
 
         interactor = null;
         player.ClearCurrentZone(this);
+        UpdateCircleZoneColor();
+    }
+
+    private void UpdateCircleZoneColor()
+    {
+        if (circleZone == null) return;
+        if (interactor == null)
+        {
+            circleZone.color = defaultColor;
+            return;
+        }
+
+        GameMode mode = GameManager.Instance.CurrentGameMode;
+        if (mode == GameMode.Mafia)
+        {
+            // 마피아 모드는 팀 모르니까 기본색
+            circleZone.color = defaultColor;
+            return;
+        }
+
+        bool isAlly = (Faction)interactor.PlayerFactionInt.Value ==
+                      (Faction)ownerHealth.PlayerFactionInt.Value;
+
+        circleZone.color = isAlly ? allyColor : enemyColor;
     }
 
     public void TryRevive()
