@@ -28,10 +28,33 @@ public class GoatMilkDispenser : NetworkBehaviour
         this.healAmount = damage;
         this.healRange = range;
 
+        if (IsServer)
+        {
+            ApplyVisuals(range);
+            StartCoroutine(GoatHealPerSecond());
+            StartCoroutine(SetupVisualsDelay(range));
+        }
+    }
+
+    private void ApplyVisuals(float range)
+    {
+        this.healRange = range;
         DrawCircle();
         StartCoroutine(BrightenEverySecond());
+    }
 
-        if (IsServer) StartCoroutine(GoatHealPerSecond());
+    private IEnumerator SetupVisualsDelay(float range)
+    {
+        yield return null;
+        SetupVisuals_ClientRpc(range);
+    }
+
+    [ClientRpc]
+    private void SetupVisuals_ClientRpc(float range)
+    {
+        if (IsServer) return;
+
+        ApplyVisuals(range);
     }
 
     private void DrawCircle()
@@ -49,11 +72,11 @@ public class GoatMilkDispenser : NetworkBehaviour
     {
         while (true)
         {
-            lineRenderer.startColor = lineRenderer.endColor = Color.white * 2f;
+            lineRenderer.startColor = lineRenderer.endColor = Color.white;
 
             yield return new WaitForSeconds(0.1f);
 
-            lineRenderer.startColor = lineRenderer.endColor = Color.white;
+            lineRenderer.startColor = lineRenderer.endColor = Color.coral;
 
             yield return new WaitForSeconds(healInterval);
         }
@@ -85,7 +108,6 @@ public class GoatMilkDispenser : NetworkBehaviour
 
         if (IsServer)
         {
-            StopCoroutine(BrightenEverySecond());
             GetComponent<NetworkObject>().Despawn();
         }
     }

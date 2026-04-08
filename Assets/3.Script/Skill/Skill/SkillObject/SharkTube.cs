@@ -16,36 +16,63 @@ public class SharkTube : NetworkBehaviour
     private float moveSpeed;
     private float duration;
 
+    private NetworkVariable<NetworkObjectReference> driverRef =
+        new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
 
-        Debug.Log("shark spawn");
+        driverRef.OnValueChanged += OnDriverChanged;
 
+        if (driverRef.Value.TryGet(out NetworkObject driverNetObj))
+        {
+            SetupDriverPhysics(driverNetObj.GetComponent<PlayerNetwork>(), true);
+        }
     }
 
     public override void OnNetworkDespawn()
     {
+        driverRef.OnValueChanged -= OnDriverChanged;
+
         if (driver != null)
         {
-            driver.GetComponent<Collider>().isTrigger = false;
+            SetupDriverPhysics(driver, false);
         }
     }
 
+    private void OnDriverChanged(NetworkObjectReference previous, NetworkObjectReference current)
+    {
+        if (current.TryGet(out NetworkObject driverNetObj))
+        {
+            SetupDriverPhysics(driverNetObj.GetComponent<PlayerNetwork>(), true);
+        }
+    }
+
+    private void SetupDriverPhysics(PlayerNetwork targetDriver, bool isInside)
+    {
+        if (targetDriver == null) return;
+
+        this.driver = targetDriver;
+        targetDriver.GetComponent<Collider>().isTrigger = isInside;
+
+        Rigidbody pRb = targetDriver.GetComponent<Rigidbody>();
+        if (pRb != null)
+        {
+            pRb.isKinematic = isInside;
+            pRb.linearVelocity = Vector3.zero;
+        }
+    }
     public void Initialize(float duration, float moveSpeed, PlayerNetwork driver)
     {
-
-        Debug.Log("shark spawn");
-
         this.duration = duration;
         this.moveSpeed = moveSpeed;
         this.driver = driver;
 
         if (IsServer)
         {
+            driverRef.Value = new NetworkObjectReference(driver.NetworkObject);
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
-            driver.GetComponent<Collider>().isTrigger = true;
         }
 
         StartCoroutine(StopSkill());

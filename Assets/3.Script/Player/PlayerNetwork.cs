@@ -112,15 +112,28 @@ public class PlayerNetwork : NetworkBehaviour
         jumpPressTime = 0;
     }
 
+    public NetworkVariable<Vector2> netMoveInput = new NetworkVariable<Vector2>();
+
     // PlayerInput에서 호출
     public void SendMoveInput(Vector2 input)
     {
         moveInput = input;
+
+        if (IsOwner)
+        {
+            SendMoveInputServerRpc(input);
+        }
+    }
+
+    [ServerRpc]
+    private void SendMoveInputServerRpc(Vector2 input)
+    {
+        netMoveInput.Value = input;
     }
 
     public Vector2 GetMoveInput()
     {
-        return moveInput;
+        return netMoveInput.Value;
     }
 
     public void SendJumpInput()
@@ -226,22 +239,25 @@ public class PlayerNetwork : NetworkBehaviour
                 penguin.Initialize(card.Speed, card.Damage, transform.forward, OwnerClientId);
                 break;
             case CardType.DuckTube:
-                Debug.Log($"DuckTube SkillPrefab: {card.SkillPrefab}");
-                GameObject duckTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                GameObject duckTube = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
                 NetworkObject duckNo = duckTube.GetComponent<NetworkObject>();
-                duckTube.GetComponent<NetworkObject>().Spawn();
+                duckNo.Spawn();
                 ShipDuckNotSsipDuck duck = duckTube.GetComponent<ShipDuckNotSsipDuck>();
                 duck.Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.SharkTube:
-                Debug.Log($"SharkTube SkillPrefab: {card.SkillPrefab}");
-                GameObject sharkTube = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
+                GameObject sharkTube = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
                 NetworkObject sharkNo = sharkTube.GetComponent<NetworkObject>();
-                sharkTube.GetComponent<NetworkObject>().Spawn();
+                sharkNo.Spawn();
                 SharkTube shark = sharkTube.GetComponent<SharkTube>();
                 shark.Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.GoatDisinfectant:
+                GameObject goatDispenser = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
+                NetworkObject goatNo = goatDispenser.GetComponent<NetworkObject>();
+                goatNo.Spawn();
+                GoatMilkDispenser goat = goatDispenser.GetComponent<GoatMilkDispenser>();
+                goat.Initialize(card.Duration, card.Damage, card.Range);
                 break;
             case CardType.MalrangBong:
                 break;

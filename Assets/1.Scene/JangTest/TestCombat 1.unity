@@ -1131,11 +1131,11 @@ MonoBehaviour:
     CardIcon: {fileID: 21300000, guid: dfaae201c43f1c44fac95f9926cb92a2, type: 3}
     SkillIcon: {fileID: 21300000, guid: 297af1a247e060e4abba4534f849ac06, type: 3}
     Cooldown: 20
-    Duration: 0
-    Damage: 65
-    Range: 2
+    Duration: 10
+    Damage: 0
+    Range: 0
     Speed: 20
-    SkillPrefab: {fileID: 0}
+    SkillPrefab: {fileID: 8497842375792836421, guid: 7b599ae761958244982b2d0f2e0b93b3, type: 3}
   - ID: 06
     CardName: "\uC0C1\uC5B4\uD29C\uBE0C"
     Description: 
@@ -1144,11 +1144,11 @@ MonoBehaviour:
     CardIcon: {fileID: 21300000, guid: 51e38d3dcd3070b49baff4ca3da53b8c, type: 3}
     SkillIcon: {fileID: 21300000, guid: 167d70a43186bee418d71a2b9d9ff410, type: 3}
     Cooldown: 20
-    Duration: 15
+    Duration: 10
     Damage: 0
     Range: 0
     Speed: 20
-    SkillPrefab: {fileID: 0}
+    SkillPrefab: {fileID: 5245220240986222524, guid: dcf7381a1ab4a3b40a28db18e7cec89e, type: 3}
   - ID: 07
     CardName: "\uC5FC\uC18C\uC18C\uB3C5\uC81C"
     Description: 
@@ -1157,11 +1157,11 @@ MonoBehaviour:
     CardIcon: {fileID: 21300000, guid: 73b6d66bdbaa8f04588ef46293df59d4, type: 3}
     SkillIcon: {fileID: 21300000, guid: 818ab173fe4c9d74f80232f3517b63e7, type: 3}
     Cooldown: 25
-    Duration: 5
+    Duration: 10
     Damage: 65
     Range: 1.5
     Speed: 0
-    SkillPrefab: {fileID: 0}
+    SkillPrefab: {fileID: 5520828771612287719, guid: 08cd1d9c4ce2e4e4b894edfa699f87e0, type: 3}
   - ID: 08
     CardName: "\uBC0D\uD0A4\uC758 \uB9D0\uB791\uBD09"
     Description: 
