@@ -19,13 +19,16 @@ public class PlayerInput : MonoBehaviour
     public event Action OnSkipPerformed;
     public event Action OnRevivePerformed;
 
+    private bool isInitialized = false;
+
+
     private void Awake()
     {
         TryGetComponent<PlayerNetwork>(out network);
         inputActions = new PlayerInputAction();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (!network.IsOwner)
         {
@@ -35,6 +38,9 @@ public class PlayerInput : MonoBehaviour
 
         inputActions.Player.Enable();
         
+        if (isInitialized) return; // 이벤트 중복 등록 방지
+        isInitialized = true;
+
         // 움직임
         inputActions.Player.Move.performed += context =>
            network.SendMoveInput(context.ReadValue<Vector2>());

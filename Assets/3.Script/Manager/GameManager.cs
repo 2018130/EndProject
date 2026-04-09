@@ -16,6 +16,22 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
     public SceneContext SceneContext { get; set; } = null;
     public GameMode CurrentGameMode { get; set; } = GameMode.TeamBattle;
 
+    private bool isGameRunning = false;
+
+    private int expectedPlayerCount = 2;
+
+    public void AddKill(ulong killerClientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        PlayerHealth health = NetworkManager.Singleton.ConnectedClients[killerClientId]
+            .PlayerObject.GetComponent<PlayerHealth>();
+
+        Faction faction = (Faction)health.PlayerFactionInt.Value;
+
+        GameTimerNetwork.Instance.AddKill(faction);
+    }
+
     public void OnNetworkSceneContextBuilt()
     {
         Debug.Log("OnNetworkSceneContextBuilt 호출됨");
@@ -39,15 +55,27 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
         // 이벤트 구독
         health.OnDead += OnPlayerDead;
 
-        //StartGame();
-        SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+        if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
+            OnAllPlayersConnected();
+
+    }
+
+    private void OnAllPlayersConnected()
+    {
+        Debug.Log("OnAllPlayersConnected 호출됨");
+        GameTimerNetwork.Instance.StartGame();
+
+        // 모든 클라이언트한테 카드 선택 UI
+        foreach (var client in NetworkManager.Singleton.ConnectedClients)
+            SceneContext.GameDataManager.StartCardSelectionForClient(client.Key);
     }
 
     private void SpawnPlayer(PlayerHealth health)
     {
         Faction faction = (Faction)health.PlayerFactionInt.Value;
-        Vector3 spawnPos = SpawnAreaManager.Instance.GetSpawnPosition(faction);
+        Vector3 spawnPos = SceneContext.SpawnAreaManager.GetSpawnPosition(faction);
         health.TeleportToSpawnClientRpc(spawnPos);
+        health.DisableInputClientRpc();
     }
 
     private void OnPlayerDead(PlayerHealth health)
@@ -62,11 +90,10 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
         health.Respawn();
     }
 
-    public void StartGame()
+    public void EndGame()
     {
-        Debug.Log($"IsServer: {NetworkManager.Singleton.IsServer}");
-        if (!NetworkManager.Singleton.IsServer) return;
-        Debug.Log("StartCardSelection 호출");
-        SceneContext.GameDataManager.StartCardSelection();
+        Faction winner = GameTimerNetwork.Instance.TeamAKills.Value >=
+                         GameTimerNetwork.Instance.TeamBKills.Value
+                         ? Faction.TeamA : Faction.TeamB;
     }
 }

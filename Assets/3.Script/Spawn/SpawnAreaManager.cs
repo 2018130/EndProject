@@ -2,14 +2,8 @@ using UnityEngine;
 
 public class SpawnAreaManager : MonoBehaviour
 {
-    public static SpawnAreaManager Instance { get; private set; }
 
     [SerializeField] private SpawnArea[] spawnAreas;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     public Vector3 GetSpawnPosition(Faction faction)
     {
