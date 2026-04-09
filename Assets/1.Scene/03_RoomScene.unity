@@ -2337,6 +2337,8 @@ MonoBehaviour:
   - {fileID: 1715153119}
   - {fileID: 1140829612}
   - {fileID: 412874695}
+  preCharacterButton: {fileID: 347759730}
+  postCharacterButton: {fileID: 618959248}
   gameStart_Button: {fileID: 2080932838}
 --- !u!1 &876953695
 GameObject:
@@ -2585,6 +2587,11 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   chatText: 
   networkPlayer: {fileID: 1321731441522187029, guid: 7b69fdd7b9f39304ca83b747ad965419, type: 3}
+  characterDatas:
+  - ID: 01
+    Icon: {fileID: 21300000, guid: 69730eb277b32784db2ea0892461c641, type: 3}
+  - ID: 02
+    Icon: {fileID: 21300000, guid: dfaae201c43f1c44fac95f9926cb92a2, type: 3}
 --- !u!4 &986407399
 Transform:
   m_ObjectHideFlags: 0

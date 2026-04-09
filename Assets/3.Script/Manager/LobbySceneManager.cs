@@ -22,6 +22,9 @@ public class LobbySceneManager : NetworkBehaviour
     [SerializeField]
     private NetworkObject networkPlayer;
 
+    [SerializeField]
+    private List<CharacterData> characterDatas = new List<CharacterData>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -51,7 +54,12 @@ public class LobbySceneManager : NetworkBehaviour
     {
         int idx = playerData.Index;
         string nickname = playerData.Value.Nickname.ToString();
-        LobbySceneUIManager.Instance.SetCharacterBox(idx, nickname);
+        Sprite icon = GetCharacterIcon(playerData.Value.CharacterID.ToString());
+
+        LobbySceneUIManager.Instance.SetCharacterBox(idx, nickname, icon);
+        LobbySceneUIManager.Instance.SetReadyStateButtonActive(idx, playerData.Value.IsReady);
+
+        Debug.Log($"Change userdata idx : {idx} nickname : {nickname} ready state : {userDatas[playerData.Index].IsReady}");
     }
 
     public void StartServer()
@@ -71,8 +79,9 @@ public class LobbySceneManager : NetworkBehaviour
         }
         else
         {
+            // 각 클라이언트 개인 초기화
             Debug.Log(GameManager.Instance.PlayerData.Nickname);
-            PlayerData_s playerData = new PlayerData_s(GameManager.Instance.PlayerData);
+            PlayerData_s playerData = new PlayerData_s(GameManager.Instance.PlayerData, false, "01");
             SendPlayerData_Rpc(playerData);
             RefreshUserUI();
         }
@@ -81,12 +90,31 @@ public class LobbySceneManager : NetworkBehaviour
 
     }
 
+    // 서버에서 실행되어 클라이언트에게 할당
     private void SpawnClient(ulong clientId)
     {
         Debug.Log($"Spawn Network Player, id : {clientId}");
         NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(networkPlayer, clientId);
+
+        int clientCount = NetworkManager.Singleton.ConnectedClientsIds.Count;
+
+        RpcParams rpcParams = new RpcParams
+        {
+            Send = new RpcSendParams
+            {
+                Target = RpcTarget.Single(clientId, RpcTargetUse.Temp)
+            }
+        };
+
+        SetClientRoomAuthority_Rpc(clientCount - 1, clientCount == 1 ? true : false, rpcParams);
     }
 
+    [Rpc(SendTo.SpecifiedInParams)]
+    private void SetClientRoomAuthority_Rpc(int idx, bool isRoomManager, RpcParams rpcParams = default)
+    {
+        Debug.Log($"Set client room authority");
+        LobbySceneUIManager.Instance.SetRoomManageState(idx, isRoomManager);
+    }
 
     #region Chatting
     public void SendChatMessage(string text)
@@ -131,5 +159,105 @@ public class LobbySceneManager : NetworkBehaviour
 
             LobbySceneUIManager.Instance.SetCharacterBox(i, userDatas[i].Nickname.ToString());
         }
+    }
+
+    [Rpc(SendTo.Server)]
+    public void ToggleReadyState_ServerRpc(int idx)
+    {
+        if(userDatas.Count <= idx)
+        {
+            Debug.LogWarning($"Out of bound in userdata");
+            return;
+        }
+
+        PlayerData_s currentData = userDatas[idx];
+
+        userDatas[idx] = new PlayerData_s
+        {
+            Nickname = currentData.Nickname,
+            IsReady = !currentData.IsReady
+        };
+
+        Debug.Log($"change ready state idx {idx} ready State : {userDatas[idx].IsReady}");
+    }
+
+    public int GetIdxFromNickname(string nickname)
+    {
+        for(int i = 0; i < userDatas.Count; i++)
+        {
+            if (nickname == userDatas[i].Nickname)
+                return i;
+        }
+
+        return -1;
+    }
+
+
+
+    public Sprite GetCharacterIcon(string id)
+    {
+        foreach(var characterData in characterDatas)
+        {
+            if (characterData.ID == id)
+                return characterData.Icon;
+        }
+
+        return null;
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SetCharacterIcon_ServerRpc(string userNickname, bool isPre)
+    {
+        int idx = GetIdxFromNickname(userNickname);
+        if (userDatas.Count <= idx || idx == -1)
+        {
+            Debug.LogWarning($"Out of bound in userdata");
+            return;
+        }
+
+        string characterId = userDatas[idx].CharacterID.ToString();
+        CharacterData characterData = isPre ? GetPreCharacterData(characterId) : GetPostCharacterData(characterId);
+
+        if(characterData.ID == default)
+        {
+            Debug.LogWarning($"Failed to get characterData");
+            return;
+        }
+
+        userDatas[idx] = new PlayerData_s(userDatas[idx].Nickname.ToString(), userDatas[idx].IsReady, characterData.ID);
+    }
+
+    public CharacterData GetPreCharacterData(string id)
+    {
+        for (int i = 0; i < characterDatas.Count; i++)
+        {
+            if (characterDatas[i].ID == id)
+            {
+                if (i == 0)
+                    return characterDatas[characterDatas.Count - 1];
+                else
+                    return characterDatas[i - 1];
+            }
+                
+        }
+
+        return default;
+    }
+
+    public CharacterData GetPostCharacterData(string id)
+    {
+        for (int i = 0; i < characterDatas.Count; i++)
+        {
+            if (characterDatas[i].ID == id)
+            {
+                if (i == characterDatas.Count - 1)
+                    return characterDatas[0];
+                else
+                    return characterDatas[i + 1];
+            }
+
+        }
+
+        return default;
     }
 }

@@ -11,6 +11,8 @@ public class CharacterBox : MonoBehaviour
     private TMP_Text nicknameText;
     [SerializeField]
     private Image characterIcon;
+    [SerializeField]
+    private TMP_Text readyText;
 
     public void SetNicknameText(string nickname)
     {
@@ -20,5 +22,10 @@ public class CharacterBox : MonoBehaviour
     public void SetCharacterIcon(Sprite newIcon)
     {
         characterIcon.sprite = newIcon;
+    }
+
+    public void SetActiveReadyText(bool active)
+    {
+        readyText.gameObject.SetActive(active);
     }
 }

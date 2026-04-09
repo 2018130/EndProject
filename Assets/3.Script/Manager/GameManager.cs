@@ -22,19 +22,34 @@ public struct PlayerData_s : INetworkSerializable, IEquatable<PlayerData_s>
 {
     public FixedString32Bytes Nickname;
 
-    public PlayerData_s(PlayerData playerData)
+    public bool IsReady;
+
+    public FixedString32Bytes CharacterID;
+
+    public PlayerData_s(PlayerData playerData, bool isReady, string characterID)
     {
         Nickname = playerData.Nickname;
+        IsReady = isReady;
+        CharacterID = characterID;
+    }
+
+    public PlayerData_s(string nickname, bool isReady, string characterID)
+    {
+        Nickname = nickname;
+        IsReady = isReady;
+        CharacterID = characterID;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref Nickname);
+        serializer.SerializeValue(ref IsReady);
+        serializer.SerializeValue(ref CharacterID);
     }
 
     public bool Equals(PlayerData_s other)
     {
-        return Nickname == other.Nickname;
+        return Nickname == other.Nickname && IsReady == other.IsReady && CharacterID == other.CharacterID;
     }
 }
 
