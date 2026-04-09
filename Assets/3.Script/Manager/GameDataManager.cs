@@ -53,7 +53,7 @@ public class GameDataManager : NetworkBehaviour
             weaponNO.SpawnWithOwnership(clientId);
 
             if (NetworkManager.Singleton.ConnectedClients
-                .TryGetValue(clientId, out NetworkClient client))
+                .TryGetValue(clientId, out Unity.Netcode.NetworkClient client))
             {
 
                 weaponNO.TrySetParent(client.PlayerObject, false);
@@ -74,7 +74,7 @@ public class GameDataManager : NetworkBehaviour
             .TryGetValue(weaponNetworkId, out NetworkObject weaponNO)) return;
 
         if (!NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(clientId, out NetworkClient client)) return;
+            .TryGetValue(clientId, out Unity.Netcode.NetworkClient client)) return;
 
         BaseWeapon weapon = weaponNO.GetComponent<BaseWeapon>();
         weapon.transform.localPosition = new Vector3(0.7f, 0.7f, 0f);
