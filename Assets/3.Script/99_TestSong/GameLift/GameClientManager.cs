@@ -26,8 +26,20 @@ public class MatchStatusResponse
 
 public class GameClientManager : MonoBehaviour
 {
+    public static GameClientManager Instance { get; set; }
+    private void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     [Header("AWS Configuration")]
-    // TODO: 생성하신 자격 증명 풀 ID로 변경해주세요. (예: ap-northeast-2:1234abcd-...)
     [SerializeField] private string identityPoolId = "ap-northeast-2:YOUR_IDENTITY_POOL_ID";
     [SerializeField] private string awsRegion = "ap-northeast-2";
 
@@ -76,7 +88,7 @@ public class GameClientManager : MonoBehaviour
         }
     }
 
-    public void RequestTicket()
+    public void JoinRoom()
     {
         if (!isCognitoReady)
         {

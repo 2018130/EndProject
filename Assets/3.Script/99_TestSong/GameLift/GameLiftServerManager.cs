@@ -184,6 +184,7 @@ public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
                 response.CreatePlayerObject = true;
             }
             else
+
             {
                 Debug.LogError($"[GameLift] Player session REJECTED: {outcome.Error.ErrorMessage}");
                 response.Approved = false;

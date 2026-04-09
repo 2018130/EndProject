@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
@@ -8,9 +9,10 @@ using UnityEngine.SceneManagement;
 
 public enum SceneType
 {
+    SignScene,
     TitleScene,
     LobbyScene,
-    RoomScene,
+    GameScene,
 }
 
 public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
@@ -80,6 +82,21 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
 
         SceneManager.UnloadSceneAsync(LoadingSceneName);
     }
+
+    public void ChangeSceneForMultiPlay(SceneType sceneType)
+    {
+        if (!NetworkManager.Singleton.IsServer)
+            return;
+
+        string scenePath = SceneUtility.GetScenePathByBuildIndex((int)sceneType);
+        string sceneName = Path.GetFileNameWithoutExtension(scenePath);
+
+        Debug.Log($"Change scene name : {sceneName}");
+
+        SceneEventProgressStatus status = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+
+    }
+    
 
     private void BroadcastingSceneContextBuilt()
     {
