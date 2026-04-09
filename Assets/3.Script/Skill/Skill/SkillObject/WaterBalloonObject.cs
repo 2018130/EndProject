@@ -8,12 +8,14 @@ public class WaterBalloonObject : NetworkBehaviour
     private float range;
     private float damage;
     private ulong ownerClientId;
+    private Faction ownerFaction;
 
-    public void Initialize(float range, float damage, ulong ownerClientId)
+    public void Initialize(float range, float damage, ulong ownerClientId, Faction ownerFaction)
     {
         this.range = range;
         this.damage = damage;
         this.ownerClientId = ownerClientId;
+        this.ownerFaction = ownerFaction;
     }
 
     public override void OnNetworkSpawn()
@@ -67,7 +69,7 @@ public class WaterBalloonObject : NetworkBehaviour
                 NetworkObject no = hit.GetComponent<NetworkObject>();
                 if (no != null && no.OwnerClientId == ownerClientId) continue;
 
-                health.TakeDamage(damage);
+                health.TakeDamage(damage, ownerFaction, ownerClientId);
             }
         }
         GetComponent<NetworkObject>().Despawn();
