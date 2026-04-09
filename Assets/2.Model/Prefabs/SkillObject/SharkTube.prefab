@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 349876235926178941}
   - component: {fileID: 5838710720659920888}
   - component: {fileID: 8043557171513083340}
+  - component: {fileID: -1883207708005753735}
   - component: {fileID: 7591535246483249937}
   - component: {fileID: 3320483899339387304}
   - component: {fileID: 4253709531311359851}
@@ -116,6 +117,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &-1883207708005753735
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5245220240986222524}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.8
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7591535246483249937
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -192,15 +214,15 @@ MonoBehaviour:
   RotationMaxInterpolationTime: 0.1
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
+  AuthorityMode: 1
   TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 0
-  SyncRotAngleY: 0
-  SyncRotAngleZ: 0
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -227,7 +249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SharkTube
   ShowTopMostFoldoutHeaderGroup: 1
-  knockbackPower: 3
+  knockbackPower: 8
   bumperPower: 10
   driverPos: {fileID: 6430867227160623480}
 --- !u!1 &6430867227160623480

@@ -1106,7 +1106,7 @@ MonoBehaviour:
     SkillIcon: {fileID: 21300000, guid: 01bd89eb91780e340b36e56fb408169e, type: 3}
     Cooldown: 30
     Duration: 3
-    Damage: 0
+    Damage: 50
     Range: 0
     Speed: 20
     SkillPrefab: {fileID: 8843121812433261822, guid: b2e648b30fef6394b9b9c159e88ce7df, type: 3}
@@ -1158,8 +1158,8 @@ MonoBehaviour:
     SkillIcon: {fileID: 21300000, guid: 818ab173fe4c9d74f80232f3517b63e7, type: 3}
     Cooldown: 25
     Duration: 10
-    Damage: 65
-    Range: 1.5
+    Damage: 5
+    Range: 5
     Speed: 0
     SkillPrefab: {fileID: 5520828771612287719, guid: 08cd1d9c4ce2e4e4b894edfa699f87e0, type: 3}
   - ID: 08

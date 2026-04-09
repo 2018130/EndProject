@@ -312,7 +312,33 @@ public class PlayerNetwork : NetworkBehaviour
     public void ApplyKnockback_ClientRpc(Vector3 force)
     {
         if (!IsOwner) return;
-        rb.AddForce(force, ForceMode.Impulse);
+
+        rb.isKinematic = true;
+
+        Collider col = GetComponent<Collider>();
+
+        if (col != null) col.isTrigger = false;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        //rb.AddForce(force, ForceMode.Impulse);
+
+        StartCoroutine(ResetPhysics_Co(force));
+    }
+
+    private IEnumerator ResetPhysics_Co(Vector3 force)
+    {
+        yield return null;
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+
+            if (force.sqrMagnitude > 0.001f)
+            {
+                rb.AddForce(force, ForceMode.Impulse);
+            }
+        }
     }
 
     [ClientRpc]
