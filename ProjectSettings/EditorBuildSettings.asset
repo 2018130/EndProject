@@ -15,16 +15,16 @@ EditorBuildSettings:
     path: Assets/1.Scene/JangTest/Test.unity
     guid: 001b961daa43ff94a8292f77370b9405
   - enabled: 1
-    path: Assets/1.Scene/00_SignScene.unity
+    path: Assets/1.Scene/01_SignScene.unity
     guid: dd984dcc22a99954b8bc9448c9ca724f
   - enabled: 1
     path: Assets/1.Scene/01_TitleScene.unity
     guid: aa641c7126208664a9ab6fa5f5acdc9d
   - enabled: 1
-    path: Assets/1.Scene/02_LobbyScene.unity
+    path: Assets/1.Scene/03_RoomScene.unity
     guid: a518f1735b5a10b4ea833754a8486de0
   - enabled: 1
-    path: Assets/1.Scene/03_RoomScene.unity
+    path: Assets/1.Scene/04_IngameScene.unity
     guid: 3537b38d79af4204ea9b4369e8947c1d
   - enabled: 0
     path: Assets/1.Scene/SongTest/TestLobby.unity
