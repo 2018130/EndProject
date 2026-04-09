@@ -346,8 +346,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (targetHealth == null) return;
         if (targetHealth.State.Value != PlayerState.Down) return;
 
-        // Dead 상태로 변경
-        targetHealth.State.Value = PlayerState.Dead;
+        targetHealth.Kill();
     }
 
     public void SetCurrentZone(ZoneInteraction zone)

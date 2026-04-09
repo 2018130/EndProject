@@ -20,6 +20,9 @@ public class PlayerHealth : NetworkBehaviour
 
     private Coroutine downedCoroutine;
 
+    // 추가
+    public event Action<PlayerHealth> OnDead;
+
     public NetworkVariable<float> Hp = new NetworkVariable<float>(
         100f, 
         NetworkVariableReadPermission.Everyone, 
@@ -144,7 +147,7 @@ public class PlayerHealth : NetworkBehaviour
     private void OnPlayerDead()
     {
         if (!IsServer) return;
-        StartCoroutine(RespawnRoutine());
+        OnDead?.Invoke(this);
     }
 
     private IEnumerator RespawnRoutine()
@@ -154,11 +157,31 @@ public class PlayerHealth : NetworkBehaviour
         Respawn();
     }
 
-    private void Respawn()
+    public void Respawn()
     {
         if (!IsServer) return;
         if (State.Value != PlayerState.Dead) return; // Dead일 때만
         Hp.Value = maxHp;
         State.Value = PlayerState.Alive;
+    }
+
+    [ClientRpc]
+    public void TeleportToSpawnClientRpc(Vector3 spawnPos)
+    {
+        transform.position = spawnPos;
+
+        foreach (var renderer in GetComponentsInChildren<Renderer>())
+            renderer.enabled = true;
+
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+            playerInput.enabled = true;
+
+        var rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.detectCollisions = true;
+            rb.linearVelocity = Vector3.zero;
+        }
     }
 }

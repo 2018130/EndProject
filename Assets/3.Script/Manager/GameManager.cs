@@ -30,12 +30,36 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
         PlayerHealth health = NetworkManager.Singleton.ConnectedClients[clientId]
         .PlayerObject.GetComponent<PlayerHealth>();
 
-        // Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
-        Faction faction = Faction.TeamA;
+         Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
+        //Faction faction = Faction.TeamA;
         health.PlayerFactionInt.Value = (int)faction;
+
+        SpawnPlayer(health);
+
+        // 이벤트 구독
+        health.OnDead += OnPlayerDead;
 
         //StartGame();
         SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+    }
+
+    private void SpawnPlayer(PlayerHealth health)
+    {
+        Faction faction = (Faction)health.PlayerFactionInt.Value;
+        Vector3 spawnPos = SpawnAreaManager.Instance.GetSpawnPosition(faction);
+        health.TeleportToSpawnClientRpc(spawnPos);
+    }
+
+    private void OnPlayerDead(PlayerHealth health)
+    {
+        StartCoroutine(RespawnRoutine(health));
+    }
+
+    private IEnumerator RespawnRoutine(PlayerHealth health)
+    {
+        yield return new WaitForSeconds(5f);
+        SpawnPlayer(health);
+        health.Respawn();
     }
 
     public void StartGame()
