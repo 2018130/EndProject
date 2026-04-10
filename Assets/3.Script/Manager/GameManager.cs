@@ -67,7 +67,13 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
 
         // 모든 클라이언트한테 카드 선택 UI
         foreach (var client in NetworkManager.Singleton.ConnectedClients)
+        {
             SceneContext.GameDataManager.StartCardSelectionForClient(client.Key);
+
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", client.Key);
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", client.Key);
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", client.Key);
+        }
     }
 
     private void SpawnPlayer(PlayerHealth health)

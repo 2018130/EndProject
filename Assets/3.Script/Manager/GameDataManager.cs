@@ -79,9 +79,13 @@ public class GameDataManager : NetworkBehaviour
         BaseWeapon weapon = weaponNO.GetComponent<BaseWeapon>();
         weapon.transform.localPosition = new Vector3(0.7f, 0.7f, 0f);
         weapon.transform.localRotation = Quaternion.identity;
+        weapon.gameObject.SetActive(false);
 
         if (weapon is RangedWeapon rangedWeapon)
             rangedWeapon.InitializeAfterEquip();
+
+        WeaponController weaponController = client.PlayerObject.GetComponent<WeaponController>();
+        weaponController?.RegisterWeapon(weapon);
     }
 
     public CardData GetCardData(string id)

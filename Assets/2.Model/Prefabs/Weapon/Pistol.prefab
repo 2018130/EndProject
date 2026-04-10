@@ -303,7 +303,7 @@ GameObject:
   - component: {fileID: 6388871198179810395}
   - component: {fileID: 3779135162039503417}
   m_Layer: 0
-  m_Name: Riple
+  m_Name: Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

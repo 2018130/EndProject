@@ -1179,7 +1179,7 @@ MonoBehaviour:
     MaxHitCountPerShot: 1
     BaseSpread: 0
     RecoilForce: {x: 0, y: 0}
-    WeaponPrefab: {fileID: 1165085595766005161, guid: 7a6d6079916d70b4fb040e81ff27947f, type: 3}
+    WeaponPrefab: {fileID: 2196245245374383465, guid: 2a2f87b034de2584db1876840d95838a, type: 3}
     FireSound: {fileID: 0}
     MuzzleFlash: {fileID: 0}
   - ID: 03
@@ -1191,7 +1191,7 @@ MonoBehaviour:
     MaxHitCountPerShot: 1
     BaseSpread: 0
     RecoilForce: {x: 0, y: 0}
-    WeaponPrefab: {fileID: 8456758896228530781, guid: a0dc1e7ec08c20348827c33afefef198, type: 3}
+    WeaponPrefab: {fileID: 1165085595766005161, guid: 7a6d6079916d70b4fb040e81ff27947f, type: 3}
     FireSound: {fileID: 0}
     MuzzleFlash: {fileID: 0}
   cardDatas:
