@@ -62,6 +62,22 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
     private PlayerData playerData = new PlayerData();
     public PlayerData PlayerData => playerData;
 
+    private bool isGameRunning = false;
+
+    private int expectedPlayerCount = 2;
+
+    public void AddKill(ulong killerClientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        PlayerHealth health = NetworkManager.Singleton.ConnectedClients[killerClientId]
+            .PlayerObject.GetComponent<PlayerHealth>();
+
+        Faction faction = (Faction)health.PlayerFactionInt.Value;
+
+        GameTimerNetwork.Instance.AddKill(faction);
+    }
+
     public void OnNetworkSceneContextBuilt()
     {
         Debug.Log("OnNetworkSceneContextBuilt 호출됨");
@@ -77,20 +93,61 @@ public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListe
         PlayerHealth health = NetworkManager.Singleton.ConnectedClients[clientId]
         .PlayerObject.GetComponent<PlayerHealth>();
 
-        // Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
-        Faction faction = Faction.TeamA;
+         Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
+        //Faction faction = Faction.TeamA;
         health.PlayerFactionInt.Value = (int)faction;
 
-        //StartGame();
-        SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+        SpawnPlayer(health);
+
+        // 이벤트 구독
+        health.OnDead += OnPlayerDead;
+
+        if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
+            OnAllPlayersConnected();
+
     }
 
-    public void StartGame()
+    private void OnAllPlayersConnected()
     {
-        Debug.Log($"IsServer: {NetworkManager.Singleton.IsServer}");
-        if (!NetworkManager.Singleton.IsServer) return;
-        Debug.Log("StartCardSelection 호출");
-        SceneContext.GameDataManager.StartCardSelection();
+        Debug.Log("OnAllPlayersConnected 호출됨");
+        GameTimerNetwork.Instance.StartGame();
+
+        // 모든 클라이언트한테 카드 선택 UI
+        foreach (var client in NetworkManager.Singleton.ConnectedClients)
+        {
+            SceneContext.GameDataManager.StartCardSelectionForClient(client.Key);
+
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", client.Key);
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", client.Key);
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", client.Key);
+        }
+    }
+
+    private void SpawnPlayer(PlayerHealth health)
+    {
+        Faction faction = (Faction)health.PlayerFactionInt.Value;
+        Vector3 spawnPos = SceneContext.SpawnAreaManager.GetSpawnPosition(faction);
+        health.TeleportToSpawnClientRpc(spawnPos);
+        health.DisableInputClientRpc();
+    }
+
+    private void OnPlayerDead(PlayerHealth health)
+    {
+        StartCoroutine(RespawnRoutine(health));
+    }
+
+    private IEnumerator RespawnRoutine(PlayerHealth health)
+    {
+        yield return new WaitForSeconds(5f);
+        SpawnPlayer(health);
+        health.Respawn();
+    }
+
+    public void EndGame()
+    {
+        Faction winner = GameTimerNetwork.Instance.TeamAKills.Value >=
+                         GameTimerNetwork.Instance.TeamBKills.Value
+                         ? Faction.TeamA : Faction.TeamB;
     }
 
     public void ExitGame()

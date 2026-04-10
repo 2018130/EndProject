@@ -79,9 +79,13 @@ public class GameDataManager : NetworkBehaviour
         BaseWeapon weapon = weaponNO.GetComponent<BaseWeapon>();
         weapon.transform.localPosition = new Vector3(0.7f, 0.7f, 0f);
         weapon.transform.localRotation = Quaternion.identity;
+        weapon.gameObject.SetActive(false);
 
         if (weapon is RangedWeapon rangedWeapon)
             rangedWeapon.InitializeAfterEquip();
+
+        WeaponController weaponController = client.PlayerObject.GetComponent<WeaponController>();
+        weaponController?.RegisterWeapon(weapon);
     }
 
     public CardData GetCardData(string id)
@@ -140,6 +144,19 @@ public class GameDataManager : NetworkBehaviour
         CardData card = GetCardData(cardId);
         Debug.Log($"[{clientId}] 카드 선택: {card.CardName}");
         ApplySkill_ClientRpc(cardId, clientId);
+
+        if (NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(clientId, out NetworkClient client))
+        {
+            PlayerHealth health = client.PlayerObject.GetComponent<PlayerHealth>();
+            Debug.Log($"PlayerHealth: {health}"); // null인지 확인
+            health?.EnableInputClientRpc();
+            Debug.Log($"EnableInputClientRpc 호출됨: {clientId}");
+        }
+        else
+        {
+            Debug.Log($"클라이언트 못 찾음: {clientId}");
+        }
     }
 
     [Rpc(SendTo.ClientsAndHost)]

@@ -20,6 +20,9 @@ public class PlayerHealth : NetworkBehaviour
 
     private Coroutine downedCoroutine;
 
+    public event Action<PlayerHealth> OnDead;
+    public ulong LastDownedByClientId { get; private set; }
+
     public NetworkVariable<float> Hp = new NetworkVariable<float>(
         100f, 
         NetworkVariableReadPermission.Everyone, 
@@ -69,6 +72,7 @@ public class PlayerHealth : NetworkBehaviour
                 break;
             case PlayerState.Alive:
                 actionZone.SetActive(false);
+                EnableInputClientRpc();
                 if (downedCoroutine != null)
                 {
                     StopCoroutine(downedCoroutine);
@@ -76,15 +80,19 @@ public class PlayerHealth : NetworkBehaviour
                 }
                 break;
             case PlayerState.Dead:
-                // 부활 처리
+                Debug.Log($"Dead 상태 진입 - IsServer: {IsServer}");
                 actionZone.SetActive(false);
+                DisableInputClientRpc();
                 if (downedCoroutine != null)
                 {
                     StopCoroutine(downedCoroutine);
                     downedCoroutine = null;
                 }
                 if (IsServer)
+                {
+                    Debug.Log("OnPlayerDead 호출 시도");
                     OnPlayerDead();
+                }
                 break;
             case PlayerState.OnVehicle:
                 // 이동, 공격 불가 처리
@@ -93,9 +101,11 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
-    public void TakeDamage(float damage, Faction attackerFaction = Faction.None)
+    public void TakeDamage(float damage, Faction attackerFaction = Faction.None, ulong attackerClientId = ulong.MaxValue)
     {
         if (!IsServer) return;
+
+        Debug.Log($"TakeDamage - damage:{damage}, attackerFaction:{attackerFaction}, attackerClientId:{attackerClientId}, myFaction:{(Faction)PlayerFactionInt.Value}, State:{State.Value}, Hp:{Hp.Value}");
 
         if (attackerFaction != Faction.None &&
             attackerFaction == (Faction)PlayerFactionInt.Value) return;
@@ -107,6 +117,12 @@ public class PlayerHealth : NetworkBehaviour
         {
             Hp.Value = maxHp; // 기절하고 HP 100
             State.Value = PlayerState.Down; // 기절 상태로 변환
+
+            Faction myFaction = (Faction)PlayerFactionInt.Value;
+            if (attackerFaction != Faction.None && attackerFaction != myFaction)
+                LastDownedByClientId = attackerClientId;
+            else
+                LastDownedByClientId = ulong.MaxValue;
         }
     }
 
@@ -144,7 +160,13 @@ public class PlayerHealth : NetworkBehaviour
     private void OnPlayerDead()
     {
         if (!IsServer) return;
-        StartCoroutine(RespawnRoutine());
+
+        Debug.Log($"OnPlayerDead 호출됨 - LastDownedByClientId: {LastDownedByClientId}");
+
+        if (LastDownedByClientId != ulong.MaxValue)
+            GameManager.Instance.AddKill(LastDownedByClientId);
+
+        OnDead?.Invoke(this);
     }
 
     private IEnumerator RespawnRoutine()
@@ -154,11 +176,47 @@ public class PlayerHealth : NetworkBehaviour
         Respawn();
     }
 
-    private void Respawn()
+    public void Respawn()
     {
         if (!IsServer) return;
         if (State.Value != PlayerState.Dead) return; // Dead일 때만
         Hp.Value = maxHp;
         State.Value = PlayerState.Alive;
+    }
+
+    [ClientRpc]
+    public void TeleportToSpawnClientRpc(Vector3 spawnPos)
+    {
+        transform.position = spawnPos;
+
+        foreach (var renderer in GetComponentsInChildren<Renderer>())
+            renderer.enabled = true;
+
+        var rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.detectCollisions = true;
+            rb.linearVelocity = Vector3.zero;
+        }
+    }
+
+    [ClientRpc]
+    public void DisableInputClientRpc()
+    {
+        if (!IsOwner) return;
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+            playerInput.enabled = false;
+    }
+
+    [ClientRpc]
+    public void EnableInputClientRpc()
+    {
+        if (!IsOwner) return;
+        var playerInput = GetComponent<PlayerInput>();
+
+        if (playerInput != null)
+            playerInput.enabled = true;
+
     }
 }

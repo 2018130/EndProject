@@ -7,6 +7,7 @@ using UnityEngine;
 public struct ProjectileData
 {
     public ulong OwnerClientId;
+    public Faction OwnerFaction;
     public int MaxHitCountPerShot;
     public float BulletSpeed;
 }
@@ -25,11 +26,31 @@ public class Projectile : NetworkBehaviour
         combat = GetComponent<Combat>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsServer) return;
+        StartCoroutine(AutoDespawn());
+    }
+
+    private IEnumerator AutoDespawn()
+    {
+        yield return new WaitForSeconds(20f);
+        GetComponent<NetworkObject>().Despawn();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent(out Combat otherCombat))
+        if (!IsServer) return;
+
+        if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
-            otherCombat.TakeDamage(combat, combat.CombatData.Damage);
+            playerHealth.TakeDamage(
+                combat.CombatData.Damage,
+                projectileData.OwnerFaction,
+                projectileData.OwnerClientId
+            );
+            // 맞으면 총알 제거
+            GetComponent<NetworkObject>().Despawn();
         }
     }
 

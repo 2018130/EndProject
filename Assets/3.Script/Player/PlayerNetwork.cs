@@ -234,6 +234,9 @@ public class PlayerNetwork : NetworkBehaviour
         CardData card = GameManager.Instance.SceneContext
                             .GameDataManager.GetCardData(cardId);
         Debug.Log($"UseSkill_ServerRpc 호출됨: {cardId}");
+
+        Faction myFaction = (Faction)GetComponent<PlayerHealth>().PlayerFactionInt.Value;
+
         switch (card.CardType)
         {
             case CardType.CatGun:
@@ -241,7 +244,7 @@ public class PlayerNetwork : NetworkBehaviour
                 Debug.Log($"CatGun SkillPrefab: {card.SkillPrefab}");
                 GameObject catGunObj = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
                 catGunObj.GetComponent<NetworkObject>().Spawn();
-                catGunObj.GetComponent<CatGunObject>().Initialize(card.Duration, card.Damage);
+                catGunObj.GetComponent<CatGunObject>().Initialize(card.Duration, card.Damage, OwnerClientId, myFaction);
                 break;
             case CardType.BubbleGun:
                 // 버블건
@@ -257,7 +260,7 @@ public class PlayerNetwork : NetworkBehaviour
                 NetworkObject penguinNo = penguinObj.GetComponent<NetworkObject>();
                 penguinNo.Spawn();
                 PenguinChargeObject penguin = penguinObj.GetComponent<PenguinChargeObject>();
-                penguin.Initialize(card.Speed, card.Damage, transform.forward, OwnerClientId);
+                penguin.Initialize(card.Speed, card.Damage, transform.forward, OwnerClientId, myFaction);
                 break;
             case CardType.DuckTube:
                 GameObject duckTube = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
@@ -301,8 +304,10 @@ public class PlayerNetwork : NetworkBehaviour
                 GameObject balloonObj = Instantiate(card.SkillPrefab, spawnPos, transform.rotation);
                 NetworkObject balloonNo = balloonObj.GetComponent<NetworkObject>();
                 balloonNo.Spawn();
+
+                Faction myFaction = (Faction)GetComponent<PlayerHealth>().PlayerFactionInt.Value;
                 WaterBalloonObject balloon = balloonObj.GetComponent<WaterBalloonObject>();
-                balloon.Initialize(card.Range, card.Damage, OwnerClientId);
+                balloon.Initialize(card.Range, card.Damage, OwnerClientId, myFaction);
                 balloon.Throw(throwDir, card.Speed);
                 break;
         }
@@ -312,7 +317,33 @@ public class PlayerNetwork : NetworkBehaviour
     public void ApplyKnockback_ClientRpc(Vector3 force)
     {
         if (!IsOwner) return;
-        rb.AddForce(force, ForceMode.Impulse);
+
+        rb.isKinematic = true;
+
+        Collider col = GetComponent<Collider>();
+
+        if (col != null) col.isTrigger = false;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        //rb.AddForce(force, ForceMode.Impulse);
+
+        StartCoroutine(ResetPhysics_Co(force));
+    }
+
+    private IEnumerator ResetPhysics_Co(Vector3 force)
+    {
+        yield return null;
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+
+            if (force.sqrMagnitude > 0.001f)
+            {
+                rb.AddForce(force, ForceMode.Impulse);
+            }
+        }
     }
 
     [ClientRpc]
@@ -346,8 +377,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (targetHealth == null) return;
         if (targetHealth.State.Value != PlayerState.Down) return;
 
-        // Dead 상태로 변경
-        targetHealth.State.Value = PlayerState.Dead;
+        targetHealth.Kill();
     }
 
     public void SetCurrentZone(ZoneInteraction zone)

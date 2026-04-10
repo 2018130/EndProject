@@ -19,13 +19,19 @@ public class PlayerInput : MonoBehaviour
     public event Action OnSkipPerformed;
     public event Action OnRevivePerformed;
 
+    public event Action<int> OnWeaponSwap;  //무기 스왑
+
+
+    private bool isInitialized = false;
+
+
     private void Awake()
     {
         TryGetComponent<PlayerNetwork>(out network);
         inputActions = new PlayerInputAction();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (!network.IsOwner)
         {
@@ -35,11 +41,19 @@ public class PlayerInput : MonoBehaviour
 
         inputActions.Player.Enable();
         
+        if (isInitialized) return; // 이벤트 중복 등록 방지
+        isInitialized = true;
+
         // 움직임
         inputActions.Player.Move.performed += context =>
            network.SendMoveInput(context.ReadValue<Vector2>());
         inputActions.Player.Move.canceled += context =>
            network.SendMoveInput(Vector2.zero);
+
+        // 무기 스왑
+        inputActions.Player.Weapon1.performed += context => OnWeaponSwap?.Invoke(0);
+        inputActions.Player.Weapon2.performed += context => OnWeaponSwap?.Invoke(1);
+        inputActions.Player.Weapon3.performed += context => OnWeaponSwap?.Invoke(2);
 
         // 발사
         inputActions.Player.Fire.performed += context => OnFirePerformed?.Invoke();
