@@ -45,7 +45,10 @@ public class CardSelectionUI : MonoBehaviour, IContextListener
 
     public void ShowCards(string[] cardIds)
     {
-        Debug.Log("Show cards");
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         isSelected = false;
 
         currentCardIds = cardIds;
@@ -83,6 +86,9 @@ public class CardSelectionUI : MonoBehaviour, IContextListener
     {
         if (isSelected) return;
         isSelected = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         if (timerCoroutine != null)
             StopCoroutine(timerCoroutine);

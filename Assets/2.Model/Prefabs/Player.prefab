@@ -301,7 +301,7 @@ MonoBehaviour:
   moveSpeed: 5
   jumpForce: 5
   jetpackForce: 8
-  dashForce: 10
+  dashForce: 15
   dashDuration: 0.3
   dashCooldown: 1
   netMoveInput:
@@ -431,7 +431,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponController
   ShowTopMostFoldoutHeaderGroup: 1
-  weapons: []
 --- !u!1 &7912213531098341626
 GameObject:
   m_ObjectHideFlags: 0
