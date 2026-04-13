@@ -97,9 +97,13 @@ public class RangedWeapon : BaseWeapon
         // 총을 쏜 클라이언트는 제외
         projectile.NetworkHide(shooterClientId);
 
+        PlayerHealth shooterHealth = NetworkManager.Singleton.ConnectedClients[shooterClientId]
+    .PlayerObject.GetComponent<PlayerHealth>();
+        Faction ownerFaction = (Faction)shooterHealth.PlayerFactionInt.Value;
+
         // 초기화
         Projectile spawn = projectile.GetComponent<Projectile>();
-        spawn.Initialize(new ProjectileData() { BulletSpeed = weaponData.BulletSpeed, MaxHitCountPerShot = weaponData.MaxHitCountPerShot, OwnerClientId = shooterClientId });
+        spawn.Initialize(new ProjectileData() { BulletSpeed = weaponData.BulletSpeed, MaxHitCountPerShot = weaponData.MaxHitCountPerShot, OwnerClientId = shooterClientId, OwnerFaction = ownerFaction });
 
         // 발사
         spawn.AddForce(shootDir);

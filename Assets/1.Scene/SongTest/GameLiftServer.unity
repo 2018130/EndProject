@@ -268,6 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93f538e3274573e4e99f269844c7b6ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameLiftServerManager
+  isAnywhereMode: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

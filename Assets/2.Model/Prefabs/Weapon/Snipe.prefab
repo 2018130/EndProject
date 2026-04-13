@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rifle
   ShowTopMostFoldoutHeaderGroup: 1
-  id: 02
+  id: 03
   weaponData:
     ID: 01
     WeaponType: 0

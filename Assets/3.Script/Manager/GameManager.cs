@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 public enum GameMode
 {
@@ -11,38 +14,170 @@ public enum GameMode
     Mafia        // 마피아 - 팀 모름, 선택 가능
 }
 
-public class GameManager : SingletonBehaviour<GameManager>, INetworkContextListener
+[Serializable]
+public class PlayerData
+{
+    public string Nickname = "";
+}
+
+public struct PlayerData_s : INetworkSerializable, IEquatable<PlayerData_s>
+{
+    public FixedString32Bytes Nickname;
+
+    public bool IsReady;
+
+    public FixedString32Bytes CharacterID;
+
+    public PlayerData_s(PlayerData playerData, bool isReady, string characterID)
+    {
+        Nickname = playerData.Nickname;
+        IsReady = isReady;
+        CharacterID = characterID;
+    }
+
+    public PlayerData_s(string nickname, bool isReady, string characterID)
+    {
+        Nickname = nickname;
+        IsReady = isReady;
+        CharacterID = characterID;
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref Nickname);
+        serializer.SerializeValue(ref IsReady);
+        serializer.SerializeValue(ref CharacterID);
+    }
+
+    public bool Equals(PlayerData_s other)
+    {
+        return Nickname == other.Nickname && IsReady == other.IsReady && CharacterID == other.CharacterID;
+    }
+}
+
+public class GameManager : SingletonBehaviour<GameManager>
 {
     public SceneContext SceneContext { get; set; } = null;
     public GameMode CurrentGameMode { get; set; } = GameMode.TeamBattle;
 
-    public void OnNetworkSceneContextBuilt()
+    [SerializeField]
+    private PlayerData playerData = new PlayerData();
+    public PlayerData PlayerData => playerData;
+
+    private bool isGameRunning = false;
+
+    private int expectedPlayerCount = 2;
+
+    public event Action<ulong> OnSpawnedPlayerCharacter;
+
+    private void Start()
     {
-        Debug.Log("OnNetworkSceneContextBuilt 호출됨");
-        if (NetworkManager.Singleton.IsServer)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-        }
+        Instance.OnSpawnedPlayerCharacter += OnClientConnected;
+    }
+
+    public void AddKill(ulong killerClientId)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        PlayerHealth health = NetworkManager.Singleton.ConnectedClients[killerClientId]
+            .PlayerObject.GetComponent<PlayerHealth>();
+
+        Faction faction = (Faction)health.PlayerFactionInt.Value;
+
+        GameTimerNetwork.Instance.AddKill(faction);
     }
 
     private void OnClientConnected(ulong clientId)
     {
-        PlayerHealth health = NetworkManager.Singleton.ConnectedClients[clientId]
-        .PlayerObject.GetComponent<PlayerHealth>();
+        if(NetworkManager.Singleton.IsServer)
+        {
+            Debug.Log($"Game manager initialized on server");
+            PlayerHealth[] playerHealthes = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
 
-        // Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
-        Faction faction = Faction.TeamA;
-        health.PlayerFactionInt.Value = (int)faction;
 
-        //StartGame();
-        SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+            // 2. 해당 클라이언트의 PlayerObject에서 컴포넌트를 바로 가져옵니다.
+            PlayerHealth health = null;
+            foreach (var p in playerHealthes)
+            {
+                if (p.GetComponent<NetworkObject>().OwnerClientId == clientId)
+                {
+                    health = p;
+                }
+            }
+
+            if (health != null)
+            {
+                Debug.Log($"[성공] Client {clientId}의 PlayerHealth를 찾았습니다!");
+
+                Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
+                //Faction faction = Faction.TeamA;
+                health.PlayerFactionInt.Value = (int)faction;
+
+                SpawnPlayer(health);
+
+                // 이벤트 구독
+                health.OnDead += OnPlayerDead;
+
+                //if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
+                OnAllPlayersConnected();
+            }
+        }
     }
 
-    public void StartGame()
+    private void OnAllPlayersConnected()
     {
-        Debug.Log($"IsServer: {NetworkManager.Singleton.IsServer}");
-        if (!NetworkManager.Singleton.IsServer) return;
-        Debug.Log("StartCardSelection 호출");
-        SceneContext.GameDataManager.StartCardSelection();
+        Debug.Log("OnAllPlayersConnected 호출됨");
+        GameTimerNetwork.Instance.StartGame();
+
+        // 모든 클라이언트한테 카드 선택 UI
+        foreach (var client in NetworkManager.Singleton.ConnectedClients)
+        {
+            SceneContext.GameDataManager.StartCardSelectionForClient(client.Key);
+
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", client.Key);
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", client.Key);
+            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", client.Key);
+        }
+    }
+
+    private void SpawnPlayer(PlayerHealth health)
+    {
+        if(SceneContext == null)
+        {
+            SceneContext = FindAnyObjectByType<SceneContext>();
+            SceneContext.Initialize();
+        }
+
+    }
+
+    private void OnPlayerDead(PlayerHealth health)
+    {
+        StartCoroutine(RespawnRoutine(health));
+    }
+
+    private IEnumerator RespawnRoutine(PlayerHealth health)
+    {
+        yield return new WaitForSeconds(5f);
+        SpawnPlayer(health);
+        health.Respawn();
+    }
+
+    public void EndGame()
+    {
+        Faction winner = GameTimerNetwork.Instance.TeamAKills.Value >=
+                         GameTimerNetwork.Instance.TeamBKills.Value
+                         ? Faction.TeamA : Faction.TeamB;
+    }
+
+    // 서버에서 실행될 함수
+    public void SpawnPlayerCharacter(ulong clientId)
+    {
+        Debug.Log($"player character가 클라이언트 상 스폰됨을 확인받음 id : {clientId}");
+        OnSpawnedPlayerCharacter?.Invoke(clientId);
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

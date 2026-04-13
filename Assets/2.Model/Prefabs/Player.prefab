@@ -172,9 +172,10 @@ GameObject:
   - component: {fileID: 7874395101249434512}
   - component: {fileID: -1029112328027385072}
   - component: {fileID: 8811993559645148064}
+  - component: {fileID: 954310614772573187}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -303,6 +304,8 @@ MonoBehaviour:
   dashForce: 10
   dashDuration: 0.3
   dashCooldown: 1
+  netMoveInput:
+    m_InternalValue: {x: 0, y: 0}
 --- !u!114 &-4028447985207414986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,6 +418,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSkill
   throwAngle: 0.3
+--- !u!114 &954310614772573187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4293558174537636908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d77a33b31f397746bf5645d744ddfa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponController
+  ShowTopMostFoldoutHeaderGroup: 1
+  weapons: []
 --- !u!1 &7912213531098341626
 GameObject:
   m_ObjectHideFlags: 0

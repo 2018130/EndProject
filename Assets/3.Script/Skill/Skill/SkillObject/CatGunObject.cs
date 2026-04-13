@@ -11,6 +11,8 @@ public class CatGunObject : NetworkBehaviour
 
     private float duration;
     private float damage;
+    private ulong ownerClientId;
+    private Faction ownerFaction;
 
     public override void OnNetworkSpawn()
     {
@@ -21,10 +23,12 @@ public class CatGunObject : NetworkBehaviour
         DrawCircle();
     }
 
-    public void Initialize(float duration, float damage)
+    public void Initialize(float duration, float damage, ulong ownerClientId, Faction ownerFaction)
     {
         this.duration = duration;
         this.damage = damage;
+        this.ownerClientId = ownerClientId;
+        this.ownerFaction = ownerFaction;  
         StartCoroutine(LifeRoutine());
         StartCoroutine(FireRoutine());
     }
@@ -61,8 +65,11 @@ public class CatGunObject : NetworkBehaviour
 
             foreach (var hit in hits)
             {
+
+                if (!hit.TryGetComponent(out PlayerHealth ph)) continue;
+                //if (ph.OwnerClientId == ownerClientId) continue;  // 자기 자신 제외
                 float dist = Vector3.Distance(transform.position, hit.transform.position);
-                if (dist < closestDist && hit.TryGetComponent(out PlayerHealth ph))
+                if (dist < closestDist)
                 {
                     closestDist = dist;
                     closest = ph;
@@ -72,7 +79,7 @@ public class CatGunObject : NetworkBehaviour
             if (closest != null)
             {
                 // 레이저 이펙트 (나중에 추가)
-                closest.TakeDamage(damage);
+                closest.TakeDamage(damage, ownerFaction, ownerClientId);
             }
 
             yield return new WaitForSeconds(fireRate);

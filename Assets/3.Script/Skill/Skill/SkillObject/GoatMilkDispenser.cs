@@ -98,6 +98,7 @@ public class GoatMilkDispenser : NetworkBehaviour
                     {
                         float targetHP = player.Hp.Value + healAmount;
                         player.Hp.Value = Mathf.Min(targetHP, player.maxHp);
+                        Debug.Log($"player hp : {targetHP}");
                     }
                 }
             }

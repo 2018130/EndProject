@@ -59,7 +59,7 @@ public class SharkTube : NetworkBehaviour
         Rigidbody pRb = targetDriver.GetComponent<Rigidbody>();
         if (pRb != null)
         {
-            pRb.isKinematic = isInside;
+            //pRb.isKinematic = isInside;
             pRb.linearVelocity = Vector3.zero;
         }
     }
@@ -80,7 +80,8 @@ public class SharkTube : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (driver != null) moveInput = driver.GetMoveInput();
+        //if (driver != null) moveInput = driver.GetMoveInput();
+        if (driver != null) moveInput = driver.netMoveInput.Value;
 
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
@@ -109,13 +110,13 @@ public class SharkTube : NetworkBehaviour
 
         if (other.CompareTag("Player"))
         {
-            PlayerNetwork passenger = other.GetComponent<PlayerNetwork>();
+            PlayerNetwork targetPlayer = other.GetComponent<PlayerNetwork>();
 
-            if(passenger != null && driver != passenger)
+            if(targetPlayer != null && driver != targetPlayer)
             {
-                Vector3 knockbackDir = (passenger.transform.position - transform.position).normalized;
+                Vector3 knockbackDir = (targetPlayer.transform.position - transform.position).normalized;
                 knockbackDir.y = 0;
-                passenger.GetComponent<PlayerNetwork>().ApplyKnockback_ClientRpc(knockbackDir * knockbackPower);
+                targetPlayer.ApplyKnockback_ClientRpc(knockbackDir * knockbackPower);
             }
             //playernetwork ÀÇ ApplyKnockback_ClientRpc »ç¿ë
         }

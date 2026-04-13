@@ -10,19 +10,21 @@ public class PenguinChargeObject : NetworkBehaviour
     // 3√ 
     private Rigidbody rb;
     private float speed;  
-    private float damage; 
+    private float damage;
     private ulong ownerClientId;
+    private Faction ownerFaction;
 
     private void Awake()
     {
         TryGetComponent(out rb);
     }
 
-    public void Initialize(float speed, float damage, Vector3 dir, ulong ownerClientId)
+    public void Initialize(float speed, float damage, Vector3 dir, ulong ownerClientId, Faction ownerFaction)
     {
         this.speed = speed;
         this.damage = damage;
         this.ownerClientId = ownerClientId;
+        this.ownerFaction = ownerFaction;
         rb.AddForce(dir * speed, ForceMode.Impulse);
         StartCoroutine(LifeRoutine());
     }
@@ -37,7 +39,7 @@ public class PenguinChargeObject : NetworkBehaviour
 
             // HP 10
             PlayerHealth health = player.GetComponent<PlayerHealth>();
-            health.TakeDamage(damage);
+            health.TakeDamage(damage, ownerFaction, ownerClientId);
 
             // ≥ÀπÈ
             Vector3 knockbackDir = (player.transform.position - transform.position).normalized;
