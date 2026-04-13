@@ -40,15 +40,12 @@ public class PlayerInput : MonoBehaviour
         }
 
         inputActions.Player.Enable();
-
-        Debug.Log("1111");
+        Debug.Log(inputActions.Player);
         if (isInitialized) return; // 이벤트 중복 등록 방지
         isInitialized = true;
 
-        Debug.Log("2222");
         // 움직임
-        inputActions.Player.Move.performed += context =>
-           network.SendMoveInput(context.ReadValue<Vector2>());
+        inputActions.Player.Move.performed += context => network.SendMoveInput(context.ReadValue<Vector2>());
         inputActions.Player.Move.canceled += context =>
            network.SendMoveInput(Vector2.zero);
 
@@ -93,6 +90,9 @@ public class PlayerInput : MonoBehaviour
 
     void OnDisable()
     {
-        inputActions?.Player.Disable();
+        if(isInitialized)
+        {
+            //inputActions?.Player.Disable();
+        }
     }
 }
