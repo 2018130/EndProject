@@ -37,6 +37,9 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         // 시네머신 카메라 연결
         CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
         if (virtualCam != null)
@@ -51,6 +54,14 @@ public class PlayerNetwork : NetworkBehaviour
             playerInput.OnRevivePerformed += () => currentZone?.TryRevive();
             playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
+    }
+
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void Update()
@@ -73,14 +84,21 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 camForward = Camera.main.transform.forward;
+        Vector3 camRight = Camera.main.transform.right;
+        camForward.y = 0; camForward.Normalize();
+        camRight.y = 0; camRight.Normalize();
+        Vector3 move = camForward * moveInput.y + camRight * moveInput.x;
+
+
+        //Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         // 이동 방향으로 회전
         if (move.magnitude > 0.1f)
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
-                Quaternion.LookRotation(move),
+            Quaternion.LookRotation(camForward),
                 0.15f
             );
 
@@ -175,7 +193,13 @@ public class PlayerNetwork : NetworkBehaviour
         Vector3 dashDir;
         if (moveInput != Vector2.zero)
         {
-            dashDir = new Vector3(moveInput.x, 0, moveInput.y);
+            Vector3 camForward = Camera.main.transform.forward;
+            Vector3 camRight = Camera.main.transform.right;
+            camForward.y = 0; camForward.Normalize();
+            camRight.y = 0; camRight.Normalize();
+            dashDir = camForward * moveInput.y + camRight * moveInput.x;
+
+            //dashDir = new Vector3(moveInput.x, 0, moveInput.y);
         }
         else
         {
@@ -199,6 +223,7 @@ public class PlayerNetwork : NetworkBehaviour
         yield return new WaitForSeconds(dashDuration);
         isDashing = false;
     }
+
 
     public bool IsGrounded()
     {
