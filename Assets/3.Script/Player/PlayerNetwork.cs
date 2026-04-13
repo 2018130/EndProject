@@ -327,7 +327,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void ReviveAlly_ServerRpc(ulong targetClientId)
     {
         if (!NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(targetClientId, out NetworkClient client)) return;
+            .TryGetValue(targetClientId, out Unity.Netcode.NetworkClient client)) return;
 
         PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
         if (targetHealth == null) return;
@@ -340,7 +340,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void ExecuteEnemy_ServerRpc(ulong targetClientId)
     {
         if (!NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(targetClientId, out NetworkClient client)) return;
+            .TryGetValue(targetClientId, out Unity.Netcode.NetworkClient client)) return;
 
         PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
         if (targetHealth == null) return;
