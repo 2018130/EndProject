@@ -84,8 +84,11 @@ public class GameDataManager : NetworkBehaviour
         if (weapon is RangedWeapon rangedWeapon)
             rangedWeapon.InitializeAfterEquip();
 
-        WeaponController weaponController = client.PlayerObject.GetComponent<WeaponController>();
-        weaponController?.RegisterWeapon(weapon);
+        if(client.PlayerObject != null)
+        {
+            WeaponController weaponController = client.PlayerObject.GetComponent<WeaponController>();
+            weaponController?.RegisterWeapon(weapon);
+        }
     }
 
     public CardData GetCardData(string id)
@@ -146,7 +149,7 @@ public class GameDataManager : NetworkBehaviour
         ApplySkill_ClientRpc(cardId, clientId);
 
         if (NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(clientId, out NetworkClient client))
+            .TryGetValue(clientId, out Unity.Netcode.NetworkClient client))
         {
             PlayerHealth health = client.PlayerObject.GetComponent<PlayerHealth>();
             Debug.Log($"PlayerHealth: {health}"); // null인지 확인

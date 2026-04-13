@@ -31,7 +31,7 @@ public class PlayerInput : MonoBehaviour
         inputActions = new PlayerInputAction();
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (!network.IsOwner)
         {
@@ -40,10 +40,12 @@ public class PlayerInput : MonoBehaviour
         }
 
         inputActions.Player.Enable();
-        
+
+        Debug.Log("1111");
         if (isInitialized) return; // 이벤트 중복 등록 방지
         isInitialized = true;
 
+        Debug.Log("2222");
         // 움직임
         inputActions.Player.Move.performed += context =>
            network.SendMoveInput(context.ReadValue<Vector2>());

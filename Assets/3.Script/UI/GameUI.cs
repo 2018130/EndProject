@@ -36,7 +36,7 @@ public class GameUI : MonoBehaviour
         // 한 번만 실행
         GameTimerNetwork.Instance.TimeRemaining.OnValueChanged -= OnGameStarted;
 
-        if (NetworkManager.Singleton.LocalClient == null) return;
+        if (NetworkManager.Singleton.LocalClient == null || NetworkManager.Singleton.IsServer) return;
 
         PlayerHealth health = NetworkManager.Singleton.LocalClient
             .PlayerObject.GetComponent<PlayerHealth>();

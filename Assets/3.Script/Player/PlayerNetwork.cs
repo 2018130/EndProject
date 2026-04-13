@@ -35,6 +35,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        SpawnPlayerCall_Rpc(OwnerClientId);
         if (!IsOwner) return;
 
         // 시네머신 카메라 연결
@@ -51,6 +52,15 @@ public class PlayerNetwork : NetworkBehaviour
             playerInput.OnRevivePerformed += () => currentZone?.TryRevive();
             playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
+
+    }
+
+    [Rpc(SendTo.Server)]
+    private void SpawnPlayerCall_Rpc(ulong clientId)
+    {
+        Debug.Log($"{clientId} player가 클라이언트에 스폰되었습니다");
+
+        GameManager.Instance.SpawnPlayerCharacter(clientId);
     }
 
     private void Update()
@@ -123,7 +133,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void SendMoveInput(Vector2 input)
     {
         moveInput = input;
-
+        Debug.Log(moveInput);
         if (IsOwner)
         {
             SendMoveInputServerRpc(input);
@@ -358,7 +368,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void ReviveAlly_ServerRpc(ulong targetClientId)
     {
         if (!NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(targetClientId, out NetworkClient client)) return;
+            .TryGetValue(targetClientId, out Unity.Netcode.NetworkClient client)) return;
 
         PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
         if (targetHealth == null) return;
@@ -371,7 +381,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void ExecuteEnemy_ServerRpc(ulong targetClientId)
     {
         if (!NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(targetClientId, out NetworkClient client)) return;
+            .TryGetValue(targetClientId, out Unity.Netcode.NetworkClient client)) return;
 
         PlayerHealth targetHealth = client.PlayerObject.GetComponent<PlayerHealth>();
         if (targetHealth == null) return;

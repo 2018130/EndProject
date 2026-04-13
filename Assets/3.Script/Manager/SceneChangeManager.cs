@@ -9,10 +9,11 @@ using UnityEngine.SceneManagement;
 
 public enum SceneType
 {
-    SignScene,
     TitleScene,
+    SignScene,
     LobbyScene,
-    GameScene,
+    RoomScene,
+    IngameScene,
 }
 
 public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
@@ -85,20 +86,16 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
 
     public void ChangeSceneForMultiPlay(SceneType sceneType)
     {
-        if (!NetworkManager.Singleton.IsServer)
-            return;
-
         string scenePath = SceneUtility.GetScenePathByBuildIndex((int)sceneType);
         string sceneName = Path.GetFileNameWithoutExtension(scenePath);
 
         Debug.Log($"Change scene name : {sceneName}");
 
         SceneEventProgressStatus status = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
-
     }
     
 
-    private void BroadcastingSceneContextBuilt()
+    public void BroadcastingSceneContextBuilt()
     {
         IContextListener[] myInterfaces = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).
                                             OfType<IContextListener>().ToArray();
@@ -109,7 +106,7 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
         }
     }
 
-    private void BroadcastingNetworkSceneContextBuilt()
+    public void BroadcastingNetworkSceneContextBuilt()
     {
         INetworkContextListener[] myInterfaces = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None).
                                             OfType<INetworkContextListener>().ToArray();

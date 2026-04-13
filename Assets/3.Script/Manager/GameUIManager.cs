@@ -12,6 +12,7 @@ public class GameUIManager : MonoBehaviour, INetworkContextListener
 
     public void OnNetworkSceneContextBuilt()
     {
+        /*
         for (int i = 0; i < spawnBtn.Count; i++)
         {
             string weaponId = "0" + (i + 1);
@@ -20,6 +21,6 @@ public class GameUIManager : MonoBehaviour, INetworkContextListener
                 GameManager.Instance.SceneContext.GameDataManager.SpawnWeapon_ServerRpc(weaponId, ClientIdChecker.OwnedClientId);
                 Debug.Log($"Spawn weapon id : {weaponId} owner client id : {ClientIdChecker.OwnedClientId}");
             });
-        }
+        }*/
     }
 }

@@ -45,6 +45,7 @@ public class CardSelectionUI : MonoBehaviour, IContextListener
 
     public void ShowCards(string[] cardIds)
     {
+        Debug.Log("Show cards");
         isSelected = false;
 
         currentCardIds = cardIds;

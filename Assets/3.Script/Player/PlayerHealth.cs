@@ -41,7 +41,10 @@ public class PlayerHealth : NetworkBehaviour
     NetworkVariableWritePermission.Server
 );
 
-
+    private void Start()
+    {
+        GameManager.Instance.OnSpawnedPlayerCharacter += InitializeOnSpawned;
+    }
     public override void OnNetworkSpawn()
     {
         Hp.OnValueChanged += onHPChanged;
@@ -52,6 +55,15 @@ public class PlayerHealth : NetworkBehaviour
             HealthUI healthUI = FindAnyObjectByType<HealthUI>();
             healthUI?.SetPlayer(this);
         }
+    }
+
+    public void InitializeOnSpawned(ulong clientId)
+    {
+        Debug.Log($"PlayerHealth initialzed {clientId}");
+        Faction faction = (Faction)PlayerFactionInt.Value;
+        Vector3 spawnPos = GameManager.Instance.SceneContext.SpawnAreaManager.GetSpawnPosition(faction);
+        TeleportToSpawnClientRpc(spawnPos);
+        DisableInputClientRpc();
     }
 
     private void onHPChanged(float oldVal, float newVal)
@@ -187,6 +199,7 @@ public class PlayerHealth : NetworkBehaviour
     [ClientRpc]
     public void TeleportToSpawnClientRpc(Vector3 spawnPos)
     {
+        Debug.Log($"Spawn : {gameObject}");
         transform.position = spawnPos;
 
         foreach (var renderer in GetComponentsInChildren<Renderer>())

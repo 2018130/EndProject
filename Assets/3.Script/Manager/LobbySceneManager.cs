@@ -144,10 +144,11 @@ public class LobbySceneManager : NetworkBehaviour
     }
     #endregion
 
-    public void GoToInGameScene()
+    [Rpc(SendTo.Server)]
+    public void GoToInGameScene_Rpc()
     {
         Debug.Log($"Go to ingame scene");
-        SceneChangeManager.Instance.ChangeSceneForMultiPlay(SceneType.GameScene);
+        SceneChangeManager.Instance.ChangeSceneForMultiPlay(SceneType.IngameScene);
     }
 
     private void RefreshUserUI()
