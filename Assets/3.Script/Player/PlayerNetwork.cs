@@ -113,7 +113,9 @@ public class PlayerNetwork : NetworkBehaviour
             );
 
         // 애니메이션
-        //animator.SetBool("IsMoving", move != Vector3.zero);
+        Vector3 localMove = transform.InverseTransformDirection(move);
+        animator.SetFloat("X", localMove.x);  // 좌우
+        animator.SetFloat("Y", localMove.z);  // 앞뒤
 
         if (isJetpacking)
         {
