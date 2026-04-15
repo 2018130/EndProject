@@ -14,19 +14,7 @@ public abstract class BaseWeapon : NetworkBehaviour, INetworkContextListener
 
     protected virtual void Awake()
     {
-<<<<<<< HEAD
-=======
-        
->>>>>>> parent of ee2630b (Revert "[0414] Edit PlayerMove")
     }
-
-    public override void OnNetworkSpawn()
-    {
-        // SceneContext가 준비된 후 초기화
-        if (GameManager.Instance?.SceneContext?.GameDataManager != null)
-            weaponData = GameManager.Instance.SceneContext.GameDataManager.GetWeaponData(id);
-    }
-
 
     public abstract void Attack();
 

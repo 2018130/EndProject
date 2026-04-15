@@ -38,12 +38,7 @@ public class WeaponController : NetworkBehaviour
 
         // 첫 번째 무기만 활성화
         if (_weapons.Count == 1)
-        {
             weapon.gameObject.SetActive(true);
-            if (weapon is RangedWeapon rangedWeapon)
-                rangedWeapon.InitializeAfterEquip();
-        }
-
     }
 
     private void HandleWeaponSwap(int index)
@@ -65,10 +60,6 @@ public class WeaponController : NetworkBehaviour
             _weapons[prev].gameObject.SetActive(false);
 
         if (current < _weapons.Count)
-        {
             _weapons[current].gameObject.SetActive(true);
-            if (_weapons[current] is RangedWeapon rangedWeapon)
-                rangedWeapon.InitializeAfterEquip();
-        }
     }
 }

@@ -10,8 +10,9 @@ public class RangedWeapon : BaseWeapon
     [SerializeField]
     private NetworkObject waterPrefab;
 
+    private DateTime lastShootTime = DateTime.MinValue;
     private PlayerInput playerInput;
-    private float lastShootTime = -999f;
+
 
     protected override void Awake()
     {
@@ -30,15 +31,12 @@ public class RangedWeapon : BaseWeapon
     public void InitializeAfterEquip()
     {
         if (!IsOwner) return;
-        Debug.Log($"InitializeAfterEquip 호출 - {gameObject.name}");
+
         playerInput = GetComponentInParent<PlayerInput>();
-        Debug.Log($"InitializeAfterEquip 호출됨 - 횟수 확인");
+        Debug.Log($"InitializeAfterEquip - PlayerInput 찾음: {playerInput != null}");
 
         if (playerInput != null)
-        {
-            playerInput.OnFirePerformed -= Attack;
             playerInput.OnFirePerformed += Attack;
-        }
     }
 
     public override void OnNetworkDespawn()
@@ -51,9 +49,12 @@ public class RangedWeapon : BaseWeapon
 
     public override void Attack()
     {
-        if (Time.time - lastShootTime < 1f / weaponData.FireRate) return;
-        lastShootTime = Time.time;
-        Shoot(transform.forward);
+
+        if (DateTime.Now.Subtract(lastShootTime) >= TimeSpan.FromSeconds(1 / weaponData.FireRate))
+        {
+            Shoot(transform.forward);
+            lastShootTime = DateTime.Now;
+        }
     }
 
     private void Shoot(Vector3 shootDir)
@@ -66,8 +67,8 @@ public class RangedWeapon : BaseWeapon
         if (playerWater == null || !playerWater.HasWater()) return;
 
         // 물 있으면 클라이언트 예측 스폰
-        // Projectile bullet = SpawnBullet();
-        //bullet.AddForce(shootDir);
+        Projectile bullet = SpawnBullet();
+        bullet.AddForce(shootDir);
 
 
         ShootProjectileRpc(NetworkManager.Singleton.LocalClientId, shootDir);
@@ -77,11 +78,7 @@ public class RangedWeapon : BaseWeapon
     {
         NetworkObject projectile = Instantiate(waterPrefab, waterSpawnPoint.position, waterSpawnPoint.rotation);
         projectile.GetComponent<Projectile>().
-            Initialize(new ProjectileData() { 
-                BulletSpeed = weaponData.BulletSpeed,
-                MaxHitCountPerShot = weaponData.MaxHitCountPerShot,
-                GravityStartDistance = weaponData.GravityStartDistance
-            });
+            Initialize(new ProjectileData() { BulletSpeed = weaponData.BulletSpeed, MaxHitCountPerShot = weaponData.MaxHitCountPerShot });
 
         return projectile.GetComponent<Projectile>();
     }
@@ -89,8 +86,6 @@ public class RangedWeapon : BaseWeapon
     [Rpc(SendTo.Server)]
     private void ShootProjectileRpc(ulong shooterClientId, Vector3 shootDir)
     {
-        Debug.Log($"waterSpawnPoint 위치: {waterSpawnPoint.position}, shootDir: {shootDir}");
-
         PlayerWater playerWater = NetworkManager.Singleton.ConnectedClients[OwnerClientId]
     .PlayerObject.GetComponent<PlayerWater>();
 
@@ -99,13 +94,8 @@ public class RangedWeapon : BaseWeapon
         // 스폰
         NetworkObject projectile = Instantiate(waterPrefab, waterSpawnPoint.position, waterSpawnPoint.rotation);
         projectile.Spawn();
-
-        Debug.Log($"Projectile 스폰됨 - NetworkObjectId: {projectile.NetworkObjectId}, 위치: {projectile.transform.position}");
         // 총을 쏜 클라이언트는 제외
-        //if (!NetworkManager.Singleton.IsHost || shooterClientId != NetworkManager.Singleton.LocalClientId)
-        //{
-        //    projectile.NetworkHide(shooterClientId);
-        //}
+        projectile.NetworkHide(shooterClientId);
 
         PlayerHealth shooterHealth = NetworkManager.Singleton.ConnectedClients[shooterClientId]
     .PlayerObject.GetComponent<PlayerHealth>();
@@ -113,14 +103,7 @@ public class RangedWeapon : BaseWeapon
 
         // 초기화
         Projectile spawn = projectile.GetComponent<Projectile>();
-        spawn.Initialize(new ProjectileData() {
-            BulletSpeed = weaponData.BulletSpeed,
-            MaxHitCountPerShot = weaponData.MaxHitCountPerShot,
-            OwnerClientId = shooterClientId,
-            OwnerFaction = ownerFaction,
-            GravityStartDistance = weaponData.GravityStartDistance,
-            Damage = weaponData.Damage
-        });
+        spawn.Initialize(new ProjectileData() { BulletSpeed = weaponData.BulletSpeed, MaxHitCountPerShot = weaponData.MaxHitCountPerShot, OwnerClientId = shooterClientId, OwnerFaction = ownerFaction });
 
         // 발사
         spawn.AddForce(shootDir);
