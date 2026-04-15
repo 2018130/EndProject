@@ -14,10 +14,6 @@ public abstract class BaseWeapon : NetworkBehaviour, INetworkContextListener
 
     protected virtual void Awake()
     {
-<<<<<<< HEAD
-=======
-        
->>>>>>> parent of ee2630b (Revert "[0414] Edit PlayerMove")
     }
 
     public override void OnNetworkSpawn()
