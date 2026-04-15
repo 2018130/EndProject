@@ -10,6 +10,8 @@ public struct ProjectileData
     public Faction OwnerFaction;
     public int MaxHitCountPerShot;
     public float BulletSpeed;
+    public float GravityStartDistance;
+    public float Damage;
 }
 
 public class Projectile : NetworkBehaviour
@@ -18,18 +20,30 @@ public class Projectile : NetworkBehaviour
 
     private Rigidbody rb;
 
-    private Combat combat;
+    private Vector3 startPosition;
+    private bool gravityEnabled = false;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        combat = GetComponent<Combat>();
+        rb.useGravity = false;
     }
 
     public override void OnNetworkSpawn()
     {
         if (!IsServer) return;
         StartCoroutine(AutoDespawn());
+    }
+
+    private void Update()
+    {
+        if (gravityEnabled) return;
+
+        if (Vector3.Distance(startPosition, transform.position) >= projectileData.GravityStartDistance)
+        {
+            rb.useGravity = true;
+            gravityEnabled = true;
+        }
     }
 
     private IEnumerator AutoDespawn()
@@ -45,7 +59,7 @@ public class Projectile : NetworkBehaviour
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
             playerHealth.TakeDamage(
-                combat.CombatData.Damage,
+                projectileData.Damage,
                 projectileData.OwnerFaction,
                 projectileData.OwnerClientId
             );

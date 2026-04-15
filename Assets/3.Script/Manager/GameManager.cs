@@ -75,13 +75,21 @@ public class GameManager : SingletonBehaviour<GameManager>
     [SerializeField]
     private int expectedPlayerCount = 2;
 
+<<<<<<< HEAD
     private int spawnedClientCount = 0;
 
+=======
+    private HashSet<ulong> _initializedClients = new HashSet<ulong>();
+>>>>>>> parent of ee2630b (Revert "[0414] Edit PlayerMove")
     public event Action<ulong> OnSpawnedPlayerCharacter;
 
     private void Start()
     {
+<<<<<<< HEAD
         playerData = new PlayerData() { Nickname = UnityEngine.Random.Range(0, 10000).ToString() };
+=======
+        Instance.OnSpawnedPlayerCharacter -= OnClientConnected;
+>>>>>>> parent of ee2630b (Revert "[0414] Edit PlayerMove")
         Instance.OnSpawnedPlayerCharacter += OnClientConnected;
     }
 
@@ -99,10 +107,18 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private void OnClientConnected(ulong clientId)
     {
+<<<<<<< HEAD
         if(NetworkManager.Singleton.IsServer)
         {
             spawnedClientCount++;
             Debug.Log($"Game manager initialized on server {clientId}");
+=======
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (_initializedClients.Contains(clientId)) return;
+        _initializedClients.Add(clientId);
+
+        Debug.Log($"Game manager initialized on server");
+>>>>>>> parent of ee2630b (Revert "[0414] Edit PlayerMove")
             PlayerHealth[] playerHealthes = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
             
             // 2. 해당 클라이언트의 PlayerObject에서 컴포넌트를 바로 가져옵니다.
@@ -128,13 +144,28 @@ public class GameManager : SingletonBehaviour<GameManager>
                 // 이벤트 구독
                 health.OnDead += OnPlayerDead;
 
+<<<<<<< HEAD
                 Debug.Log(expectedPlayerCount + " " + spawnedClientCount);
                 if (expectedPlayerCount <= spawnedClientCount)
                     OnAllPlayersConnected();
             }
+=======
+                //if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
+                //OnAllPlayersConnected();
+
+                SpawnWeaponsForClient(clientId);
+                SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+                GameTimerNetwork.Instance.StartGame();
+
+>>>>>>> parent of ee2630b (Revert "[0414] Edit PlayerMove")
         }
     }
-
+    private void SpawnWeaponsForClient(ulong clientId)
+    {
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", clientId);
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", clientId);
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", clientId);
+    }
     private void OnAllPlayersConnected()
     {
         Debug.Log("OnAllPlayersConnected 호출됨");
