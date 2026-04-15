@@ -7,23 +7,49 @@ using UnityEngine;
 
 public class NicknameViewer : NetworkBehaviour
 {
-    NetworkObject owner;
+    [SerializeField]
+    private NetworkObject owner;
 
     [SerializeField]
     private TMP_Text nicknameText;
 
-    private static List<ulong> initalizedClientId = new List<ulong>();
+    [SerializeField]
+    private Vector3 offset;
+
+    [SerializeField]
+    private Vector3 endOffset;
+
+    private static List<ulong> initalizedClientId;
+
+    private bool isEnding = false;
+
     private void Awake()
     {
+        isEnding = false;
+        initalizedClientId = new List<ulong>();
         GameManager.Instance.OnSpawnedPlayerCharacter += InitViewer_Rpc;
+        GameManager.Instance.OnEndGame += OnEndingStart;
+    }
+
+    private void OnEndingStart(Faction faction)
+    {
+        if (owner == null)
+            return;
+
+        RectTransform rect = GetComponent<RectTransform>();
+        rect.sizeDelta =  new Vector2(20f, 8);
+        isEnding = true;
     }
 
     [Rpc(SendTo.ClientsAndHost)]
     public void InitViewer_Rpc(ulong clientId)
     {
+        if (owner != null)
+            return;
+
         foreach (ulong visitId in initalizedClientId)
         {
-            Debug.Log($"visit : {visitId}");
+            Debug.Log($"visit : {visitId} {visitId}");
             if (visitId == clientId)
                 return;
         }
@@ -34,10 +60,10 @@ public class NicknameViewer : NetworkBehaviour
             if (spawnedObj.IsPlayerObject && spawnedObj.OwnerClientId == clientId)
             {
                 owner = spawnedObj;
-                Debug.Log(clientId + " " + owner.OwnerClientId);
 
                 foreach (var player in FindObjectsByType<NetworkPlayer>(FindObjectsSortMode.None))
                 {
+                    Debug.Log($"{gameObject} nickname : {player.OwnerClientId} {clientId}");
                     if (player.OwnerClientId == clientId)
                     {
                         nicknameText.text = player.Nickname;
@@ -54,7 +80,7 @@ public class NicknameViewer : NetworkBehaviour
     {
         if(owner != null)
         {
-            transform.position = owner.transform.position;
+            transform.position = isEnding? owner.transform.position + endOffset : owner.transform.position + offset;
         }  
     }
 }

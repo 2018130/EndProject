@@ -116,8 +116,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 257084536
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 971641307
+  InScenePlacedSourceGlobalObjectIdHash: 257084536
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
@@ -137,6 +137,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 21427199994022129}
     m_Modifications:
+    - target: {fileID: 3986122387081945406, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 532025053
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986122387081945406, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986122387081945406, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 257084536
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585337308951002736, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: endOffset.y
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -163,11 +179,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -221,8 +237,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Nickname (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: -7206795707126246670, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+    - target: {fileID: 7705982149801752196, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2898725884
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -240,6 +259,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 21427199994022129}
     m_Modifications:
+    - target: {fileID: 3986122387081945406, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3013375379
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986122387081945406, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986122387081945406, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 257084536
+      objectReference: {fileID: 0}
+    - target: {fileID: 4585337308951002736, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: endOffset.y
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -266,11 +301,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5048341687801171482, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -324,8 +359,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Nickname
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: -7206795707126246670, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+    - target: {fileID: 7705982149801752196, guid: 3b4d58fca798c2843a427ae341f0b1e9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2032704632
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
