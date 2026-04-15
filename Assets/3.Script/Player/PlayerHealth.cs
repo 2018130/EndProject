@@ -59,6 +59,9 @@ public class PlayerHealth : NetworkBehaviour
 
     public void InitializeOnSpawned(ulong clientId)
     {
+        if (NetworkManager.Singleton.LocalClientId != clientId)
+            return;
+
         Debug.Log($"PlayerHealth initialzed {clientId}");
         Faction faction = (Faction)PlayerFactionInt.Value;
         Vector3 spawnPos = GameManager.Instance.SceneContext.SpawnAreaManager.GetSpawnPosition(faction);
