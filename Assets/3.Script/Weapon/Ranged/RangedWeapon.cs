@@ -38,8 +38,6 @@ public class RangedWeapon : BaseWeapon
         if (playerInput != null)
             playerInput.OnFirePerformed += Attack;
 
-        }
-
             Debug.Log($"InitializeAfterEquip È£ÃâµÊ - ¹«±â: {gameObject.name}");
         
     }
