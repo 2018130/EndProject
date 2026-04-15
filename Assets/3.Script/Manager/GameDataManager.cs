@@ -70,10 +70,6 @@ public class GameDataManager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void EquipWeapon_ClientRpc(ulong weaponNetworkId, ulong clientId)
     {
-<<<<<<< Updated upstream
-=======
-        // 자기 클라이언트만 처리
->>>>>>> Stashed changes
         if (NetworkManager.Singleton.LocalClientId != clientId) return;
 
         if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects

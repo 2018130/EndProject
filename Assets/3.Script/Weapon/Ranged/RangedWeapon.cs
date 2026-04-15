@@ -30,31 +30,25 @@ public class RangedWeapon : BaseWeapon
     public void InitializeAfterEquip()
     {
         if (!IsOwner) return;
-<<<<<<< Updated upstream
         Debug.Log($"InitializeAfterEquip 호출 - {gameObject.name}");
         playerInput = GetComponentInParent<PlayerInput>();
-        Debug.Log($"InitializeAfterEquip 호출됨 - 횟수 확인");
 
-=======
-        playerInput = GetComponentInParent<PlayerInput>();
->>>>>>> Stashed changes
         if (playerInput != null)
         {
             playerInput.OnFirePerformed -= Attack;
             playerInput.OnFirePerformed += Attack;
-<<<<<<< Updated upstream
+
         }
-=======
 
             Debug.Log($"InitializeAfterEquip 호출됨 - 무기: {gameObject.name}");
-        }
+        
     }
 
     public void UnsubscribeInput()
     {
         if (playerInput != null)
             playerInput.OnFirePerformed -= Attack;
->>>>>>> Stashed changes
+
     }
 
     public override void OnNetworkDespawn()
@@ -80,15 +74,6 @@ public class RangedWeapon : BaseWeapon
         Debug.Log($"PlayerWater 찾음: {playerWater != null}");
 
         if (playerWater == null || !playerWater.HasWater()) return;
-
-        // 물 있으면 클라이언트 예측 스폰
-<<<<<<< Updated upstream
-        // Projectile bullet = SpawnBullet();
-=======
-        //Projectile bullet = SpawnBullet();
->>>>>>> Stashed changes
-        //bullet.AddForce(shootDir);
-
 
         ShootProjectileRpc(NetworkManager.Singleton.LocalClientId, shootDir);
     }
@@ -121,15 +106,6 @@ public class RangedWeapon : BaseWeapon
         projectile.Spawn();
 
         Debug.Log($"Projectile 스폰됨 - NetworkObjectId: {projectile.NetworkObjectId}, 위치: {projectile.transform.position}");
-        // 총을 쏜 클라이언트는 제외
-<<<<<<< Updated upstream
-        //if (!NetworkManager.Singleton.IsHost || shooterClientId != NetworkManager.Singleton.LocalClientId)
-        //{
-        //    projectile.NetworkHide(shooterClientId);
-        //}
-=======
-        //projectile.NetworkHide(shooterClientId);
->>>>>>> Stashed changes
 
         PlayerHealth shooterHealth = NetworkManager.Singleton.ConnectedClients[shooterClientId]
     .PlayerObject.GetComponent<PlayerHealth>();

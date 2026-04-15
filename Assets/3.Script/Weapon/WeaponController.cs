@@ -42,16 +42,11 @@ public class WeaponController : NetworkBehaviour
         if (_weapons.Count == 1)
         {
             weapon.gameObject.SetActive(true);
-<<<<<<< Updated upstream
-            if (weapon is RangedWeapon rangedWeapon)
-                rangedWeapon.InitializeAfterEquip();
-        }
 
-=======
             if (IsOwner && weapon is RangedWeapon rangedWeapon)
                 rangedWeapon.InitializeAfterEquip();
         }
->>>>>>> Stashed changes
+
     }
 
     private void HandleWeaponSwap(int index)
@@ -79,11 +74,8 @@ public class WeaponController : NetworkBehaviour
         if (current < _weapons.Count)
         {
             _weapons[current].gameObject.SetActive(true);
-<<<<<<< Updated upstream
-            if (_weapons[current] is RangedWeapon rangedWeapon)
-=======
+
             if (IsOwner && _weapons[current] is RangedWeapon rangedWeapon)
->>>>>>> Stashed changes
                 rangedWeapon.InitializeAfterEquip();
         }
     }

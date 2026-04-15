@@ -137,37 +137,15 @@ public class GameManager : SingletonBehaviour<GameManager>
                 // 이벤트 구독
                 health.OnDead += OnPlayerDead;
 
-<<<<<<< Updated upstream
-
-=======
                 SpawnWeaponsForClient(clientId); // 개별로
                 SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
                 GameTimerNetwork.Instance.StartGame();
->>>>>>> Stashed changes
+
             }
-
-                //if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
-                //OnAllPlayersConnected();
-
-                SpawnWeaponsForClient(clientId);
-                SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
-                GameTimerNetwork.Instance.StartGame();
-
 
         }
     }
-<<<<<<< Updated upstream
     private void SpawnWeaponsForClient(ulong clientId)
-    {
-        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", clientId);
-        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", clientId);
-        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", clientId);
-    }
-    private void OnAllPlayersConnected()
-=======
-
-    private void SpawnWeaponsForClient(ulong clientId)
->>>>>>> Stashed changes
     {
         SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", clientId);
         SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", clientId);
