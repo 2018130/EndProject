@@ -10793,7 +10793,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameTimerNetwork
   ShowTopMostFoldoutHeaderGroup: 1
   TimeRemaining:
-    m_InternalValue: 300
+    m_InternalValue: 10
   TeamAKills:
     m_InternalValue: 0
   TeamBKills:

@@ -79,6 +79,8 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public event Action<ulong> OnSpawnedPlayerCharacter;
 
+    public event Action<Faction> OnEndGame;
+
     private void Start()
     {
         playerData = new PlayerData() { Nickname = UnityEngine.Random.Range(0, 10000).ToString() };
@@ -178,6 +180,9 @@ public class GameManager : SingletonBehaviour<GameManager>
         Faction winner = GameTimerNetwork.Instance.TeamAKills.Value >=
                          GameTimerNetwork.Instance.TeamBKills.Value
                          ? Faction.TeamA : Faction.TeamB;
+
+        Debug.Log($"End game!!! winner : {winner.ToString()}");
+        OnEndGame?.Invoke(winner);
     }
 
     // 서버에서 실행될 함수
