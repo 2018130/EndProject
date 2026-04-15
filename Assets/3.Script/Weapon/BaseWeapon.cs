@@ -14,8 +14,16 @@ public abstract class BaseWeapon : NetworkBehaviour
 
     protected virtual void Awake()
     {
-        weaponData = GameManager.Instance.SceneContext.GameDataManager.GetWeaponData(id);
+        
     }
+
+    public override void OnNetworkSpawn()
+    {
+        // SceneContext가 준비된 후 초기화
+        if (GameManager.Instance?.SceneContext?.GameDataManager != null)
+            weaponData = GameManager.Instance.SceneContext.GameDataManager.GetWeaponData(id);
+    }
+
 
     public abstract void Attack();
 }

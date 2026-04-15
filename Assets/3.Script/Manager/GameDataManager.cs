@@ -56,8 +56,8 @@ public class GameDataManager : NetworkBehaviour
                 .TryGetValue(clientId, out Unity.Netcode.NetworkClient client))
             {
 
-                weaponNO.TrySetParent(client.PlayerObject, false);
-
+                bool parentResult = weaponNO.TrySetParent(client.PlayerObject, false);
+                Debug.Log($"TrySetParent 결과: {parentResult}, 클라이언트: {clientId}");
                 EquipWeapon_ClientRpc(weaponNO.NetworkObjectId, clientId);
             }
         }
@@ -70,6 +70,8 @@ public class GameDataManager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void EquipWeapon_ClientRpc(ulong weaponNetworkId, ulong clientId)
     {
+        if (NetworkManager.Singleton.LocalClientId != clientId) return;
+
         if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
             .TryGetValue(weaponNetworkId, out NetworkObject weaponNO)) return;
 
@@ -81,8 +83,8 @@ public class GameDataManager : NetworkBehaviour
         weapon.transform.localRotation = Quaternion.identity;
         weapon.gameObject.SetActive(false);
 
-        if (weapon is RangedWeapon rangedWeapon)
-            rangedWeapon.InitializeAfterEquip();
+        //if (weapon is RangedWeapon rangedWeapon)
+        //    rangedWeapon.InitializeAfterEquip();
 
         if(client.PlayerObject != null)
         {

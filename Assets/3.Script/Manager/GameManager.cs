@@ -68,10 +68,12 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private int expectedPlayerCount = 2;
 
+    private HashSet<ulong> _initializedClients = new HashSet<ulong>();
     public event Action<ulong> OnSpawnedPlayerCharacter;
 
     private void Start()
     {
+        Instance.OnSpawnedPlayerCharacter -= OnClientConnected;
         Instance.OnSpawnedPlayerCharacter += OnClientConnected;
     }
 
@@ -89,9 +91,11 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private void OnClientConnected(ulong clientId)
     {
-        if(NetworkManager.Singleton.IsServer)
-        {
-            Debug.Log($"Game manager initialized on server");
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (_initializedClients.Contains(clientId)) return;
+        _initializedClients.Add(clientId);
+
+        Debug.Log($"Game manager initialized on server");
             PlayerHealth[] playerHealthes = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
 
 
@@ -119,11 +123,20 @@ public class GameManager : SingletonBehaviour<GameManager>
                 health.OnDead += OnPlayerDead;
 
                 //if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
-                OnAllPlayersConnected();
-            }
+                //OnAllPlayersConnected();
+
+                SpawnWeaponsForClient(clientId);
+                SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+                GameTimerNetwork.Instance.StartGame();
+
         }
     }
-
+    private void SpawnWeaponsForClient(ulong clientId)
+    {
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", clientId);
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", clientId);
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", clientId);
+    }
     private void OnAllPlayersConnected()
     {
         Debug.Log("OnAllPlayersConnected »£√‚µ ");
