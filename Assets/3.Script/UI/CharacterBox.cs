@@ -26,6 +26,10 @@ public class CharacterBox : MonoBehaviour
 
     public void SetActiveReadyText(bool active)
     {
+        if(active)
+        {
+            readyText.text = "Ready";
+        }
         readyText.gameObject.SetActive(active);
     }
 }

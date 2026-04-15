@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public abstract class BaseWeapon : NetworkBehaviour
+public abstract class BaseWeapon : NetworkBehaviour, INetworkContextListener
 {
     [SerializeField]
     protected string id;
@@ -14,8 +14,12 @@ public abstract class BaseWeapon : NetworkBehaviour
 
     protected virtual void Awake()
     {
-        weaponData = GameManager.Instance.SceneContext.GameDataManager.GetWeaponData(id);
     }
 
     public abstract void Attack();
+
+    public void OnNetworkSceneContextBuilt()
+    {
+        weaponData = GameManager.Instance.SceneContext.GameDataManager.GetWeaponData(id);
+    }
 }

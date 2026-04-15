@@ -71,7 +71,7 @@ public class RangedWeapon : BaseWeapon
         bullet.AddForce(shootDir);
 
 
-        ShootProjectileRpc(ClientIdChecker.OwnedClientId, shootDir);
+        ShootProjectileRpc(NetworkManager.Singleton.LocalClientId, shootDir);
     }
 
     private Projectile SpawnBullet()

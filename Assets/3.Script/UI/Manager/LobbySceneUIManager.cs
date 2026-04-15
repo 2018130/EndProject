@@ -89,7 +89,10 @@ public class LobbySceneUIManager : MonoBehaviour
         if(isRoomManager)
         {
             SetGameStartButtonText("StartGame");
-            gameStart_Button.onClick.AddListener(() => LobbySceneManager.Instance.GoToInGameScene_Rpc());
+            gameStart_Button.onClick.AddListener(() =>
+            {
+                LobbySceneManager.Instance.GoToInGameScene_Rpc();
+            });
         }
         else
         {

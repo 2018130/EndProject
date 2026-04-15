@@ -17,11 +17,14 @@ public enum GameMode
 [Serializable]
 public class PlayerData
 {
+    public ulong ClientID;
     public string Nickname = "";
 }
 
 public struct PlayerData_s : INetworkSerializable, IEquatable<PlayerData_s>
 {
+    public ulong ClientId;
+
     public FixedString32Bytes Nickname;
 
     public bool IsReady;
@@ -31,12 +34,14 @@ public struct PlayerData_s : INetworkSerializable, IEquatable<PlayerData_s>
     public PlayerData_s(PlayerData playerData, bool isReady, string characterID)
     {
         Nickname = playerData.Nickname;
+        ClientId = playerData.ClientID;
         IsReady = isReady;
         CharacterID = characterID;
     }
 
-    public PlayerData_s(string nickname, bool isReady, string characterID)
+    public PlayerData_s(ulong clinetId, string nickname, bool isReady, string characterID)
     {
+        ClientId = clinetId;
         Nickname = nickname;
         IsReady = isReady;
         CharacterID = characterID;
@@ -47,11 +52,12 @@ public struct PlayerData_s : INetworkSerializable, IEquatable<PlayerData_s>
         serializer.SerializeValue(ref Nickname);
         serializer.SerializeValue(ref IsReady);
         serializer.SerializeValue(ref CharacterID);
+        serializer.SerializeValue(ref ClientId);
     }
 
     public bool Equals(PlayerData_s other)
     {
-        return Nickname == other.Nickname && IsReady == other.IsReady && CharacterID == other.CharacterID;
+        return Nickname == other.Nickname && IsReady == other.IsReady && CharacterID == other.CharacterID && ClientId == other.ClientId;
     }
 }
 
@@ -61,17 +67,21 @@ public class GameManager : SingletonBehaviour<GameManager>
     public GameMode CurrentGameMode { get; set; } = GameMode.TeamBattle;
 
     [SerializeField]
-    private PlayerData playerData = new PlayerData();
+    private PlayerData playerData;
     public PlayerData PlayerData => playerData;
 
     private bool isGameRunning = false;
 
+    [SerializeField]
     private int expectedPlayerCount = 2;
+
+    private int spawnedClientCount = 0;
 
     public event Action<ulong> OnSpawnedPlayerCharacter;
 
     private void Start()
     {
+        playerData = new PlayerData() { Nickname = UnityEngine.Random.Range(0, 10000).ToString() };
         Instance.OnSpawnedPlayerCharacter += OnClientConnected;
     }
 
@@ -91,10 +101,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         if(NetworkManager.Singleton.IsServer)
         {
-            Debug.Log($"Game manager initialized on server");
+            spawnedClientCount++;
+            Debug.Log($"Game manager initialized on server {clientId}");
             PlayerHealth[] playerHealthes = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
-
-
+            
             // 2. 해당 클라이언트의 PlayerObject에서 컴포넌트를 바로 가져옵니다.
             PlayerHealth health = null;
             foreach (var p in playerHealthes)
@@ -118,8 +128,9 @@ public class GameManager : SingletonBehaviour<GameManager>
                 // 이벤트 구독
                 health.OnDead += OnPlayerDead;
 
-                //if (NetworkManager.Singleton.ConnectedClients.Count >= expectedPlayerCount)
-                OnAllPlayersConnected();
+                Debug.Log(expectedPlayerCount + " " + spawnedClientCount);
+                if (expectedPlayerCount <= spawnedClientCount)
+                    OnAllPlayersConnected();
             }
         }
     }
