@@ -75,15 +75,17 @@ public class GameManager : SingletonBehaviour<GameManager>
     [SerializeField]
     private int expectedPlayerCount = 2;
 
-    private int spawnedClientCount = 0;
-
+    private HashSet<ulong> _initializedClients = new HashSet<ulong>();
     public event Action<ulong> OnSpawnedPlayerCharacter;
 
     public event Action<Faction> OnEndGame;
 
     private void Start()
     {
+
         playerData = new PlayerData() { Nickname = UnityEngine.Random.Range(0, 10000).ToString() };
+
+        Instance.OnSpawnedPlayerCharacter -= OnClientConnected;
         Instance.OnSpawnedPlayerCharacter += OnClientConnected;
     }
 
@@ -103,8 +105,15 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         if(NetworkManager.Singleton.IsServer)
         {
-            spawnedClientCount++;
+
             Debug.Log($"Game manager initialized on server {clientId}");
+
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (_initializedClients.Contains(clientId)) return;
+        _initializedClients.Add(clientId);
+
+        Debug.Log($"Game manager initialized on server");
+
             PlayerHealth[] playerHealthes = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
             
             // 2. 해당 클라이언트의 PlayerObject에서 컴포넌트를 바로 가져옵니다.
@@ -130,27 +139,19 @@ public class GameManager : SingletonBehaviour<GameManager>
                 // 이벤트 구독
                 health.OnDead += OnPlayerDead;
 
-                Debug.Log(expectedPlayerCount + " " + spawnedClientCount);
-                if (expectedPlayerCount <= spawnedClientCount)
-                    OnAllPlayersConnected();
+                SpawnWeaponsForClient(clientId); // 개별로
+                SceneContext.GameDataManager.StartCardSelectionForClient(clientId);
+                GameTimerNetwork.Instance.StartGame();
+
             }
+
         }
     }
-
-    private void OnAllPlayersConnected()
+    private void SpawnWeaponsForClient(ulong clientId)
     {
-        Debug.Log("OnAllPlayersConnected 호출됨");
-        GameTimerNetwork.Instance.StartGame();
-
-        // 모든 클라이언트한테 카드 선택 UI
-        foreach (var client in NetworkManager.Singleton.ConnectedClients)
-        {
-            SceneContext.GameDataManager.StartCardSelectionForClient(client.Key);
-
-            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", client.Key);
-            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", client.Key);
-            SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", client.Key);
-        }
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("01", clientId);
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("02", clientId);
+        SceneContext.GameDataManager.SpawnWeapon_ServerRpc("03", clientId);
     }
 
     private void SpawnPlayer(PlayerHealth health)

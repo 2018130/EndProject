@@ -33,10 +33,22 @@ public class RangedWeapon : BaseWeapon
         if (!IsOwner) return;
 
         playerInput = GetComponentInParent<PlayerInput>();
-        Debug.Log($"InitializeAfterEquip - PlayerInput 찾음: {playerInput != null}");
+        Debug.Log($"InitializeAfterEquip 호출됨 - 횟수 확인");
 
         if (playerInput != null)
             playerInput.OnFirePerformed += Attack;
+
+        }
+
+            Debug.Log($"InitializeAfterEquip 호출됨 - 무기: {gameObject.name}");
+        
+    }
+
+    public void UnsubscribeInput()
+    {
+        if (playerInput != null)
+            playerInput.OnFirePerformed -= Attack;
+
     }
 
     public override void OnNetworkDespawn()
@@ -66,11 +78,6 @@ public class RangedWeapon : BaseWeapon
 
         if (playerWater == null || !playerWater.HasWater()) return;
 
-        // 물 있으면 클라이언트 예측 스폰
-        Projectile bullet = SpawnBullet();
-        bullet.AddForce(shootDir);
-
-
         ShootProjectileRpc(NetworkManager.Singleton.LocalClientId, shootDir);
     }
 
@@ -94,8 +101,8 @@ public class RangedWeapon : BaseWeapon
         // 스폰
         NetworkObject projectile = Instantiate(waterPrefab, waterSpawnPoint.position, waterSpawnPoint.rotation);
         projectile.Spawn();
-        // 총을 쏜 클라이언트는 제외
-        projectile.NetworkHide(shooterClientId);
+
+        Debug.Log($"Projectile 스폰됨 - NetworkObjectId: {projectile.NetworkObjectId}, 위치: {projectile.transform.position}");
 
         PlayerHealth shooterHealth = NetworkManager.Singleton.ConnectedClients[shooterClientId]
     .PlayerObject.GetComponent<PlayerHealth>();

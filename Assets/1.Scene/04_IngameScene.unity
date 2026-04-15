@@ -1944,10 +1944,12 @@ MonoBehaviour:
   weaponDatas:
   - ID: 01
     WeaponType: 0
-    WaterPerShot: 2
-    FireRate: 5
-    FireMode: 1
-    BulletSpeed: 20
+    Damage: 25
+    GravityStartDistance: 30
+    WaterPerShot: 6.25
+    FireRate: 4
+    FireMode: 0
+    BulletSpeed: 30
     MaxHitCountPerShot: 1
     BaseSpread: 0
     RecoilForce: {x: 0, y: 0}
@@ -1956,8 +1958,10 @@ MonoBehaviour:
     MuzzleFlash: {fileID: 0}
   - ID: 02
     WeaponType: 0
-    WaterPerShot: 10
-    FireRate: 1
+    Damage: 15
+    GravityStartDistance: 30
+    WaterPerShot: 3.57
+    FireRate: 10
     FireMode: 1
     BulletSpeed: 40
     MaxHitCountPerShot: 1
@@ -1968,10 +1972,12 @@ MonoBehaviour:
     MuzzleFlash: {fileID: 0}
   - ID: 03
     WeaponType: 0
-    WaterPerShot: 0
-    FireRate: 5
-    FireMode: 1
-    BulletSpeed: 10
+    Damage: 65
+    GravityStartDistance: 75
+    WaterPerShot: 12.5
+    FireRate: 0.5
+    FireMode: 0
+    BulletSpeed: 60
     MaxHitCountPerShot: 1
     BaseSpread: 0
     RecoilForce: {x: 0, y: 0}
@@ -10793,7 +10799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameTimerNetwork
   ShowTopMostFoldoutHeaderGroup: 1
   TimeRemaining:
-    m_InternalValue: 10
+    m_InternalValue: 300
   TeamAKills:
     m_InternalValue: 0
   TeamBKills:
