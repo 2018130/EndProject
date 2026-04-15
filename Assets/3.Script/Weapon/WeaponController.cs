@@ -36,14 +36,22 @@ public class WeaponController : NetworkBehaviour
     {
         _weapons.Add(weapon);
 
+        Debug.Log($"RegisterWeapon 호출됨 - 무기: {weapon.gameObject.name}, 총 무기 수: {_weapons.Count}");
+
         // 첫 번째 무기만 활성화
         if (_weapons.Count == 1)
         {
             weapon.gameObject.SetActive(true);
+<<<<<<< Updated upstream
             if (weapon is RangedWeapon rangedWeapon)
                 rangedWeapon.InitializeAfterEquip();
         }
 
+=======
+            if (IsOwner && weapon is RangedWeapon rangedWeapon)
+                rangedWeapon.InitializeAfterEquip();
+        }
+>>>>>>> Stashed changes
     }
 
     private void HandleWeaponSwap(int index)
@@ -62,12 +70,20 @@ public class WeaponController : NetworkBehaviour
     private void OnWeaponChanged(int prev, int current)
     {
         if (prev < _weapons.Count)
+        {
             _weapons[prev].gameObject.SetActive(false);
+            if (IsOwner && _weapons[prev] is RangedWeapon prevRanged)
+                prevRanged.UnsubscribeInput();
+        }
 
         if (current < _weapons.Count)
         {
             _weapons[current].gameObject.SetActive(true);
+<<<<<<< Updated upstream
             if (_weapons[current] is RangedWeapon rangedWeapon)
+=======
+            if (IsOwner && _weapons[current] is RangedWeapon rangedWeapon)
+>>>>>>> Stashed changes
                 rangedWeapon.InitializeAfterEquip();
         }
     }

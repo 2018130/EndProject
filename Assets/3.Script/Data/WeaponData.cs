@@ -13,6 +13,10 @@ public struct WeaponData
     public string ID;
     public WeaponType WeaponType;
     public float Damage;
+<<<<<<< Updated upstream
+=======
+    public float GravityStartDistance;
+>>>>>>> Stashed changes
 
     [Header("물 소모량")]
     public float WaterPerShot;

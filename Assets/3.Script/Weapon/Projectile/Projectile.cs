@@ -10,8 +10,13 @@ public struct ProjectileData
     public Faction OwnerFaction;
     public int MaxHitCountPerShot;
     public float BulletSpeed;
+<<<<<<< Updated upstream
     public float GravityStartDistance;
     public float Damage;
+=======
+    public float Damage;
+    public float GravityStartDistance;
+>>>>>>> Stashed changes
 }
 
 public class Projectile : NetworkBehaviour
@@ -23,10 +28,16 @@ public class Projectile : NetworkBehaviour
     private Vector3 startPosition;
     private bool gravityEnabled = false;
 
+    private Vector3 startPosition;
+    private bool gravityEnabled = false;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+<<<<<<< Updated upstream
+=======
+        combat = GetComponent<Combat>();
+>>>>>>> Stashed changes
     }
 
     public override void OnNetworkSpawn()
@@ -52,12 +63,26 @@ public class Projectile : NetworkBehaviour
         GetComponent<NetworkObject>().Despawn();
     }
 
+    private void Update()
+    {
+        if (gravityEnabled) return;
+
+        if (Vector3.Distance(startPosition, transform.position) >= projectileData.GravityStartDistance)
+        {
+            rb.useGravity = true;
+            gravityEnabled = true;
+        }
+    }
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return;
 
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
+            if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return;
+
             playerHealth.TakeDamage(
                 projectileData.Damage,
                 projectileData.OwnerFaction,
