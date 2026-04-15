@@ -12,7 +12,6 @@ public struct WeaponData
     [Header("기본 정보")]
     public string ID;
     public WeaponType WeaponType;
-    public float Damage;
 
     [Header("물 소모량")]
     public float WaterPerShot;
@@ -22,9 +21,6 @@ public struct WeaponData
     public FireMode FireMode;
     public float BulletSpeed;
     public int MaxHitCountPerShot;
-
-    [Header("거리")]
-    public float GravityStartDistance;
 
     [Header("정확도 및 반동")]
     public float BaseSpread;

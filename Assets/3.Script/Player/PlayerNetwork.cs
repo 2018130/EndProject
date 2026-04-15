@@ -35,9 +35,8 @@ public class PlayerNetwork : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner) return;
-
         SpawnPlayerCall_Rpc(OwnerClientId);
+        if (!IsOwner) return;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
