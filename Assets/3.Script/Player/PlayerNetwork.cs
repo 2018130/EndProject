@@ -26,11 +26,15 @@ public class PlayerNetwork : NetworkBehaviour
 
     private ZoneInteraction currentZone; // 살리기, 처형
 
+    private PlayerInput playerInput;
+
+    [SerializeField] private Transform cameraPivot;
 
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<Animator>(out animator);
+        TryGetComponent<PlayerInput>(out playerInput);
     }
 
     public override void OnNetworkSpawn()
@@ -45,11 +49,10 @@ public class PlayerNetwork : NetworkBehaviour
         CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
         if (virtualCam != null)
         {
-            virtualCam.Target.TrackingTarget = transform;
-            virtualCam.Target.LookAtTarget = transform;
+            virtualCam.Target.TrackingTarget = cameraPivot;
+            virtualCam.Target.LookAtTarget = cameraPivot;
         }
 
-        PlayerInput playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
         {
             playerInput.OnRevivePerformed += () => currentZone?.TryRevive();
@@ -105,17 +108,49 @@ public class PlayerNetwork : NetworkBehaviour
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         // 이동 방향으로 회전
-        if (move.magnitude > 0.1f)
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-            Quaternion.LookRotation(camForward),
-                0.15f
-            );
+        //if (move.magnitude > 0.1f)
+        //    transform.rotation = Quaternion.Slerp(
+        //        transform.rotation,
+        //    Quaternion.LookRotation(camForward),
+        //        0.15f
+        //    );
+
+        bool isCombatMode = playerInput != null && (playerInput.isFiring || playerInput.isZooming);
+
+        if(isCombatMode)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(camForward), 0.2f);
+
+            Vector3 localMove = transform.InverseTransformDirection(move);
+            animator.SetFloat("X", localMove.x, 0.1f, Time.fixedDeltaTime);
+            animator.SetFloat("Y", localMove.z, 0.1f, Time.fixedDeltaTime);
+        }
+        else
+        {
+            if (move.magnitude > 0.1f)
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                Quaternion.LookRotation(move),
+                    0.5f
+                );
+
+            animator.SetFloat("X", 0f, 0.1f, Time.fixedDeltaTime);
+            animator.SetFloat("Y", move.magnitude, 0.1f, Time.fixedDeltaTime);
+        }
+
+        //if (move.magnitude > 0.1f)
+        //    transform.rotation = Quaternion.Slerp(
+        //        transform.rotation,
+        //    Quaternion.LookRotation(move),
+        //        0.5f
+        //    );
 
         // 애니메이션
-        Vector3 localMove = transform.InverseTransformDirection(move);
-        animator.SetFloat("X", localMove.x);  // 좌우
-        animator.SetFloat("Y", localMove.z);  // 앞뒤
+        //Vector3 localMove = transform.InverseTransformDirection(move);
+        //animator.SetFloat("X", localMove.x);  // 좌우
+        //animator.SetFloat("Y", localMove.z);  // 앞뒤
+        //animator.SetFloat("X", 0);  // 좌우
+        //animator.SetFloat("Y", move.magnitude);  // 앞뒤
 
         if (isJetpacking)
         {

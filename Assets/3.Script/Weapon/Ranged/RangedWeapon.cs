@@ -13,6 +13,7 @@ public class RangedWeapon : BaseWeapon
     private DateTime lastShootTime = DateTime.MinValue;
     private PlayerInput playerInput;
 
+    private AimController aimController;
 
     protected override void Awake()
     {
@@ -35,6 +36,8 @@ public class RangedWeapon : BaseWeapon
         playerInput = GetComponentInParent<PlayerInput>();
         Debug.Log($"InitializeAfterEquip - PlayerInput Ã£À½: {playerInput != null}");
 
+        aimController = GetComponentInParent<AimController>();
+
         if (playerInput != null)
             playerInput.OnFirePerformed += Attack;
     }
@@ -52,7 +55,15 @@ public class RangedWeapon : BaseWeapon
 
         if (DateTime.Now.Subtract(lastShootTime) >= TimeSpan.FromSeconds(1 / weaponData.FireRate))
         {
-            Shoot(transform.forward);
+            Vector3 shootDir = transform.forward;
+
+            if(aimController != null)
+            {
+                aimController.GetFirePoint(out Vector3 hitPoint, out Vector3 camDirection);
+                shootDir = (hitPoint - waterSpawnPoint.position).normalized;
+            }
+
+            Shoot(shootDir);
             lastShootTime = DateTime.Now;
         }
     }

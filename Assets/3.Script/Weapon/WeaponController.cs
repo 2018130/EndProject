@@ -13,6 +13,9 @@ public class WeaponController : NetworkBehaviour
     );
 
     private PlayerInput _playerInput;
+    private AimController _aimController;
+
+    public BaseWeapon CurrentWeapon => (_weapons.Count > 0 && _currentWeaponIndex.Value < _weapons.Count) ? _weapons[_currentWeaponIndex.Value] : null;
 
     public override void OnNetworkSpawn()
     {
@@ -30,6 +33,16 @@ public class WeaponController : NetworkBehaviour
 
         if (_playerInput != null)
             _playerInput.OnWeaponSwap -= HandleWeaponSwap;
+    }
+
+    private void Update()
+    {
+        if (!IsOwner || _playerInput == null) return;
+
+        if(_playerInput.isFirePressed && CurrentWeapon != null)
+        {
+            CurrentWeapon.Attack();
+        }
     }
 
     public void RegisterWeapon(BaseWeapon weapon)

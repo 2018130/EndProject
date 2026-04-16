@@ -35,7 +35,8 @@ public class Projectile : NetworkBehaviour
     private IEnumerator AutoDespawn()
     {
         yield return new WaitForSeconds(20f);
-        GetComponent<NetworkObject>().Despawn();
+        if (NetworkObject != null && NetworkObject.IsSpawned) NetworkObject.Despawn();
+        //GetComponent<NetworkObject>().Despawn();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -50,7 +51,8 @@ public class Projectile : NetworkBehaviour
                 projectileData.OwnerClientId
             );
             // 맞으면 총알 제거
-            GetComponent<NetworkObject>().Despawn();
+            //GetComponent<NetworkObject>().Despawn();
+            if (NetworkObject != null && NetworkObject.IsSpawned) NetworkObject.Despawn();
         }
     }
 
@@ -61,6 +63,11 @@ public class Projectile : NetworkBehaviour
 
     public void AddForce(Vector3 dir)
     {
+        if(dir != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(dir);
+        }
+
         rb.AddForce(dir.normalized * projectileData.BulletSpeed);
     }
 }
