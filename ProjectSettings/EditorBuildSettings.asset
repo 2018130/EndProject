@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/1.Scene/SongTest/TestLobby.unity
     guid: c9629846b59be9c4eaa7d948aa9c6550
+  - enabled: 0
+    path: Assets/1.Scene/SongTest/SignInServer.unity
+    guid: d2681abac91590b40999a0632799c30e
   - enabled: 1
     path: Assets/1.Scene/LoadingScene.unity
     guid: 6b1a40b179ca2c9458653cbccb5a19d1
@@ -41,12 +44,21 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/1.Scene/SongTest/GameLiftServer.unity
     guid: c46405d6c64395f4fb1f38dd05726b04
+<<<<<<< Updated upstream
   - enabled: 1
     path: Assets/1.Scene/SongTest/SignInServer.unity
     guid: d2681abac91590b40999a0632799c30e
   - enabled: 1
     path: Assets/1.Scene/BootstrapScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+=======
+  - enabled: 1
+    path: Assets/1.Scene/BootstrapScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 0
+    path: Assets/1.Scene/JangTest/TestCombat 1.unity
+    guid: ed2c749996205124b92799f8aa4c7ae7
+>>>>>>> Stashed changes
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

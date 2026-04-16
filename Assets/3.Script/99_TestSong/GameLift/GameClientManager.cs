@@ -35,10 +35,55 @@ public class GameClientManager : MonoBehaviour
     private void Start()
     {
         playerId = "Tester_" + UnityEngine.Random.Range(1000, 10000).ToString();
+<<<<<<< Updated upstream
+=======
+#if !UNITY_SERVER
+        InitializeCognito();
+#endif
+>>>>>>> Stashed changes
     }
 
     public void RequestTicket()
     {
+<<<<<<< Updated upstream
+=======
+        try
+        {
+            // 1. UnityInitializer 삭제 (최신 SDK에서는 불필요)
+            AWSConfigs.RegionEndpoint = RegionEndpoint.APNortheast2;
+
+            // 2. 익명 자격 증명 객체 생성
+            credentials = new CognitoAWSCredentials(
+                identityPoolId,
+                RegionEndpoint.APNortheast2
+            );
+
+            // 3. 최신 async/await 방식으로 자격 증명(AccessKey, SecretKey, Token) 받아오기
+            var creds = await credentials.GetCredentialsAsync();
+
+            Debug.Log("Cognito 자격 증명 획득 성공!");
+            // 이제 creds.AccessKey, creds.SecretKey, creds.Token 형태로 바로 접근 가능합니다.
+
+            isCognitoReady = true; // 발급 완료 플래그 켜기
+
+            JoinRoom();
+        }
+        catch (Exception ex)
+        {
+            // 발급 실패 시 에러 로그 출력
+            Debug.LogError("Cognito 자격 증명 실패: " + ex.Message);
+        }
+    }
+
+    public void JoinRoom()
+    {
+        if (!isCognitoReady)
+        {
+            Debug.LogWarning("아직 AWS 자격 증명을 받아오지 못했습니다. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+
+>>>>>>> Stashed changes
         StartCoroutine(RequestTicketFromServer_co());
     }
 
