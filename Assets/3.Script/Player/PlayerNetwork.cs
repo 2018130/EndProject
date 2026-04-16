@@ -68,6 +68,22 @@ public class PlayerNetwork : NetworkBehaviour
     }
 
     [ClientRpc]
+    public void EnableInputOnLandClientRpc()
+    {
+        if (!IsOwner) return;
+        StartCoroutine(EnableInputOnLand_Co());
+    }
+
+    private IEnumerator EnableInputOnLand_Co()
+    {
+        // 착지할 때까지 대기
+        yield return new WaitUntil(() => IsGrounded());
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+            playerInput.IsPassenger = false;
+    }
+
+    [ClientRpc]
     public void SetPassengerMode_ClientRpc(bool isPassenger)
     {
         if (!IsOwner) return;
