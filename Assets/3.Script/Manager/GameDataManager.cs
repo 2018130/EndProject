@@ -81,8 +81,6 @@ public class GameDataManager : NetworkBehaviour
         weapon.transform.localRotation = Quaternion.identity;
         weapon.gameObject.SetActive(false);
 
-        if (weapon is RangedWeapon rangedWeapon)
-            rangedWeapon.InitializeAfterEquip();
 
         if(client.PlayerObject != null)
         {

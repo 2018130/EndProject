@@ -13,6 +13,7 @@ public class RangedWeapon : BaseWeapon
     private DateTime lastShootTime = DateTime.MinValue;
     private PlayerInput playerInput;
 
+    private bool isSubscribed = false;
 
     protected override void Awake()
     {
@@ -30,6 +31,10 @@ public class RangedWeapon : BaseWeapon
         playerInput = GetComponentInParent<PlayerInput>();
         Debug.Log($"InitializeAfterEquip È£ÃâµÊ - È½¼ö È®ÀÎ");
 
+        if (playerInput == null) return;
+
+        if (isSubscribed) return;
+
         if (playerInput != null)
         {
             playerInput.OnFirePerformed -= Attack;
@@ -43,15 +48,14 @@ public class RangedWeapon : BaseWeapon
     {
         if (playerInput != null)
             playerInput.OnFirePerformed -= Attack;
+            isSubscribed = false;
 
     }
 
     public override void OnNetworkDespawn()
     {
         if (!IsOwner) return;
-
-        if (playerInput != null)
-            playerInput.OnFirePerformed -= Attack;
+        UnsubscribeInput();
     }
 
     public override void Attack()
