@@ -16,6 +16,11 @@ public abstract class BaseWeapon : NetworkBehaviour, INetworkContextListener
     {
     }
 
+    public override void OnNetworkSpawn()
+    {
+        OnNetworkSceneContextBuilt();
+    }
+
     public abstract void Attack();
 
     public void OnNetworkSceneContextBuilt()

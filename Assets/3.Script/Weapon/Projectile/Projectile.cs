@@ -24,6 +24,8 @@ public class Projectile : NetworkBehaviour
     private Vector3 startPosition;
     private bool gravityEnabled = false;
 
+    private bool isHit = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -56,24 +58,41 @@ public class Projectile : NetworkBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return;
+        if (isHit) return;
 
-        if (other.TryGetComponent(out PlayerHealth playerHealth))
-        {
-            if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return;
+        Debug.Log($"충돌: {other.gameObject.name}, 레이어: {LayerMask.LayerToName(other.gameObject.layer)}");
 
-            playerHealth.TakeDamage(
-                projectileData.Damage,
-                projectileData.OwnerFaction,
-                projectileData.OwnerClientId
-            );
-            // 맞으면 총알 제거
-            GetComponent<NetworkObject>().Despawn();
-        }
+        PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
+
+        if (playerHealth == null) return; // 플레이어 아니면 무시
+
+        if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return; // 자기 자신 무시
+        Debug.Log($"적 때린 거 맞음");
+        isHit = true;
+        playerHealth.TakeDamage(projectileData.Damage, projectileData.OwnerFaction, projectileData.OwnerClientId);
+        GetComponent<NetworkObject>().Despawn();
     }
 
     public void Initialize(ProjectileData projectileData)
     {
         this.projectileData = projectileData;
+
+        startPosition = transform.position;
+
+        // 발사자 플레이어 콜라이더 무시
+        if (NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(projectileData.OwnerClientId, out var client))
+        {
+            Collider myCollider = GetComponent<Collider>();
+            if (myCollider == null) return;
+
+            // 발사자의 모든 콜라이더 무시
+            Collider[] ownerColliders = client.PlayerObject.GetComponentsInChildren<Collider>();
+            foreach (Collider col in ownerColliders)
+            {
+                Physics.IgnoreCollision(myCollider, col);
+            }
+        }
     }
 
     public void AddForce(Vector3 dir)
