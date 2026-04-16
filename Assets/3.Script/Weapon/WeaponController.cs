@@ -14,6 +14,8 @@ public class WeaponController : NetworkBehaviour
 
     private PlayerInput _playerInput;
 
+    private int _expectedWeaponCount = 3;
+
     public override void OnNetworkSpawn()
     {
         _currentWeaponIndex.OnValueChanged += OnWeaponChanged;
@@ -38,15 +40,17 @@ public class WeaponController : NetworkBehaviour
 
         Debug.Log($"RegisterWeapon 호출됨 - 무기: {weapon.gameObject.name}, 총 무기 수: {_weapons.Count}");
 
-        // 첫 번째 무기만 활성화
         if (_weapons.Count == 1)
-        {
             weapon.gameObject.SetActive(true);
+        else
+            weapon.gameObject.SetActive(false);
 
-            if (IsOwner && weapon is RangedWeapon rangedWeapon)
+        // 모든 무기가 등록됐을 때 한 번만 초기화
+        if (_weapons.Count == _expectedWeaponCount)
+        {
+            if (IsOwner && _weapons[0] is RangedWeapon rangedWeapon)
                 rangedWeapon.InitializeAfterEquip();
         }
-            
 
     }
 
