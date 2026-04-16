@@ -67,6 +67,14 @@ public class PlayerNetwork : NetworkBehaviour
         GameManager.Instance.SpawnPlayerCharacter(clientId);
     }
 
+    [ClientRpc]
+    public void SetPassengerMode_ClientRpc(bool isPassenger)
+    {
+        if (!IsOwner) return;
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+            playerInput.IsPassenger = isPassenger;
+    }
 
     public override void OnDestroy()
     {

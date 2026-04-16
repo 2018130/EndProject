@@ -20,7 +20,7 @@ public class PlayerInput : MonoBehaviour
     public event Action OnRevivePerformed;
 
     public event Action<int> OnWeaponSwap;  //무기 스왑
-
+    public bool IsPassenger { get; set; } = false;
 
     private bool isInitialized = false;
 
@@ -55,11 +55,15 @@ public class PlayerInput : MonoBehaviour
         inputActions.Player.Weapon3.performed += context => OnWeaponSwap?.Invoke(2);
 
         // 발사
-        inputActions.Player.Fire.performed += context => OnFirePerformed?.Invoke();
+        inputActions.Player.Fire.performed += context => {
+             if (!IsPassenger) OnFirePerformed?.Invoke(); };
+
         inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
 
         // 스킬
-        inputActions.Player.Skill.performed += context => OnSkillPerformed?.Invoke();
+        inputActions.Player.Skill.performed += context => 
+            { if (!IsPassenger) OnSkillPerformed?.Invoke(); };
+
 
         // 처형
         inputActions.Player.Execute.performed += context => OnExecutePerformed?.Invoke();

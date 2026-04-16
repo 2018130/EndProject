@@ -198,6 +198,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
                 if (!alreadyIn)
                 {
                     passenger.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
+                    passenger.SetPassengerMode_ClientRpc(true); // 공격/스킬 막기
                     passengerRefs.Add(new NetworkObjectReference(passenger.NetworkObject));
                 }
             }
@@ -229,6 +230,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             flyingDir.y = 1f;
 
             passengers[i].GetComponent<PlayerHealth>().State.Value = PlayerState.Alive;
+            passengers[i].SetPassengerMode_ClientRpc(false); // 공격/스킬 다시 허용
             passengers[i].ApplyKnockback_ClientRpc(flyingDir * knockbackPower);
 
             passengers[i] = null;
