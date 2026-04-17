@@ -55,13 +55,14 @@ public class PlayerHealth : NetworkBehaviour
             HealthUI healthUI = FindAnyObjectByType<HealthUI>();
             healthUI?.SetPlayer(this);
         }
+
     }
 
     public void InitializeOnSpawned(ulong clientId)
     {
-        Debug.Log($"PlayerHealth initialzed {clientId}");
         Faction faction = (Faction)PlayerFactionInt.Value;
         Vector3 spawnPos = GameManager.Instance.SceneContext.SpawnAreaManager.GetSpawnPosition(faction);
+        Debug.Log($"PlayerHealth initialzed {clientId} faction : {faction} spawnPos : {spawnPos}");
         TeleportToSpawnClientRpc(spawnPos);
         DisableInputClientRpc();
     }

@@ -12,6 +12,7 @@ public struct WeaponData
     [Header("기본 정보")]
     public string ID;
     public WeaponType WeaponType;
+    public float Damage;
 
     [Header("물 소모량")]
     public float WaterPerShot;

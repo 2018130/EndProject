@@ -38,7 +38,7 @@ public class GameTimerNetwork : NetworkBehaviour
         {
             TimeRemaining.Value = 0;
             isGameRunning = false;
-            GameManager.Instance.EndGame();
+            EndGame_Rpc();
         }
     }
 
@@ -46,7 +46,7 @@ public class GameTimerNetwork : NetworkBehaviour
     {
         if (!IsServer) return;
         isGameRunning = true;
-        TimeRemaining.Value = 300f;
+        TimeRemaining.Value = 17f;
         TeamAKills.Value = 0;
         TeamBKills.Value = 0;
     }
@@ -56,5 +56,11 @@ public class GameTimerNetwork : NetworkBehaviour
         if (!IsServer) return;
         if (faction == Faction.TeamA) TeamAKills.Value++;
         else if (faction == Faction.TeamB) TeamBKills.Value++;
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void EndGame_Rpc()
+    {
+        GameManager.Instance.EndGame();
     }
 }

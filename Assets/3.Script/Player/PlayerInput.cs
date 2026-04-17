@@ -2,13 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
     private PlayerInputAction inputActions;
     private PlayerNetwork network;
-    private AimController aimController;
 
     public event Action OnFirePerformed;
     public event Action OnFireCanceled;
@@ -22,18 +20,7 @@ public class PlayerInput : MonoBehaviour
     public event Action OnRevivePerformed;
 
     public event Action<int> OnWeaponSwap;  //무기 스왑
-
-
-    public event Action OnZoomPerfomed;
-    public event Action OnZoomCanceled;
-
-    public Vector2 moseInput { get; private set; }
-    public bool isFirePressed { get; private set; }
-    public bool isZoomPressed { get; private set; }
-    public bool isFiring => isFirePressed;
-    public bool isZooming => isZoomPressed;
-
-
+    public bool IsPassenger { get; set; } = false;
 
     private bool isInitialized = false;
 
@@ -67,8 +54,16 @@ public class PlayerInput : MonoBehaviour
         inputActions.Player.Weapon2.performed += context => OnWeaponSwap?.Invoke(1);
         inputActions.Player.Weapon3.performed += context => OnWeaponSwap?.Invoke(2);
 
+        // 발사
+        inputActions.Player.Fire.performed += context => {
+             if (!IsPassenger) OnFirePerformed?.Invoke(); };
+
+        inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
+
         // 스킬
-        inputActions.Player.Skill.performed += context => OnSkillPerformed?.Invoke();
+        inputActions.Player.Skill.performed += context => 
+            { if (!IsPassenger) OnSkillPerformed?.Invoke(); };
+
 
         // 처형
         inputActions.Player.Execute.performed += context => OnExecutePerformed?.Invoke();
@@ -80,11 +75,7 @@ public class PlayerInput : MonoBehaviour
         inputActions.Player.Revive.performed += context => OnRevivePerformed?.Invoke();
 
         // 물풍선 LookAt
-        inputActions.Player.Look.performed += context =>
-        {
-            OnLookPerformed?.Invoke(context.ReadValue<Vector2>());
-            aimController?.OnLook(context);
-        };
+        inputActions.Player.Look.performed += context => OnLookPerformed?.Invoke(context.ReadValue<Vector2>());
 
         // 점프
         inputActions.Player.Jump.performed += context =>
@@ -99,37 +90,11 @@ public class PlayerInput : MonoBehaviour
         // 대쉬
         inputActions.Player.Dash.performed += context =>
            network.SendDashInput();
-
-        // 발사
-        //inputActions.Player.Fire.performed += context => OnFirePerformed?.Invoke();
-        //inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
-        inputActions.Player.Fire.performed += context =>
-        {
-            isFirePressed = true;
-            OnFirePerformed?.Invoke();
-        };
-        inputActions.Player.Fire.canceled += context =>
-        {
-            isFirePressed = false;
-            OnFireCanceled?.Invoke();
-        };
-
-        //줌
-        inputActions.Player.Zoom.performed += context =>
-        {
-            isZoomPressed = true;
-            OnZoomPerfomed?.Invoke();
-        };
-        inputActions.Player.Zoom.canceled += context =>
-        {
-            isZoomPressed = false;
-            OnZoomCanceled?.Invoke();
-        };
     }
 
     void OnDisable()
     {
-        if (isInitialized)
+        if(isInitialized)
         {
             //inputActions?.Player.Disable();
         }

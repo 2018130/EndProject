@@ -18,6 +18,7 @@ public class LobbySceneManager : NetworkBehaviour
     // 서버에서 관리될 플레이어 데이터 목록
     [SerializeField]
     private NetworkList<PlayerData_s> userDatas;
+    public NetworkList<PlayerData_s> UserDatas => userDatas;
 
     [SerializeField]
     private NetworkObject networkPlayer;
@@ -47,6 +48,7 @@ public class LobbySceneManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void SendPlayerData_Rpc(PlayerData_s playerData)
     {
+        Debug.Log($"Player data : {playerData.CharacterID} {playerData.ClientId} {playerData.Nickname}");
         userDatas.Add(playerData);
     }
 
@@ -60,6 +62,16 @@ public class LobbySceneManager : NetworkBehaviour
         LobbySceneUIManager.Instance.SetReadyStateButtonActive(idx, playerData.Value.IsReady);
 
         Debug.Log($"Change userdata idx : {idx} nickname : {nickname} ready state : {userDatas[playerData.Index].IsReady}");
+        /*
+        foreach (var player in FindObjectsByType<NetworkPlayer>(FindObjectsSortMode.None))
+        {
+            Debug.Log(player.OwnerClientId + " " + playerData.Value.ClientId);
+            if(player.OwnerClientId == playerData.Value.ClientId)
+            {
+                player.SetPlayerNickname_Rpc(playerData.Value.Nickname.ToString());
+            }
+        }
+        */
     }
 
     public void StartServer()
@@ -79,6 +91,7 @@ public class LobbySceneManager : NetworkBehaviour
         }
         else
         {
+            GameManager.Instance.PlayerData.ClientID = NetworkManager.Singleton.LocalClientId;
             // 각 클라이언트 개인 초기화
             Debug.Log(GameManager.Instance.PlayerData.Nickname);
             PlayerData_s playerData = new PlayerData_s(GameManager.Instance.PlayerData, false, "01");
@@ -94,8 +107,7 @@ public class LobbySceneManager : NetworkBehaviour
     private void SpawnClient(ulong clientId)
     {
         Debug.Log($"Spawn Network Player, id : {clientId}");
-        NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(networkPlayer, clientId);
-
+        NetworkObject spawn = NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(networkPlayer, clientId);
         int clientCount = NetworkManager.Singleton.ConnectedClientsIds.Count;
 
         RpcParams rpcParams = new RpcParams
@@ -105,6 +117,15 @@ public class LobbySceneManager : NetworkBehaviour
                 Target = RpcTarget.Single(clientId, RpcTargetUse.Temp)
             }
         };
+
+        foreach (var player in userDatas)
+        {
+            if (player.ClientId == clientId)
+            {
+                spawn.GetComponent<NetworkPlayer>().SetPlayerNickname_Rpc(player.Nickname.ToString());
+                Debug.Log($"client id : {clientId} {player.Nickname.ToString()}");
+            }
+        }
 
         SetClientRoomAuthority_Rpc(clientCount - 1, clientCount == 1 ? true : false, rpcParams);
     }
@@ -147,6 +168,15 @@ public class LobbySceneManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void GoToInGameScene_Rpc()
     {
+        for(int i = 1; i < userDatas.Count; i++)
+        {
+            if(!userDatas[i].IsReady)
+            {
+                Debug.Log($"Failed to go inGmaeScene");
+                return;
+            }
+        }
+
         Debug.Log($"Go to ingame scene");
         SceneChangeManager.Instance.ChangeSceneForMultiPlay(SceneType.IngameScene);
     }
@@ -158,7 +188,7 @@ public class LobbySceneManager : NetworkBehaviour
             if (userDatas[i].Nickname == GameManager.Instance.PlayerData.Nickname)
                 return;
 
-            LobbySceneUIManager.Instance.SetCharacterBox(i, userDatas[i].Nickname.ToString());
+            LobbySceneUIManager.Instance.SetCharacterBox(i, userDatas[i].Nickname.ToString(), characterDatas[i].Icon);
         }
     }
 
@@ -225,7 +255,7 @@ public class LobbySceneManager : NetworkBehaviour
             return;
         }
 
-        userDatas[idx] = new PlayerData_s(userDatas[idx].Nickname.ToString(), userDatas[idx].IsReady, characterData.ID);
+        userDatas[idx] = new PlayerData_s(OwnerClientId, userDatas[idx].Nickname.ToString(), userDatas[idx].IsReady, characterData.ID);
     }
 
     public CharacterData GetPreCharacterData(string id)
