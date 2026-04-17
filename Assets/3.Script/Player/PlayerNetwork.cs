@@ -132,50 +132,39 @@ public class PlayerNetwork : NetworkBehaviour
         //Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
-        // 이동 방향으로 회전
-        //if (move.magnitude > 0.1f)
-        //    transform.rotation = Quaternion.Slerp(
-        //        transform.rotation,
-        //    Quaternion.LookRotation(camForward),
-        //        0.15f
-        //    );
-
-        bool isCombatMode = playerInput != null && (playerInput.isFiring || playerInput.isZooming);
-
-        if(isCombatMode)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(camForward), 0.2f);
-
-            Vector3 localMove = transform.InverseTransformDirection(move);
-            animator.SetFloat("X", localMove.x, 0.1f, Time.fixedDeltaTime);
-            animator.SetFloat("Y", localMove.z, 0.1f, Time.fixedDeltaTime);
-        }
-        else
-        {
-            if (move.magnitude > 0.1f)
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                Quaternion.LookRotation(move),
-                    0.5f
-                );
-
-            animator.SetFloat("X", 0f, 0.1f, Time.fixedDeltaTime);
-            animator.SetFloat("Y", move.magnitude, 0.1f, Time.fixedDeltaTime);
-        }
-
+        //이동 방향으로 회전
         //if (move.magnitude > 0.1f)
         //    transform.rotation = Quaternion.Slerp(
         //        transform.rotation,
         //    Quaternion.LookRotation(move),
         //        0.5f
         //    );
-
         // 애니메이션
         //Vector3 localMove = transform.InverseTransformDirection(move);
         //animator.SetFloat("X", localMove.x);  // 좌우
         //animator.SetFloat("Y", localMove.z);  // 앞뒤
         //animator.SetFloat("X", 0);  // 좌우
         //animator.SetFloat("Y", move.magnitude);  // 앞뒤
+
+        AimController aimController = GetComponent<AimController>();
+        bool isAiming = aimController != null && aimController.GetIsAiming();
+
+        if(isAiming)
+        {
+            Vector3 localMove = transform.InverseTransformDirection(move);
+            animator.SetFloat("X", localMove.x);
+            animator.SetFloat("Y", localMove.z);
+        }
+        else
+        {
+            if(move.magnitude > 0.1f)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.5f);
+            }
+
+            animator.SetFloat("X", 0);
+            animator.SetFloat("Y", move.magnitude);
+        }
 
         if (isJetpacking)
         {

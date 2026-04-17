@@ -206,6 +206,8 @@ GameObject:
   - component: {fileID: 954310614772573187}
   - component: {fileID: 5646414900619511927}
   - component: {fileID: 4521153170557362773}
+  - component: {fileID: -350024074868699166}
+  - component: {fileID: -465424918658300191}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -503,6 +505,54 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList: []
   m_Animator: {fileID: 5646414900619511927}
+--- !u!114 &-350024074868699166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4293558174537636908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 354a275419b0d7a488422fd6e9062d7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimController
+  ShowTopMostFoldoutHeaderGroup: 1
+  aimRotationSpeed: 15
+  moveRotationSpeed: 10
+  aimLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxAimDistance: 100
+  aimAssistRadius: 1.5
+  aimAssistLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerLayerName: Player
+  NetAimDirection:
+    m_InternalValue: {x: 0, y: 0, z: 1}
+  NetIsAiming:
+    m_InternalValue: 0
+--- !u!114 &-465424918658300191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4293558174537636908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e2ad1654e996bc459800fa9b5594d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
+  ShowTopMostFoldoutHeaderGroup: 1
+  CinemachineCam: {fileID: 0}
+  activePriority: 20
+  inactivePriority: 5
+  overrideFOV: 1
+  normalFOV: 60
+  zoomFOV: 40
+  fovLerpSpeed: 8
 --- !u!1 &7912213531098341626
 GameObject:
   m_ObjectHideFlags: 0

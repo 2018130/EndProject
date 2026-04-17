@@ -41,7 +41,7 @@ public class WeaponController : NetworkBehaviour
     {
         if (!IsOwner || _playerInput == null) return;
 
-        if(_playerInput.isFirePressed && CurrentWeapon != null)
+        if(_playerInput.isFiring && CurrentWeapon != null)
         {
             CurrentWeapon.Attack();
         }
