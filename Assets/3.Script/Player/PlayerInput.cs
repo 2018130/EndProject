@@ -24,6 +24,10 @@ public class PlayerInput : MonoBehaviour
 
     private bool isInitialized = false;
 
+    public bool isZooming { get; private set; }
+    public bool isFiring { get; private set; }
+    public event Action OnZoomPerformed;
+    public event Action OnZoomCanceled;
 
     private void Awake()
     {
@@ -55,13 +59,20 @@ public class PlayerInput : MonoBehaviour
         inputActions.Player.Weapon3.performed += context => OnWeaponSwap?.Invoke(2);
 
         // 발사
-        inputActions.Player.Fire.performed += context => {
-             if (!IsPassenger) OnFirePerformed?.Invoke(); };
+        inputActions.Player.Fire.performed += context =>
+        {
+            isFiring = true;
+            if (!IsPassenger) OnFirePerformed?.Invoke();
+        };
 
-        inputActions.Player.Fire.canceled += context => OnFireCanceled?.Invoke();
+        inputActions.Player.Fire.canceled += context =>
+        {
+            isFiring = false;
+            OnFireCanceled?.Invoke();
+        };
 
         // 스킬
-        inputActions.Player.Skill.performed += context => 
+        inputActions.Player.Skill.performed += context =>
             { if (!IsPassenger) OnSkillPerformed?.Invoke(); };
 
 
@@ -90,11 +101,23 @@ public class PlayerInput : MonoBehaviour
         // 대쉬
         inputActions.Player.Dash.performed += context =>
            network.SendDashInput();
+
+        // 줌
+        inputActions.Player.Zoom.performed += context =>
+        {
+            isZooming = true;
+            OnZoomPerformed?.Invoke();
+        };
+        inputActions.Player.Zoom.canceled += context =>
+        {
+            isZooming = false;
+            OnZoomCanceled?.Invoke();
+        };
     }
 
     void OnDisable()
     {
-        if(isInitialized)
+        if (isInitialized)
         {
             //inputActions?.Player.Disable();
         }
