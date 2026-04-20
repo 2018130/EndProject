@@ -57,7 +57,10 @@ public class GameClientManager : MonoBehaviour
     private void Start()
     {
         playerId = "Tester_" + UnityEngine.Random.Range(1000, 10000).ToString();
+
+#if !UNITY_SERVER || UNITY_EDITOR
         InitializeCognito();
+#endif
     }
 
     private async void InitializeCognito()
@@ -196,8 +199,14 @@ public class GameClientManager : MonoBehaviour
         return request;
     }
 
-    private void ConnectToServer(MatchStatusResponse matchStatusResponse)
+    public void ConnectToServer(MatchStatusResponse matchStatusResponse)
     {
+        if(matchStatusResponse == null || matchStatusResponse.status != "COMPLETED")
+        {
+            Debug.Log($"Failed to complete matching");
+            return;
+        }
+
         ClientConnectionPayload clientPayload = new ClientConnectionPayload()
         {
             playerId = this.playerId,

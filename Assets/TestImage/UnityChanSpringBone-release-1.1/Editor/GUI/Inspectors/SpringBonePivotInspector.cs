@@ -1,4 +1,5 @@
-﻿using Unity.Animations.SpringBones.GameObjectExtensions;
+﻿#if UNITY_EDITOR
+using Unity.Animations.SpringBones.GameObjectExtensions;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -59,3 +60,4 @@ namespace Unity.Animations.SpringBones
         }
     }
 }
+#endif

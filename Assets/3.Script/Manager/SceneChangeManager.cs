@@ -11,7 +11,6 @@ public enum SceneType
 {
     TitleScene,
     SignScene,
-    LobbyScene,
     RoomScene,
     IngameScene,
 }
@@ -46,6 +45,7 @@ public class SceneChangeManager : SingletonBehaviour<SceneChangeManager>
 
     public void ChangeSceneForSinglePlay(SceneType sceneType)
     {
+        Debug.Log($"Change scene to {sceneType.ToString()}");
         StartCoroutine(ChangeSceneForSinglePlay_co(sceneType));
     }
 

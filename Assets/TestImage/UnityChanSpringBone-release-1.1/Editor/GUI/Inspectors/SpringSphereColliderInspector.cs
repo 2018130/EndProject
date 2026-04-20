@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if UNITY_EDITOR
+using System.Linq;
 using UnityEditor;
 
 namespace Unity.Animations.SpringBones
@@ -23,3 +24,4 @@ namespace Unity.Animations.SpringBones
         private SpringColliderBoneSelector boneSelector;
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if UNITY_EDITOR
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -231,3 +232,4 @@ namespace Unity.Animations.SpringBones
         }
     }
 }
+#endif

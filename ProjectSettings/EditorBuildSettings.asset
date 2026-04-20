@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1.Scene/01_SignScene.unity
     guid: dd984dcc22a99954b8bc9448c9ca724f
-  - enabled: 1
+  - enabled: 0
     path: Assets/1.Scene/02_LobbyScene.unity
     guid: 89355a7aabbbac4499330eea669287a8
   - enabled: 0

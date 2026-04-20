@@ -26,6 +26,11 @@ public class LobbySceneManager : NetworkBehaviour
     [SerializeField]
     private List<CharacterData> characterDatas = new List<CharacterData>();
 
+    [SerializeField]
+    private Canvas roomCanvas;
+    [SerializeField]
+    private Canvas lobbyCanvas;
+
     private void Awake()
     {
         if (Instance == null)
@@ -37,6 +42,16 @@ public class LobbySceneManager : NetworkBehaviour
             Destroy(gameObject);
         }
         userDatas = new NetworkList<PlayerData_s>();
+    }
+
+    private void Start()
+    {
+        NetworkManager.Singleton.OnClientStarted += CloseRoomAndOpenLobbyCanvas;
+    }
+    public void CloseRoomAndOpenLobbyCanvas()
+    {
+        roomCanvas.gameObject.SetActive(false);
+        lobbyCanvas.gameObject.SetActive(true);
     }
 
     public void StartClient()

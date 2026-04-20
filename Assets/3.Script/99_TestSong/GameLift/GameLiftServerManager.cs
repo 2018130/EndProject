@@ -20,22 +20,17 @@ public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
     private bool isInitialized = false; 
     private bool _sessionStartRequested = false;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        // Register the callback to validate incoming players via GameLift
-        NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-    }
-
     private void Start()
     {
         if (!Instance.isInitialized)
         {
             isInitialized = true;
-#if UNITY_SERVER || UNITY_EDITOR
+#if UNITY_SERVER && !UNITY_EDITOR
+            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
             InitializeGameLift();
 #endif
         }
+
     }
 
     private void Update()

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 namespace Unity.Animations.SpringBones
@@ -92,3 +93,4 @@ namespace Unity.Animations.SpringBones
         }
     }
 }
+#endif
