@@ -524,11 +524,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   maxAimDistance: 100
-  aimAssistRadius: 1.5
+  aimAssistRadius: 0.5
   aimAssistLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  playerLayerName: Player
+    m_Bits: 64
   NetAimDirection:
     m_InternalValue: {x: 0, y: 0, z: 1}
   NetIsAiming:
@@ -546,13 +545,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
   ShowTopMostFoldoutHeaderGroup: 1
-  CinemachineCam: {fileID: 0}
-  activePriority: 20
-  inactivePriority: 5
+  cinemachineCam: {fileID: 0}
   overrideFOV: 1
   normalFOV: 60
   zoomFOV: 40
-  fovLerpSpeed: 8
+  normalOffset: {x: 0, y: -0.5, z: -1}
+  zoomOffset: {x: 1, y: -1.5, z: -1}
+  lerpSpeed: 8
 --- !u!1 &7912213531098341626
 GameObject:
   m_ObjectHideFlags: 0

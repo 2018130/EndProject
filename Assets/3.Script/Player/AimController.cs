@@ -19,8 +19,8 @@ public class AimController : NetworkBehaviour
     [Tooltip("에임 보정으로 끌어당길 대상 레이어 (예: Enemy)")]
     [SerializeField] private LayerMask aimAssistLayerMask;
 
-    [Tooltip("레이어 마스크에서 제외할 플레이어 레이어 이름")]
-    [SerializeField] private string playerLayerName = "Player";
+    //[Tooltip("레이어 마스크에서 제외할 플레이어 레이어 이름")]
+    //[SerializeField] private string playerLayerName = "Player";
 
     public NetworkVariable<Vector3> NetAimDirection = new NetworkVariable<Vector3>(
         Vector3.forward,
@@ -51,9 +51,9 @@ public class AimController : NetworkBehaviour
         mainCamera = Camera.main;
         TryGetComponent(out input);
 
-        int playerLayer = LayerMask.NameToLayer(playerLayerName);
-        if (playerLayer >= 0)
-            aimLayerMask &= ~(1 << playerLayer);
+        //int playerLayer = LayerMask.NameToLayer(playerLayerName);
+        //if (playerLayer >= 0)
+        //    aimLayerMask &= ~(1 << playerLayer);
     }
 
     private void Update()
@@ -88,33 +88,43 @@ public class AimController : NetworkBehaviour
         Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
         Ray ray = mainCamera.ScreenPointToRay(screenCenter);
 
-        Vector3 targetPoint;
+        Vector3 targetPoint = ray.origin + ray.direction * maxAimDistance;
+        bool hitAssisted = false;
 
-        if(input != null && input.isZooming)
+        if (input != null && input.isZooming)
         {
-            if(Physics.SphereCast(ray, aimAssistRadius, out RaycastHit assistHit, maxAimDistance, aimAssistLayerMask))
+            RaycastHit[] assistHits = Physics.SphereCastAll(ray, aimAssistRadius, maxAimDistance, aimAssistLayerMask);
+            float closestAssistDist = float.MaxValue;
+
+            foreach (var hit in assistHits)
             {
-                if(IsTargetEnemy(assistHit.collider.gameObject))
+                if (IsTargetEnemy(hit.collider.gameObject))
                 {
-                    targetPoint = assistHit.collider.bounds.center;
-                }
-                else
-                {
-                    targetPoint = assistHit.point;
+                    if (hit.distance < closestAssistDist)
+                    {
+                        closestAssistDist = hit.distance;
+                        targetPoint = hit.collider.bounds.center;
+                        hitAssisted = true;
+                    }
                 }
             }
-            else
+        }
+
+        if(!hitAssisted)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(ray, maxAimDistance, aimLayerMask);
+            float closestDist = float.MaxValue;
+
+            foreach(var hit in hits)
             {
-                targetPoint = ray.origin + ray.direction * maxAimDistance;
+                if (!IsValidAimTarget(hit.collider.gameObject)) continue;
+
+                if(hit.distance < closestDist)
+                {
+                    closestDist = hit.distance;
+                    targetPoint = hit.point;
+                }
             }
-        }
-        else if(Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, aimLayerMask))
-        {
-            targetPoint = hit.point;
-        }
-        else
-        {
-            targetPoint = ray.origin + ray.direction * maxAimDistance;
         }
 
         AimWorldPoint = targetPoint;
@@ -134,6 +144,18 @@ public class AimController : NetworkBehaviour
             return myFaction != targetFaction;
         }
         return false;
+    }
+
+    private bool IsValidAimTarget(GameObject target)
+    {
+        if (target == gameObject || target.transform.IsChildOf(transform)) return false;
+
+        if(target.TryGetComponent<PlayerHealth>(out var _))
+        {
+            return IsTargetEnemy(target);
+        }
+
+        return true;
     }
 
     private void HandleAimRotation()
