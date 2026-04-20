@@ -30,11 +30,17 @@ public class PlayerNetwork : NetworkBehaviour
 
     [SerializeField] private Transform cameraPivot;
 
+    // 처형 관련 스크립트
+    PlayerHealth aimedDownPlayer;
+
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<Animator>(out animator);
         TryGetComponent<PlayerInput>(out playerInput);
+
+        playerInput.OnKickPerformed += KillEffect_Kick;
     }
 
     public override void OnNetworkSpawn()
@@ -116,6 +122,8 @@ public class PlayerNetwork : NetworkBehaviour
         {
             UseJetpackWaterServerRpc();
         }
+
+        CheckKillEffect();
     }
 
     private void FixedUpdate()
@@ -477,4 +485,60 @@ public class PlayerNetwork : NetworkBehaviour
             currentZone = null;
     }
 
+    #region 처형
+    private void CheckKillEffect()
+    {
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, 10f);
+        Debug.DrawRay(transform.position, transform.forward * 10f, Color.red, 1f);
+        foreach (var hit in hits)
+        {
+            if(hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+            {
+                if(playerHealth.State.Value == PlayerState.Down)
+                {
+                    aimedDownPlayer = playerHealth;
+                    return;
+                }
+            }
+        }
+
+        aimedDownPlayer = null;
+    }
+
+    private void KillEffect_Kick()
+    {
+        if (aimedDownPlayer == null)
+        {
+            return;
+        }
+
+        StartCoroutine(PlayKickAnimation(aimedDownPlayer));
+    }
+
+    private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
+    {
+        rb.AddForce(Vector3.up * jumpForce * 2f, ForceMode.Impulse);
+
+        while(true)
+        {
+            yield return null;
+
+            if(rb.linearVelocity.y < 0)
+            {
+                break;
+            }
+        }
+        // 점프 후 최고높이 도달
+        // ↓↓↓↓↓↓↓↓↓↓
+
+        Vector3 dirVector3 = (otherPlayer.transform.position - transform.position).normalized;
+        rb.AddForce(dirVector3 * jumpForce * 2.5f, ForceMode.Impulse);
+        // TODO : 타깃의 위치에 킥 하도록 구현
+        animator.SetTrigger("Kick");
+
+        yield return new WaitForSeconds(0.5f);
+
+        GetComponent<PlayerCameraController>().Shake(0.5f, 0.5f);
+    }
+    #endregion
 }
