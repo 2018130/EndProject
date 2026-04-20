@@ -11,13 +11,16 @@ public class PlayerNetwork : NetworkBehaviour
     private Animator animator;      // 애니메이터
     private Vector2 moveInput;      // 이동벡터
 
-    [SerializeField] private float moveSpeed = 5f; // 이동 스피드
+    [SerializeField] private float baseMoveSpeed = 5f; // 기본 이동 스피드
+    [SerializeField] private float moveSpeed; // 가변 이동 스피드
     [SerializeField] private float jumpForce = 5f; // 점프
     [SerializeField] private float jetpackForce = 8f; // 제트팩
     [SerializeField] private float dashForce = 10f; // 대쉬
     [SerializeField] private float dashDuration = 0.3f; // 대쉬 지속 시간
     [SerializeField] private float dashCooldown = 1f; //대쉬 쿨타임
 
+
+    
     private float lastDashTime; // 마지막 대쉬한 시간
     private float jumpPressTime; //점프버튼을 누른 시간
 
@@ -35,6 +38,7 @@ public class PlayerNetwork : NetworkBehaviour
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<Animator>(out animator);
         TryGetComponent<PlayerInput>(out playerInput);
+        moveSpeed = baseMoveSpeed;
     }
 
     public override void OnNetworkSpawn()
@@ -60,6 +64,33 @@ public class PlayerNetwork : NetworkBehaviour
             playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
 
+    }
+
+    public void ApplyBoost(float amount, float duration)
+    {
+        if (!IsOwner) return;
+        StartCoroutine(BoostRoutine(amount, duration));
+    }
+
+    public void ApplyJumpPad(Vector3 dir, float force)
+    {
+        if (!IsOwner) return;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        rb.AddForce(dir * force, ForceMode.Impulse);
+    }
+
+    private IEnumerator BoostRoutine(float amount, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float current = Mathf.Lerp(amount, 0f, elapsed / duration);
+            moveSpeed = baseMoveSpeed * (1f + current);
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+        moveSpeed = baseMoveSpeed;
     }
 
     [Rpc(SendTo.Server)]
