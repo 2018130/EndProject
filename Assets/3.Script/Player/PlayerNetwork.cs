@@ -370,8 +370,22 @@ public class PlayerNetwork : NetworkBehaviour
                 goat.Initialize(card.Duration, card.Damage, card.Range);
                 break;
             case CardType.MalrangBong:
+                if(TryGetComponent(out WeaponController weaponController))
+                {
+                    weaponController.DespawnMalrangBongOnServer();
+
+                    GameObject mbObj = Instantiate(card.SkillPrefab, transform.position, transform.rotation);
+                    NetworkObject mbNo = mbObj.GetComponent<NetworkObject>();
+
+                    mbNo.SpawnWithOwnership(OwnerClientId);
+                    mbNo.TrySetParent(transform);
+
+                    MalangBong mb = mbObj.GetComponent<MalangBong>();
+                    mb.Initialize(card.Damage, card.Cooldown);
+
+                    weaponController.EquipMalrangBong_ServerRpc(mbNo);
+                }
                 break;
-                // ...
         }
     }
 
