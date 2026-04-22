@@ -32,6 +32,11 @@ public class PlayerNetwork : NetworkBehaviour
 
     // 처형 관련 스크립트
     PlayerHealth aimedDownPlayer;
+    [Header("Kick")]
+    [SerializeField]
+    private float kickJumpForce = 7f;
+    [SerializeField]
+    private float knockbackForce = 3f;
 
 
     private void Awake()
@@ -517,13 +522,13 @@ public class PlayerNetwork : NetworkBehaviour
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
     {
-        rb.AddForce(Vector3.up * jumpForce * 2f, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * kickJumpForce, ForceMode.Impulse);
 
-        while(true)
+        while (true)
         {
             yield return null;
 
-            if(rb.linearVelocity.y < 0)
+            if (rb.linearVelocity.y < 0)
             {
                 break;
             }
@@ -531,14 +536,45 @@ public class PlayerNetwork : NetworkBehaviour
         // 점프 후 최고높이 도달
         // ↓↓↓↓↓↓↓↓↓↓
 
-        Vector3 dirVector3 = (otherPlayer.transform.position - transform.position).normalized;
-        rb.AddForce(dirVector3 * jumpForce * 2.5f, ForceMode.Impulse);
-        // TODO : 타깃의 위치에 킥 하도록 구현
         animator.SetTrigger("Kick");
+        float dashDuration = 0.15f;
+        Vector3 targetPos = otherPlayer.transform.position;
+        targetPos.y += 0.5f;
+        Vector3 displacement = targetPos - transform.position;
 
-        yield return new WaitForSeconds(0.5f);
+        rb.linearVelocity = displacement / dashDuration;
+
+        yield return new WaitForSeconds(dashDuration);
+
+        // 타격
+        // ↓↓↓↓↓↓↓↓↓↓
+
+        float originalAnimSpeed = animator.speed;
+        bool wasGravity = rb.useGravity;
+
+        animator.speed = 0f;
+        rb.useGravity = false;
+        rb.linearVelocity = Vector3.zero;
+
+        yield return new WaitForSeconds(1f);
+
+        // 4. 상태 원상 복구
+        animator.speed = originalAnimSpeed;
+        rb.useGravity = wasGravity;
 
         GetComponent<PlayerCameraController>().Shake(0.5f, 0.5f);
+        otherPlayer.GetComponent<PlayerNetwork>().AddForce_Rpc(displacement.normalized * knockbackForce, otherPlayer.OwnerClientId);
     }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void AddForce_Rpc(Vector3 direction, ulong clientId)
+    {
+            if (clientId != OwnerClientId)
+                return;
+
+            direction.y = 1f;
+            rb.linearVelocity = direction;
+    }
+
     #endregion
 }
