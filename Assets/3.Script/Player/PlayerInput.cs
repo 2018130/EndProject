@@ -18,6 +18,7 @@ public class PlayerInput : MonoBehaviour
     public event Action OnExecutePerformed;
     public event Action OnSkipPerformed;
     public event Action OnRevivePerformed;
+    public event Action OnKickPerformed;
 
     public event Action<int> OnWeaponSwap;  //무기 스왑
     public bool IsPassenger { get; set; } = false;
@@ -112,6 +113,11 @@ public class PlayerInput : MonoBehaviour
         {
             isZooming = false;
             OnZoomCanceled?.Invoke();
+        };
+
+        inputActions.Player.Kick.performed += context =>
+        {
+            OnKickPerformed?.Invoke();
         };
     }
 

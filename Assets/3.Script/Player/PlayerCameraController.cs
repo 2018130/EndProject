@@ -11,7 +11,8 @@ public class PlayerCameraController : NetworkBehaviour
     private CinemachineCameraOffset cameraOffset;
 
     [Header("Cinemachine Virtual Cameras")]
-    [SerializeField] private CinemachineCamera cinemachineCam;
+    [SerializeField] private CinemachineCamera cinemachineCam; 
+    [SerializeField] private CinemachineBasicMultiChannelPerlin multiChannelPerlin;
 
     //[Header("Priority")]
     //[SerializeField] private int activePriority = 20;
@@ -31,7 +32,6 @@ public class PlayerCameraController : NetworkBehaviour
     private bool isZooming;
     //public bool IsZooming => isZooming;
 
-
     public override void OnNetworkSpawn()
     {
         if (!IsOwner)
@@ -45,6 +45,8 @@ public class PlayerCameraController : NetworkBehaviour
         if (cinemachineCam == null)
         {
             cinemachineCam = GameObject.FindAnyObjectByType<CinemachineCamera>();
+            multiChannelPerlin = cinemachineCam.GetComponent<CinemachineBasicMultiChannelPerlin>();
+            multiChannelPerlin.AmplitudeGain = 0f;
         }
 
         if (cinemachineCam != null)
@@ -77,5 +79,21 @@ public class PlayerCameraController : NetworkBehaviour
             Vector3 targetOffset = isZooming ? zoomOffset : normalOffset;
             cameraOffset.Offset = Vector3.Lerp(cameraOffset.Offset, targetOffset, lerpSpeed * Time.deltaTime);
         }
+    }
+
+    public void Shake(float intensity, float time)
+    {
+        if (multiChannelPerlin == null) return;
+
+        multiChannelPerlin.AmplitudeGain = intensity;
+
+        StartCoroutine(StopShake(time));
+    }
+
+    private IEnumerator StopShake(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        multiChannelPerlin.AmplitudeGain = 0f;
     }
 }

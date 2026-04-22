@@ -11,16 +11,13 @@ public class PlayerNetwork : NetworkBehaviour
     private Animator animator;      // 애니메이터
     private Vector2 moveInput;      // 이동벡터
 
-    [SerializeField] private float baseMoveSpeed = 5f; // 기본 이동 스피드
-    [SerializeField] private float moveSpeed; // 가변 이동 스피드
+    [SerializeField] private float moveSpeed = 5f; // 이동 스피드
     [SerializeField] private float jumpForce = 5f; // 점프
     [SerializeField] private float jetpackForce = 8f; // 제트팩
     [SerializeField] private float dashForce = 10f; // 대쉬
     [SerializeField] private float dashDuration = 0.3f; // 대쉬 지속 시간
     [SerializeField] private float dashCooldown = 1f; //대쉬 쿨타임
 
-
-    
     private float lastDashTime; // 마지막 대쉬한 시간
     private float jumpPressTime; //점프버튼을 누른 시간
 
@@ -33,12 +30,17 @@ public class PlayerNetwork : NetworkBehaviour
 
     [SerializeField] private Transform cameraPivot;
 
+    // 처형 관련 스크립트
+    PlayerHealth aimedDownPlayer;
+
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<Animator>(out animator);
         TryGetComponent<PlayerInput>(out playerInput);
-        moveSpeed = baseMoveSpeed;
+
+        playerInput.OnKickPerformed += KillEffect_Kick;
     }
 
     public override void OnNetworkSpawn()
@@ -64,33 +66,6 @@ public class PlayerNetwork : NetworkBehaviour
             playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
 
-    }
-
-    public void ApplyBoost(float amount, float duration)
-    {
-        if (!IsOwner) return;
-        StartCoroutine(BoostRoutine(amount, duration));
-    }
-
-    public void ApplyJumpPad(Vector3 dir, float force)
-    {
-        if (!IsOwner) return;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        rb.AddForce(dir * force, ForceMode.Impulse);
-    }
-
-    private IEnumerator BoostRoutine(float amount, float duration)
-    {
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            float current = Mathf.Lerp(amount, 0f, elapsed / duration);
-            moveSpeed = baseMoveSpeed * (1f + current);
-            elapsed += Time.deltaTime;
-
-            yield return null;
-        }
-        moveSpeed = baseMoveSpeed;
     }
 
     [Rpc(SendTo.Server)]
@@ -147,6 +122,8 @@ public class PlayerNetwork : NetworkBehaviour
         {
             UseJetpackWaterServerRpc();
         }
+
+        CheckKillEffect();
     }
 
     private void FixedUpdate()
@@ -508,4 +485,60 @@ public class PlayerNetwork : NetworkBehaviour
             currentZone = null;
     }
 
+    #region 처형
+    private void CheckKillEffect()
+    {
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, 10f);
+        Debug.DrawRay(transform.position, transform.forward * 10f, Color.red, 1f);
+        foreach (var hit in hits)
+        {
+            if(hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+            {
+                if(playerHealth.State.Value == PlayerState.Down)
+                {
+                    aimedDownPlayer = playerHealth;
+                    return;
+                }
+            }
+        }
+
+        aimedDownPlayer = null;
+    }
+
+    private void KillEffect_Kick()
+    {
+        if (aimedDownPlayer == null)
+        {
+            return;
+        }
+
+        StartCoroutine(PlayKickAnimation(aimedDownPlayer));
+    }
+
+    private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
+    {
+        rb.AddForce(Vector3.up * jumpForce * 2f, ForceMode.Impulse);
+
+        while(true)
+        {
+            yield return null;
+
+            if(rb.linearVelocity.y < 0)
+            {
+                break;
+            }
+        }
+        // 점프 후 최고높이 도달
+        // ↓↓↓↓↓↓↓↓↓↓
+
+        Vector3 dirVector3 = (otherPlayer.transform.position - transform.position).normalized;
+        rb.AddForce(dirVector3 * jumpForce * 2.5f, ForceMode.Impulse);
+        // TODO : 타깃의 위치에 킥 하도록 구현
+        animator.SetTrigger("Kick");
+
+        yield return new WaitForSeconds(0.5f);
+
+        GetComponent<PlayerCameraController>().Shake(0.5f, 0.5f);
+    }
+    #endregion
 }
