@@ -22,6 +22,8 @@ public class PlayerInput : MonoBehaviour
     public event Action<int> OnWeaponSwap;  //무기 스왑
     public bool IsPassenger { get; set; } = false;
 
+    public bool IsDown { get; set; } = false;
+
     private bool isInitialized = false;
 
     public bool isZooming { get; private set; }
@@ -61,8 +63,11 @@ public class PlayerInput : MonoBehaviour
         // 발사
         inputActions.Player.Fire.performed += context =>
         {
-            isFiring = true;
-            if (!IsPassenger) OnFirePerformed?.Invoke();
+            if (!IsPassenger && !IsDown)
+            {
+                isFiring = true;          
+                OnFirePerformed?.Invoke();
+            }
         };
 
         inputActions.Player.Fire.canceled += context =>
@@ -73,7 +78,7 @@ public class PlayerInput : MonoBehaviour
 
         // 스킬
         inputActions.Player.Skill.performed += context =>
-            { if (!IsPassenger) OnSkillPerformed?.Invoke(); };
+            { if (!IsPassenger && !IsDown) OnSkillPerformed?.Invoke(); };
 
 
         // 처형
@@ -90,17 +95,21 @@ public class PlayerInput : MonoBehaviour
 
         // 점프
         inputActions.Player.Jump.performed += context =>
-           network.SendJumpInput();
+        { if (!IsDown) network.SendJumpInput(); };
 
         // 제트팩
-        inputActions.Player.JetPack.performed += context =>
-           network.SendJetpackInput(true);
+        inputActions.Player.JetPack.performed += context => {
+            if (!IsDown) network.SendJetpackInput(true);
+        };
+
         inputActions.Player.JetPack.canceled += context =>
            network.SendJetpackInput(false);
 
         // 대쉬
         inputActions.Player.Dash.performed += context =>
-           network.SendDashInput();
+        {
+            if (!IsDown) network.SendDashInput();
+        };
 
         // 줌
         inputActions.Player.Zoom.performed += context =>

@@ -64,6 +64,36 @@ public class PlayerNetwork : NetworkBehaviour
             playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
 
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.State.OnValueChanged += OnPlayerStateChanged;
+        }
+
+    }
+
+    private void OnPlayerStateChanged(PlayerState oldState, PlayerState newState)
+    {
+        switch (newState)
+        {
+            case PlayerState.Down:
+                animator.SetBool("IsCrawling", true);
+                // Down 상태 이동속도 감소
+                moveSpeed = baseMoveSpeed * 0.4f;
+                if (IsOwner) playerInput.IsDown = true;
+                break;
+
+            case PlayerState.Alive:
+                animator.SetBool("IsCrawling", false);
+                moveSpeed = baseMoveSpeed;
+                if (IsOwner) playerInput.IsDown = false;
+                break;
+
+            case PlayerState.Dead:
+                animator.SetBool("IsCrawling", false);
+                if (IsOwner) playerInput.IsDown = true;
+                break;
+        }
     }
 
     public void ApplyBoost(float amount, float duration)
@@ -129,6 +159,11 @@ public class PlayerNetwork : NetworkBehaviour
     public override void OnDestroy()
     {
         base.OnDestroy();
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.State.OnValueChanged -= OnPlayerStateChanged;
+        }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
