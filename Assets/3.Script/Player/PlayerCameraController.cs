@@ -32,6 +32,12 @@ public class PlayerCameraController : NetworkBehaviour
     private bool isZooming;
     //public bool IsZooming => isZooming;
 
+    [Header("Kill Effect")]
+    [SerializeField]
+    private bool isKillEffectPlaying = false;
+    [SerializeField]
+    private Vector3 killEffectOffset;
+
     public override void OnNetworkSpawn()
     {
         if (!IsOwner)
@@ -65,7 +71,16 @@ public class PlayerCameraController : NetworkBehaviour
     {
         if (cinemachineCam == null) return;
 
-        if (overrideFOV)
+
+        if(isKillEffectPlaying)
+        {
+            float targetFOV = 80f;
+
+            LensSettings lens = cinemachineCam.Lens;
+            lens.FieldOfView = Mathf.Lerp(lens.FieldOfView, targetFOV, lerpSpeed * Time.deltaTime);
+            cinemachineCam.Lens = lens;
+        }
+        else if (overrideFOV)
         {
             float targetFOV = isZooming ? zoomFOV : normalFOV;
 
@@ -76,8 +91,15 @@ public class PlayerCameraController : NetworkBehaviour
 
         if (cameraOffset != null)
         {
-            Vector3 targetOffset = isZooming ? zoomOffset : normalOffset;
-            cameraOffset.Offset = Vector3.Lerp(cameraOffset.Offset, targetOffset, lerpSpeed * Time.deltaTime);
+            if (isKillEffectPlaying)
+            {
+                cameraOffset.Offset = Vector3.Lerp(cameraOffset.Offset, killEffectOffset, lerpSpeed * Time.deltaTime);
+            }
+            else
+            {
+                Vector3 targetOffset = isZooming ? zoomOffset : normalOffset;
+                cameraOffset.Offset = Vector3.Lerp(cameraOffset.Offset, targetOffset, lerpSpeed * Time.deltaTime);
+            }
         }
     }
 
@@ -95,5 +117,29 @@ public class PlayerCameraController : NetworkBehaviour
         yield return new WaitForSeconds(time);
 
         multiChannelPerlin.AmplitudeGain = 0f;
+    }
+
+    public void SetKillEffectCamera(bool active)
+    {
+        isKillEffectPlaying = active;
+
+        if(active)
+        {
+            foreach(var playerCharacter in FindObjectsByType<PlayerNetwork>(FindObjectsSortMode.None))
+            {
+                if(playerCharacter.IsOwner)
+                {
+                    cinemachineCam.Target.TrackingTarget = playerCharacter.transform;
+                    cinemachineCam.Target.LookAtTarget = playerCharacter.transform;
+                    cinemachineCam.GetComponent<CinemachineInputAxisController>().enabled = false;
+
+                    return;
+                }
+            }
+        }
+        else
+        {
+            cinemachineCam.GetComponent<CinemachineInputAxisController>().enabled = true;
+        }
     }
 }
