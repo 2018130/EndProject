@@ -18,6 +18,7 @@ public class AudioManager : SingletonBehaviour<AudioManager>
     [Header("Audio Sources")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource loopSfxSource;
 
     [Header("BGM")]
     [SerializeField] private AudioData[] bgmList;
@@ -55,17 +56,32 @@ public class AudioManager : SingletonBehaviour<AudioManager>
 
     // ─── SFX ───────────────────────────────────────
 
-    public void PlaySFX(string key)
+    public void PlaySFX(string key, bool loop = false)
     {
         foreach (var data in sfxList)
         {
             if (data.key != key) continue;
 
-            sfxSource.PlayOneShot(data.clip);
+            if (loop)
+            {
+                loopSfxSource.clip = data.clip;
+                loopSfxSource.loop = true;
+                loopSfxSource.Play();
+            }
+            else
+            {
+                sfxSource.PlayOneShot(data.clip);
+            }
             return;
         }
 
         Debug.LogWarning($"SFX 키 없음: {key}");
+    }
+
+    public void StopSFX()
+    {
+        loopSfxSource.Stop();
+        loopSfxSource.loop = false;
     }
 
     // ─── Volume (0f ~ 1f 로 받아서 dB 변환) ────────

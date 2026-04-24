@@ -53,6 +53,8 @@ public class BoostRing : MonoBehaviour
         PlayerNetwork player = other.GetComponent<PlayerNetwork>();
         if (player == null) return;
 
+        AudioManager.Instance.PlaySFX("Item");
+
         player.ApplyBoost(boostAmount, boostDuration);
 
         if (ringType == BoostRingType.Card)
