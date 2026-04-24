@@ -11,13 +11,16 @@ public class PlayerNetwork : NetworkBehaviour
     private Animator animator;      // 애니메이터
     private Vector2 moveInput;      // 이동벡터
 
-    [SerializeField] private float moveSpeed = 5f; // 이동 스피드
+    [SerializeField] private float baseMoveSpeed = 5f; // 기본 이동 스피드
+    [SerializeField] private float moveSpeed; // 가변 이동 스피드
     [SerializeField] private float jumpForce = 5f; // 점프
     [SerializeField] private float jetpackForce = 8f; // 제트팩
     [SerializeField] private float dashForce = 10f; // 대쉬
     [SerializeField] private float dashDuration = 0.3f; // 대쉬 지속 시간
     [SerializeField] private float dashCooldown = 1f; //대쉬 쿨타임
 
+
+    
     private float lastDashTime; // 마지막 대쉬한 시간
     private float jumpPressTime; //점프버튼을 누른 시간
 
@@ -32,6 +35,11 @@ public class PlayerNetwork : NetworkBehaviour
 
     // 처형 관련 스크립트
     PlayerHealth aimedDownPlayer;
+    [Header("Kick")]
+    [SerializeField]
+    private float kickJumpForce = 7f;
+    [SerializeField]
+    private float knockbackForce = 3f;
 
 
     private void Awake()
@@ -41,6 +49,7 @@ public class PlayerNetwork : NetworkBehaviour
         TryGetComponent<PlayerInput>(out playerInput);
 
         playerInput.OnKickPerformed += KillEffect_Kick;
+        moveSpeed = baseMoveSpeed;
     }
 
     public override void OnNetworkSpawn()
@@ -66,6 +75,67 @@ public class PlayerNetwork : NetworkBehaviour
             playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
         }
 
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.State.OnValueChanged += OnPlayerStateChanged;
+        }
+
+    }
+
+    private void OnPlayerStateChanged(PlayerState oldState, PlayerState newState)
+    {
+        switch (newState)
+        {
+            case PlayerState.Down:
+                animator.SetBool("IsCrawling", true);
+                // Down 상태 이동속도 감소
+                moveSpeed = baseMoveSpeed * 0.4f;
+                if (IsOwner) playerInput.IsDown = true;
+                break;
+
+            case PlayerState.Alive:
+                animator.SetBool("IsCrawling", false);
+                moveSpeed = baseMoveSpeed;
+                if (IsOwner) playerInput.IsDown = false;
+                break;
+
+            case PlayerState.Dead:
+                animator.SetBool("IsCrawling", false);
+                if (IsOwner) playerInput.IsDown = true;
+                break;
+        }
+    }
+
+    public void ApplyBoost(float amount, float duration)
+    {
+        if (!IsOwner) return;
+        StartCoroutine(BoostRoutine(amount, duration));
+    }
+    public void ApplyWaterRefill(float amount)
+    {
+        GetComponent<PlayerWater>()?.RequestWaterRefill(amount);
+    }
+
+    public void ApplyJumpPad(Vector3 dir, float force)
+    {
+        if (!IsOwner) return;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        rb.AddForce(dir * force, ForceMode.Impulse);
+    }
+
+    private IEnumerator BoostRoutine(float amount, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float current = Mathf.Lerp(amount, 0f, elapsed / duration);
+            moveSpeed = baseMoveSpeed * (1f + current);
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+        moveSpeed = baseMoveSpeed;
     }
 
     [Rpc(SendTo.Server)]
@@ -104,6 +174,11 @@ public class PlayerNetwork : NetworkBehaviour
     public override void OnDestroy()
     {
         base.OnDestroy();
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.State.OnValueChanged -= OnPlayerStateChanged;
+        }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -210,7 +285,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void SendMoveInput(Vector2 input)
     {
         moveInput = input;
-        Debug.Log(moveInput);
+
         if (IsOwner)
         {
             SendMoveInputServerRpc(input);
@@ -453,6 +528,7 @@ public class PlayerNetwork : NetworkBehaviour
             }
         }
     }
+    //진짜 개싫타 학원에 있기....
 
     [ClientRpc]
     public void ApplyBubbleEffect_ClientRpc(float duration)
@@ -474,7 +550,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         targetHealth.Revive();
     }
-
+    //나 송준엽인데 사실 우리팀 버리고 그냥 취업해버리고싶다 >> 옆사람 개못함
     [ServerRpc]
     public void ExecuteEnemy_ServerRpc(ulong targetClientId)
     {
@@ -526,18 +602,23 @@ public class PlayerNetwork : NetworkBehaviour
             return;
         }
 
-        StartCoroutine(PlayKickAnimation(aimedDownPlayer));
+        StartCoroutine(PlaySwingAnimation(aimedDownPlayer));
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
     {
-        rb.AddForce(Vector3.up * jumpForce * 2f, ForceMode.Impulse);
+        PlayerCameraController camera = GetComponent<PlayerCameraController>();
+        camera.SetKillEffectCamera(true);
 
-        while(true)
+        yield return new WaitForSeconds(0.5f);
+
+        rb.AddForce(Vector3.up * kickJumpForce, ForceMode.Impulse);
+
+        while (true)
         {
             yield return null;
 
-            if(rb.linearVelocity.y < 0)
+            if (rb.linearVelocity.y < 0)
             {
                 break;
             }
@@ -545,14 +626,119 @@ public class PlayerNetwork : NetworkBehaviour
         // 점프 후 최고높이 도달
         // ↓↓↓↓↓↓↓↓↓↓
 
-        Vector3 dirVector3 = (otherPlayer.transform.position - transform.position).normalized;
-        rb.AddForce(dirVector3 * jumpForce * 2.5f, ForceMode.Impulse);
-        // TODO : 타깃의 위치에 킥 하도록 구현
         animator.SetTrigger("Kick");
+        float dashDuration = 0.15f;
+        Vector3 targetPos = otherPlayer.transform.position;
+        targetPos.y += 0.5f;
+        Vector3 displacement = targetPos - transform.position;
+
+        rb.linearVelocity = displacement / dashDuration;
+
+        yield return new WaitForSeconds(dashDuration);
+
+        // 타격
+        // ↓↓↓↓↓↓↓↓↓↓
+        //나 송준엽인데 바지에 똥쌌다 사실...조금 지렸어....
+        float originalAnimSpeed = animator.speed;
+        bool wasGravity = rb.useGravity;
+
+        animator.speed = 0f;
+        rb.useGravity = false;
+        rb.linearVelocity = Vector3.zero;
+
+        yield return new WaitForSeconds(1f);
+
+        // 4. 상태 원상 복구
+        animator.speed = originalAnimSpeed;
+        rb.useGravity = wasGravity;
+
+        camera.Shake(0.5f, 0.5f);
+        otherPlayer.GetComponent<PlayerNetwork>().AddForce_Rpc(displacement.normalized * knockbackForce, otherPlayer.OwnerClientId);
+        EndKillEffect(camera);
+    }
+
+    private IEnumerator PlayUppercutAnimation(PlayerHealth otherPlayer)
+    {
+        PlayerCameraController camera = GetComponent<PlayerCameraController>();
+        camera.SetKillEffectCamera(true);
 
         yield return new WaitForSeconds(0.5f);
 
-        GetComponent<PlayerCameraController>().Shake(0.5f, 0.5f);
+        animator.SetTrigger("Uppercut");
+
+        float floatingDuration = 1f;
+        PlayerNetwork otherPlayerCharacter = otherPlayer.GetComponent<PlayerNetwork>();
+        otherPlayerCharacter.SetGravity_Rpc(false);
+        otherPlayerCharacter.AddForce_Rpc(Vector3.up * kickJumpForce, otherPlayer.OwnerClientId);
+        camera.Shake(0.5f, 0.5f);
+
+        yield return new WaitForSeconds(floatingDuration);
+
+        otherPlayerCharacter.SetGravity_Rpc(true);
+        EndKillEffect(camera);
     }
+
+    private IEnumerator PlaySwingAnimation(PlayerHealth otherPlayer)
+    {
+        PlayerCameraController camera = GetComponent<PlayerCameraController>();
+        camera.SetKillEffectCamera(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        animator.SetTrigger("Swing");
+
+        yield return null;
+
+        float targetNormalizedTime = 5f / 30f;
+
+        yield return new WaitUntil(() =>
+            animator.GetCurrentAnimatorStateInfo(0).IsName("Swing") &&
+            animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= targetNormalizedTime
+        );
+
+        float floatingDuration = 1f;
+        Vector3 targetPos = otherPlayer.transform.position;
+        targetPos.y += 0.5f;
+        Vector3 displacement = targetPos - transform.position;
+
+        PlayerNetwork otherPlayerCharacter = otherPlayer.GetComponent<PlayerNetwork>();
+        otherPlayerCharacter.SetGravity_Rpc(false);
+        otherPlayerCharacter.AddForce_Rpc(displacement.normalized * kickJumpForce, otherPlayer.OwnerClientId);
+        camera.Shake(0.5f, 0.5f);
+
+        yield return new WaitForSeconds(floatingDuration);
+
+        otherPlayerCharacter.SetGravity_Rpc(true);
+        EndKillEffect(camera);
+    }
+
+
+    private void EndKillEffect(PlayerCameraController camera)
+    {
+        camera.SetKillEffectCamera(false);
+        CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
+        if (virtualCam != null)
+        {
+            virtualCam.Target.TrackingTarget = cameraPivot;
+            virtualCam.Target.LookAtTarget = cameraPivot;
+        }
+    }
+
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void AddForce_Rpc(Vector3 direction, ulong clientId)
+    {
+            if (clientId != OwnerClientId)
+                return;
+
+            rb.linearVelocity = direction;
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SetGravity_Rpc(bool active)
+    {
+        rb.useGravity = active;
+    }
+
     #endregion
 }
