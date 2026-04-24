@@ -50,6 +50,8 @@ public class PlayerNetwork : NetworkBehaviour
     private ParticleSystem dashEffect;
     [SerializeField]
     private ParticleSystem jetpackEffect;
+    [SerializeField]
+    private ParticleSystem kickHitEffect;
 
     private void Awake()
     {
@@ -616,7 +618,7 @@ public class PlayerNetwork : NetworkBehaviour
             return;
         }
 
-        StartCoroutine(PlaySwingAnimation(aimedDownPlayer));
+        StartCoroutine(PlayKickAnimation(aimedDownPlayer));
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
@@ -639,7 +641,6 @@ public class PlayerNetwork : NetworkBehaviour
         }
         // 점프 후 최고높이 도달
         // ↓↓↓↓↓↓↓↓↓↓
-
         animator.SetTrigger("Kick");
         float dashDuration = 0.15f;
         Vector3 targetPos = otherPlayer.transform.position;
@@ -656,6 +657,7 @@ public class PlayerNetwork : NetworkBehaviour
         float originalAnimSpeed = animator.speed;
         bool wasGravity = rb.useGravity;
 
+        kickHitEffect.Play();
         animator.speed = 0f;
         rb.useGravity = false;
         rb.linearVelocity = Vector3.zero;
