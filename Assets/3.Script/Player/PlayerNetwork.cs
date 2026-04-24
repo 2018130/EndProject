@@ -132,6 +132,7 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        AudioManager.Instance.PlaySFX("JumpPad");
         rb.AddForce(dir * force, ForceMode.Impulse);
     }
 
@@ -321,6 +322,7 @@ public class PlayerNetwork : NetworkBehaviour
         jumpPressTime = Time.time;
         if (IsGrounded())
         {
+            AudioManager.Instance.PlaySFX("Jump");
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
@@ -366,6 +368,7 @@ public class PlayerNetwork : NetworkBehaviour
         // 기본 속도 초기화 후 대시
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         rb.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
+        AudioManager.Instance.PlaySFX("Dash");
 
         // 마지막에 대쉬한 시간 기록
         lastDashTime = Time.time;
@@ -550,6 +553,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (!IsOwner) return;
         // BubbleEffectUI 띄우기
         BubbleEffectUI.Instance.Show(duration);
+        AudioManager.Instance.PlaySFX("Bubble");
     }
 
     [ServerRpc]
