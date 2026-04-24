@@ -33,11 +33,22 @@ public class PlayerNetwork : NetworkBehaviour
 
     [SerializeField] private Transform cameraPivot;
 
+    // 처형 관련 스크립트
+    PlayerHealth aimedDownPlayer;
+    [Header("Kick")]
+    [SerializeField]
+    private float kickJumpForce = 7f;
+    [SerializeField]
+    private float knockbackForce = 3f;
+
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<Animator>(out animator);
         TryGetComponent<PlayerInput>(out playerInput);
+
+        playerInput.OnKickPerformed += KillEffect_Kick;
         moveSpeed = baseMoveSpeed;
     }
 
@@ -186,6 +197,8 @@ public class PlayerNetwork : NetworkBehaviour
         {
             UseJetpackWaterServerRpc();
         }
+
+        CheckKillEffect();
     }
 
     private void FixedUpdate()
@@ -272,7 +285,7 @@ public class PlayerNetwork : NetworkBehaviour
     public void SendMoveInput(Vector2 input)
     {
         moveInput = input;
-        Debug.Log(moveInput);
+
         if (IsOwner)
         {
             SendMoveInputServerRpc(input);
@@ -515,6 +528,7 @@ public class PlayerNetwork : NetworkBehaviour
             }
         }
     }
+    //진짜 개싫타 학원에 있기....
 
     [ClientRpc]
     public void ApplyBubbleEffect_ClientRpc(float duration)
@@ -536,7 +550,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         targetHealth.Revive();
     }
-
+    //나 송준엽인데 사실 우리팀 버리고 그냥 취업해버리고싶다 >> 옆사람 개못함
     [ServerRpc]
     public void ExecuteEnemy_ServerRpc(ulong targetClientId)
     {
@@ -561,4 +575,170 @@ public class PlayerNetwork : NetworkBehaviour
             currentZone = null;
     }
 
+    #region 처형
+    private void CheckKillEffect()
+    {
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, 10f);
+        Debug.DrawRay(transform.position, transform.forward * 10f, Color.red, 1f);
+        foreach (var hit in hits)
+        {
+            if(hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+            {
+                if(playerHealth.State.Value == PlayerState.Down)
+                {
+                    aimedDownPlayer = playerHealth;
+                    return;
+                }
+            }
+        }
+
+        aimedDownPlayer = null;
+    }
+
+    private void KillEffect_Kick()
+    {
+        if (aimedDownPlayer == null)
+        {
+            return;
+        }
+
+        StartCoroutine(PlaySwingAnimation(aimedDownPlayer));
+    }
+
+    private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
+    {
+        PlayerCameraController camera = GetComponent<PlayerCameraController>();
+        camera.SetKillEffectCamera(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        rb.AddForce(Vector3.up * kickJumpForce, ForceMode.Impulse);
+
+        while (true)
+        {
+            yield return null;
+
+            if (rb.linearVelocity.y < 0)
+            {
+                break;
+            }
+        }
+        // 점프 후 최고높이 도달
+        // ↓↓↓↓↓↓↓↓↓↓
+
+        animator.SetTrigger("Kick");
+        float dashDuration = 0.15f;
+        Vector3 targetPos = otherPlayer.transform.position;
+        targetPos.y += 0.5f;
+        Vector3 displacement = targetPos - transform.position;
+
+        rb.linearVelocity = displacement / dashDuration;
+
+        yield return new WaitForSeconds(dashDuration);
+
+        // 타격
+        // ↓↓↓↓↓↓↓↓↓↓
+        //나 송준엽인데 바지에 똥쌌다 사실...조금 지렸어....
+        float originalAnimSpeed = animator.speed;
+        bool wasGravity = rb.useGravity;
+
+        animator.speed = 0f;
+        rb.useGravity = false;
+        rb.linearVelocity = Vector3.zero;
+
+        yield return new WaitForSeconds(1f);
+
+        // 4. 상태 원상 복구
+        animator.speed = originalAnimSpeed;
+        rb.useGravity = wasGravity;
+
+        camera.Shake(0.5f, 0.5f);
+        otherPlayer.GetComponent<PlayerNetwork>().AddForce_Rpc(displacement.normalized * knockbackForce, otherPlayer.OwnerClientId);
+        EndKillEffect(camera);
+    }
+
+    private IEnumerator PlayUppercutAnimation(PlayerHealth otherPlayer)
+    {
+        PlayerCameraController camera = GetComponent<PlayerCameraController>();
+        camera.SetKillEffectCamera(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        animator.SetTrigger("Uppercut");
+
+        float floatingDuration = 1f;
+        PlayerNetwork otherPlayerCharacter = otherPlayer.GetComponent<PlayerNetwork>();
+        otherPlayerCharacter.SetGravity_Rpc(false);
+        otherPlayerCharacter.AddForce_Rpc(Vector3.up * kickJumpForce, otherPlayer.OwnerClientId);
+        camera.Shake(0.5f, 0.5f);
+
+        yield return new WaitForSeconds(floatingDuration);
+
+        otherPlayerCharacter.SetGravity_Rpc(true);
+        EndKillEffect(camera);
+    }
+
+    private IEnumerator PlaySwingAnimation(PlayerHealth otherPlayer)
+    {
+        PlayerCameraController camera = GetComponent<PlayerCameraController>();
+        camera.SetKillEffectCamera(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        animator.SetTrigger("Swing");
+
+        yield return null;
+
+        float targetNormalizedTime = 5f / 30f;
+
+        yield return new WaitUntil(() =>
+            animator.GetCurrentAnimatorStateInfo(0).IsName("Swing") &&
+            animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= targetNormalizedTime
+        );
+
+        float floatingDuration = 1f;
+        Vector3 targetPos = otherPlayer.transform.position;
+        targetPos.y += 0.5f;
+        Vector3 displacement = targetPos - transform.position;
+
+        PlayerNetwork otherPlayerCharacter = otherPlayer.GetComponent<PlayerNetwork>();
+        otherPlayerCharacter.SetGravity_Rpc(false);
+        otherPlayerCharacter.AddForce_Rpc(displacement.normalized * kickJumpForce, otherPlayer.OwnerClientId);
+        camera.Shake(0.5f, 0.5f);
+
+        yield return new WaitForSeconds(floatingDuration);
+
+        otherPlayerCharacter.SetGravity_Rpc(true);
+        EndKillEffect(camera);
+    }
+
+
+    private void EndKillEffect(PlayerCameraController camera)
+    {
+        camera.SetKillEffectCamera(false);
+        CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
+        if (virtualCam != null)
+        {
+            virtualCam.Target.TrackingTarget = cameraPivot;
+            virtualCam.Target.LookAtTarget = cameraPivot;
+        }
+    }
+
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void AddForce_Rpc(Vector3 direction, ulong clientId)
+    {
+            if (clientId != OwnerClientId)
+                return;
+
+            rb.linearVelocity = direction;
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SetGravity_Rpc(bool active)
+    {
+        rb.useGravity = active;
+    }
+
+    #endregion
 }
