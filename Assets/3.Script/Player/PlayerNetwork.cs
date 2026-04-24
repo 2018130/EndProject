@@ -50,6 +50,8 @@ public class PlayerNetwork : NetworkBehaviour
     private ParticleSystem dashEffect;
     [SerializeField]
     private ParticleSystem jetpackEffect;
+    [SerializeField]
+    private ParticleSystem upperHitEffect;
 
     private void Awake()
     {
@@ -620,7 +622,7 @@ public class PlayerNetwork : NetworkBehaviour
             return;
         }
 
-        StartCoroutine(PlaySwingAnimation(aimedDownPlayer));
+        StartCoroutine(PlayUppercutAnimation(aimedDownPlayer));
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
@@ -689,6 +691,7 @@ public class PlayerNetwork : NetworkBehaviour
         otherPlayerCharacter.SetGravity_Rpc(false);
         otherPlayerCharacter.AddForce_Rpc(Vector3.up * kickJumpForce, otherPlayer.OwnerClientId);
         camera.Shake(0.5f, 0.5f);
+        upperHitEffect.Play();
 
         yield return new WaitForSeconds(floatingDuration);
 

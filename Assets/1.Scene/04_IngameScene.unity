@@ -16374,6 +16374,63 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &1839807925
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4215100934875920750, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_Name
+      value: EffectManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.15525
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.89746
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.47504
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433542652950554814, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 88462d979161b4a4b8dceb86f61cac43, type: 3}
 --- !u!1 &1854474863
 GameObject:
   m_ObjectHideFlags: 0
@@ -29503,6 +29560,7 @@ GameObject:
   - component: {fileID: 7775678950288020667}
   - component: {fileID: 4646964209204958758}
   - component: {fileID: 7977035274282184611}
+  - component: {fileID: 7977035274282184612}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -36759,6 +36817,23 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
+--- !u!114 &7977035274282184612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4574972496575824699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
+  NoiseProfile: {fileID: 11400000, guid: 1075a3bcb659cac4b853a3f089d18d5c, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 1
+  FrequencyGain: 1
+  m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &7981744701433646252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40240,4 +40315,5 @@ SceneRoots:
   - {fileID: 4420996188455799344}
   - {fileID: 2100949634}
   - {fileID: 1039038077}
+  - {fileID: 1839807925}
   - {fileID: 2108294750}
