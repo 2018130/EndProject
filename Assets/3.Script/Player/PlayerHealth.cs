@@ -17,6 +17,7 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] public float maxHp = 100f;    // 기본 체력
     [SerializeField] private float downedHpDrain = 10f; // 기절 중 초당 체력 감소
     [SerializeField] private GameObject actionZone;     // 처형, 살리기 존
+    [SerializeField] private ParticleSystem hitParticlePrefab;
 
     private Coroutine downedCoroutine;
 
@@ -114,7 +115,18 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
-    public void TakeDamage(float damage, Faction attackerFaction = Faction.None, ulong attackerClientId = ulong.MaxValue)
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SpawnHitParticle_Rpc(Vector3 hitPos, Vector3 bulletPos)
+    {
+        Vector3 hitDir = (hitPos - bulletPos).normalized;
+        Quaternion particleRot = Quaternion.LookRotation(-hitDir);
+        ParticleSystem hitParticle = Instantiate(hitParticlePrefab, hitPos, particleRot);
+        hitParticle.Play();
+
+        StartCoroutine(RemoveHitParticle(1f, hitParticle));
+    }
+
+    public void TakeDamage(float damage, Faction attackerFaction = Faction.None, ulong attackerClientId = ulong.MaxValue, Vector3 hitPos = default, Vector3 bulletPos = default)
     {
         if (!IsServer) return;
 
@@ -123,6 +135,7 @@ public class PlayerHealth : NetworkBehaviour
         if (attackerFaction != Faction.None &&
             attackerFaction == (Faction)PlayerFactionInt.Value) return;
 
+        SpawnHitParticle_Rpc(hitPos, bulletPos);
 
         Hp.Value -= damage;
 
@@ -232,5 +245,12 @@ public class PlayerHealth : NetworkBehaviour
         if (playerInput != null)
             playerInput.enabled = true;
 
+    }
+
+    private IEnumerator RemoveHitParticle(float aliveTime, ParticleSystem particle)
+    {
+        yield return new WaitForSeconds(aliveTime);
+
+        Destroy(particle.gameObject);
     }
 }

@@ -60,54 +60,6 @@ public class Viewer : MonoBehaviour
 
 
 
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            Previous();
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            Next();
-        }
-        if ((Input.GetKeyDown(KeyCode.Space) && !Particles[showNum].IsAlive()) || (Input.GetKeyDown(KeyCode.Space) && isPaused))
-        {
-            PlayFX();
-        }
-        else if(Input.GetKeyDown(KeyCode.Space) && Particles[showNum].IsAlive() && !isPaused)
-        {
-            PauseFX();
-        }
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            Ray ray = _Cam.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                GameObject spawnFX = Instantiate(Particles[showNum].gameObject, hit.point, Quaternion.FromToRotation(Particles[showNum].transform.up, hit.normal));
-                spawnFX.gameObject.SetActive(true);
-                spawnFX.GetComponent<ParticleSystem>().Play();
-
-                Destroy(spawnFX, spawnFX.GetComponent<ParticleSystem>().main.duration);
-            }
-            
-        }
-        
-
-        //Camera Rotate
-        if (Input.GetMouseButton(1))
-        {
-            float xRotateMove = Input.GetAxis("Mouse X") * Time.deltaTime * Rotspeed;
-            float yRotateMove = Input.GetAxis("Mouse Y") * Time.deltaTime * Rotspeed;
-
-            Vector3 stagePosition = ShowPos.transform.position;
-
-            _Cam.transform.RotateAround(stagePosition, Vector3.up, xRotateMove);
-            _Cam.transform.RotateAround(stagePosition, Vector3.right, -yRotateMove);
-
-            _Cam.transform.LookAt(stagePosition);
-        }
-        
-
     }
 
     public void Next()

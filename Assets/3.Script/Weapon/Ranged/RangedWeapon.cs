@@ -15,6 +15,9 @@ public class RangedWeapon : BaseWeapon
 
     private bool isSubscribed = false;
 
+    [SerializeField]
+    private ParticleSystem shotParticle;
+
     protected override void Awake()
     {
         base.Awake();
@@ -87,6 +90,7 @@ public class RangedWeapon : BaseWeapon
 
         if (playerWater == null || !playerWater.HasWater()) return;
 
+        shotParticle.Play();
         ShootProjectileRpc(NetworkManager.Singleton.LocalClientId, shootDir);
     }
 
