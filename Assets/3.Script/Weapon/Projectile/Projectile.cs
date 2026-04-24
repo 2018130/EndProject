@@ -69,7 +69,8 @@ public class Projectile : NetworkBehaviour
         if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return; // 자기 자신 무시
         Debug.Log($"적 때린 거 맞음");
         isHit = true;
-        playerHealth.TakeDamage(projectileData.Damage, projectileData.OwnerFaction, projectileData.OwnerClientId);
+
+        playerHealth.TakeDamage(projectileData.Damage, projectileData.OwnerFaction, projectileData.OwnerClientId, other.ClosestPoint(transform.position), transform.position);
         GetComponent<NetworkObject>().Despawn();
     }
 

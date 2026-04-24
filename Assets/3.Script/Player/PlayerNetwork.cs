@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class PlayerNetwork : NetworkBehaviour
 {
@@ -42,6 +43,14 @@ public class PlayerNetwork : NetworkBehaviour
     private float knockbackForce = 3f;
 
 
+    [Header("Effect")]
+    [SerializeField]
+    private ParticleSystem spawnEffect;
+    [SerializeField]
+    private ParticleSystem dashEffect;
+    [SerializeField]
+    private ParticleSystem jetpackEffect;
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -50,6 +59,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         playerInput.OnKickPerformed += KillEffect_Kick;
         moveSpeed = baseMoveSpeed;
+        isJetpacking = false;
     }
 
     public override void OnNetworkSpawn()
@@ -81,6 +91,7 @@ public class PlayerNetwork : NetworkBehaviour
             playerHealth.State.OnValueChanged += OnPlayerStateChanged;
         }
 
+        spawnEffect.Play();
     }
 
     private void OnPlayerStateChanged(PlayerState oldState, PlayerState newState)
@@ -121,12 +132,14 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        AudioManager.Instance.PlaySFX("JumpPad");
         rb.AddForce(dir * force, ForceMode.Impulse);
     }
 
     private IEnumerator BoostRoutine(float amount, float duration)
     {
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
             float current = Mathf.Lerp(amount, 0f, elapsed / duration);
@@ -251,6 +264,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (isJetpacking)
         {
+            jetpackEffect.Play();
             rb.AddForce(-Physics.gravity * rb.mass, ForceMode.Force);
             rb.AddForce(Vector3.up * jetpackForce, ForceMode.Force);
         }
@@ -308,6 +322,7 @@ public class PlayerNetwork : NetworkBehaviour
         jumpPressTime = Time.time;
         if (IsGrounded())
         {
+            AudioManager.Instance.PlaySFX("Jump");
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
@@ -328,6 +343,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (isDashing) return;
         if (Time.time - lastDashTime < dashCooldown) return;
 
+        dashEffect.Play();
 
         PlayerWater playerWater = GetComponent<PlayerWater>();
 
@@ -352,6 +368,7 @@ public class PlayerNetwork : NetworkBehaviour
         // 기본 속도 초기화 후 대시
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         rb.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
+        AudioManager.Instance.PlaySFX("Dash");
 
         // 마지막에 대쉬한 시간 기록
         lastDashTime = Time.time;
@@ -536,6 +553,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (!IsOwner) return;
         // BubbleEffectUI 띄우기
         BubbleEffectUI.Instance.Show(duration);
+        AudioManager.Instance.PlaySFX("Bubble");
     }
 
     [ServerRpc]

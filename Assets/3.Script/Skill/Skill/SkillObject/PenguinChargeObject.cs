@@ -26,6 +26,16 @@ public class PenguinChargeObject : NetworkBehaviour
         TryGetComponent(out rb);
     }
 
+    public override void OnNetworkSpawn()
+    {
+        AudioManager.Instance.PlaySFX("PenguinCharge",true);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        AudioManager.Instance.StopSFX();
+    }
+
     public void Initialize(float speed, float damage, Vector3 dir, ulong ownerClientId, Faction ownerFaction)
     {
         this.speed = speed;
@@ -76,5 +86,5 @@ public class PenguinChargeObject : NetworkBehaviour
         GetComponent<NetworkObject>().Despawn();
     }
 
-    
+
 }
