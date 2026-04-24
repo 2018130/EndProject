@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4091172347
+  GlobalObjectIdHash: 322427461
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -341,8 +341,6 @@ MonoBehaviour:
   dashDuration: 0.3
   dashCooldown: 1
   cameraPivot: {fileID: 2053117649158748490}
-  kickJumpForce: 7
-  knockbackForce: 20
   netMoveInput:
     m_InternalValue: {x: 0, y: 0}
 --- !u!114 &-4028447985207414986
@@ -526,11 +524,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   maxAimDistance: 100
-  aimAssistRadius: 1.5
+  aimAssistRadius: 0.5
   aimAssistLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  playerLayerName: Player
+    m_Bits: 64
   NetAimDirection:
     m_InternalValue: {x: 0, y: 0, z: 1}
   NetIsAiming:
@@ -549,15 +546,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
   ShowTopMostFoldoutHeaderGroup: 1
   cinemachineCam: {fileID: 0}
-  multiChannelPerlin: {fileID: 0}
   overrideFOV: 1
   normalFOV: 60
   zoomFOV: 40
   normalOffset: {x: 0, y: -0.5, z: -1}
   zoomOffset: {x: 1, y: -1.5, z: -1}
   lerpSpeed: 8
-  isKillEffectPlaying: 0
-  killEffectOffset: {x: -3, y: 3, z: -3}
 --- !u!1 &7912213531098341626
 GameObject:
   m_ObjectHideFlags: 0
