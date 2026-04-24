@@ -62,6 +62,7 @@ public class CatGunObject : NetworkBehaviour
 
             PlayerHealth closest = null;
             float closestDist = float.MaxValue;
+            Vector3 hitPos = Vector3.zero;
 
             foreach (var hit in hits)
             {
@@ -73,13 +74,14 @@ public class CatGunObject : NetworkBehaviour
                 {
                     closestDist = dist;
                     closest = ph;
+                    hitPos = hit.ClosestPoint(transform.position);
                 }
             }
 
             if (closest != null)
             {
                 // 레이저 이펙트 (나중에 추가)
-                closest.TakeDamage(damage, ownerFaction, ownerClientId);
+                closest.TakeDamage(damage, ownerFaction, ownerClientId, hitPos, transform.position);
             }
 
             yield return new WaitForSeconds(fireRate);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class PlayerNetwork : NetworkBehaviour
 {
@@ -42,6 +43,14 @@ public class PlayerNetwork : NetworkBehaviour
     private float knockbackForce = 3f;
 
 
+    [Header("Effect")]
+    [SerializeField]
+    private ParticleSystem spawnEffect;
+    [SerializeField]
+    private ParticleSystem dashEffect;
+    [SerializeField]
+    private ParticleSystem jetpackEffect;
+
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -50,6 +59,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         playerInput.OnKickPerformed += KillEffect_Kick;
         moveSpeed = baseMoveSpeed;
+        isJetpacking = false;
     }
 
     public override void OnNetworkSpawn()
@@ -81,6 +91,7 @@ public class PlayerNetwork : NetworkBehaviour
             playerHealth.State.OnValueChanged += OnPlayerStateChanged;
         }
 
+        spawnEffect.Play();
     }
 
     private void OnPlayerStateChanged(PlayerState oldState, PlayerState newState)
@@ -127,6 +138,7 @@ public class PlayerNetwork : NetworkBehaviour
     private IEnumerator BoostRoutine(float amount, float duration)
     {
         float elapsed = 0f;
+
         while (elapsed < duration)
         {
             float current = Mathf.Lerp(amount, 0f, elapsed / duration);
@@ -251,6 +263,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (isJetpacking)
         {
+            jetpackEffect.Play();
             rb.AddForce(-Physics.gravity * rb.mass, ForceMode.Force);
             rb.AddForce(Vector3.up * jetpackForce, ForceMode.Force);
         }
@@ -328,6 +341,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (isDashing) return;
         if (Time.time - lastDashTime < dashCooldown) return;
 
+        dashEffect.Play();
 
         PlayerWater playerWater = GetComponent<PlayerWater>();
 

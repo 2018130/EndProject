@@ -60,8 +60,6 @@ public class Viewer : MonoBehaviour
 
 
 
-        
-
     }
 
     public void Next()
