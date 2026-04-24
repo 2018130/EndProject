@@ -186,6 +186,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2884441866724785477}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4720588742020639123
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2960021398876318668}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2960021398876318668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4720588742020639123}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.78, z: -0.909}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2884441866724785477}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7619555427853673786
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,6 +292,7 @@ Transform:
   - {fileID: 5557038543600074427}
   - {fileID: 6988158920900391662}
   - {fileID: 5285070463377483154}
+  - {fileID: 2960021398876318668}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8050602566230505540
@@ -400,7 +432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2327655873
+  GlobalObjectIdHash: 2361671433
   InScenePlacedSourceGlobalObjectIdHash: 2361671433
   DeferredDespawnTick: 0
   Ownership: 1
@@ -482,3 +514,9 @@ MonoBehaviour:
   knockbackPower: 8
   bumperPower: 10
   driverPos: {fileID: 3805300292824260864}
+  spawnEffectPrefab: {fileID: 5911893088733641442, guid: f6573a110c1967643a98d0efdba24be8, type: 3}
+  effectPrefab: {fileID: 8585649807550039280, guid: 224c4574d4d272a4b92df19ede61b338, type: 3}
+  spawnInterval: 0.1
+  effectPos: {fileID: 2960021398876318668}
+  isMoving:
+    m_InternalValue: 0

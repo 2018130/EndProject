@@ -16,11 +16,21 @@ public class SharkTube : NetworkBehaviour
     private float moveSpeed;
     private float duration;
 
+    [SerializeField] private GameObject spawnEffectPrefab;
+    [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private float spawnInterval = 0.1f;
+    [SerializeField] private Transform effectPos;
+    private float effectTimer;
+
+    public NetworkVariable<bool> isMoving = new NetworkVariable<bool>();
+
     private NetworkVariable<NetworkObjectReference> driverRef =
         new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public override void OnNetworkSpawn()
     {
+        SkillEffectPool.Instance.Get(spawnEffectPrefab, transform.position, Quaternion.identity);
+
         rb = GetComponent<Rigidbody>();
 
         driverRef.OnValueChanged += OnDriverChanged;
@@ -73,6 +83,8 @@ public class SharkTube : NetworkBehaviour
         {
             driverRef.Value = new NetworkObjectReference(driver.NetworkObject);
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
+
+            isMoving.Value = true;
         }
 
         StartCoroutine(StopSkill());
@@ -94,6 +106,20 @@ public class SharkTube : NetworkBehaviour
             );
 
         //animator.SetBool("IsMoving", move != Vector3.zero);
+    }
+
+    private void Update()
+    {
+        if (isMoving.Value)
+        {
+            effectTimer -= Time.deltaTime;
+            if (effectTimer <= 0f)
+            {
+                effectTimer = spawnInterval;
+
+                SkillEffectPool.Instance.Get(effectPrefab, effectPos.position, Quaternion.identity);
+            }
+        }
     }
 
     private void LateUpdate()

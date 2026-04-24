@@ -20,6 +20,14 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     private float moveSpeed;
     private float duration;
 
+    [SerializeField] private GameObject spawnEffectPrefab;
+    [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private float spawnInterval = 0.1f;
+    [SerializeField] private Transform effectPos;
+    private float effectTimer;
+
+    public NetworkVariable<bool> isMoving = new NetworkVariable<bool>();
+
     private NetworkVariable<NetworkObjectReference> driverRef =
         new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private NetworkList<NetworkObjectReference> passengerRefs;
@@ -31,6 +39,8 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        SkillEffectPool.Instance.Get(spawnEffectPrefab, transform.position, Quaternion.identity);
+
         passengers = new PlayerNetwork[seats.Length];
         rb = GetComponent<Rigidbody>();
 
@@ -135,9 +145,10 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             driverRef.Value = new NetworkObjectReference(driver.NetworkObject);
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
 
-            StartCoroutine(StopSkill());
-        }
+            isMoving.Value = true;
 
+        }
+        StartCoroutine(StopSkill());
     }
 
     private void FixedUpdate()
@@ -157,6 +168,20 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         }
 
         //animator.SetBool("IsMoving", move != Vector3.zero);
+    }
+
+    private void Update()
+    {
+        if (isMoving.Value)
+        {
+            effectTimer -= Time.deltaTime;
+            if (effectTimer <= 0f)
+            {
+                effectTimer = spawnInterval;
+
+                SkillEffectPool.Instance.Get(effectPrefab, effectPos.position, Quaternion.identity);
+            }
+        }
     }
 
     private void LateUpdate()
@@ -265,7 +290,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     private void DisableBoat_ClientRpc()
     {
         Collider[] boatCols = GetComponentsInChildren<Collider>();
-        foreach(Collider col in boatCols)
+        foreach (Collider col in boatCols)
         {
             col.enabled = false;
         }
