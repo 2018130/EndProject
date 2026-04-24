@@ -101,6 +101,10 @@ public class PlayerNetwork : NetworkBehaviour
         if (!IsOwner) return;
         StartCoroutine(BoostRoutine(amount, duration));
     }
+    public void ApplyWaterRefill(float amount)
+    {
+        GetComponent<PlayerWater>()?.RequestWaterRefill(amount);
+    }
 
     public void ApplyJumpPad(Vector3 dir, float force)
     {

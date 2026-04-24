@@ -30111,6 +30111,67 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 490859346}
+--- !u!1001 &7364861526635923145
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5448878406058004103, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 165131547
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 11.1780405
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 58.409485
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857943900220845958, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7217521942950242911, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
+      propertyPath: m_Name
+      value: WaterRefillBucket
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 829e99d3052f9eb4e95b0fe6c6ce6ff5, type: 3}
 --- !u!114 &7390943021169641338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34133,3 +34194,4 @@ SceneRoots:
   - {fileID: 1094243864}
   - {fileID: 4420996188455799344}
   - {fileID: 2100949634}
+  - {fileID: 7364861526635923145}

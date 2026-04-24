@@ -73,6 +73,17 @@ public class PlayerWater : NetworkBehaviour
         return true;
     }
 
+    public void RequestWaterRefill(float amount)
+    {
+        RefillWater_ServerRpc(amount);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void RefillWater_ServerRpc(float amount)
+    {
+        Water.Value = Mathf.Min(Water.Value + amount, maxWater);
+        // 충전 아이템이므로 lastWaterUseTime은 건드리지 않음 (충전 딜레이 방해 안 하도록)
+    }
 
     public void UseWaterForJetpack()
     {
