@@ -10,6 +10,8 @@ public class WaterBalloonObject : NetworkBehaviour
     private ulong ownerClientId;
     private Faction ownerFaction;
 
+    [SerializeField] private GameObject effectPrefab;
+
     public void Initialize(float range, float damage, ulong ownerClientId, Faction ownerFaction)
     {
         this.range = range;
@@ -45,12 +47,14 @@ public class WaterBalloonObject : NetworkBehaviour
         if (other.TryGetComponent(out PlayerNetwork player))
         {
             if (player.OwnerClientId == ownerClientId) return;
+            SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
             Explode();
             return;
         }
 
         if (other.CompareTag("Ground"))
         {
+            SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
             Explode();
         }
     }

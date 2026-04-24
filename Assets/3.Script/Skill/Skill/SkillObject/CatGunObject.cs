@@ -14,8 +14,12 @@ public class CatGunObject : NetworkBehaviour
     private ulong ownerClientId;
     private Faction ownerFaction;
 
+    [SerializeField] private GameObject effectPrefab;
+
     public override void OnNetworkSpawn()
     {
+        SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
+
         lineRenderer.positionCount = circleSegments + 1;
         lineRenderer.loop = true;
         lineRenderer.startWidth = 0.1f;
