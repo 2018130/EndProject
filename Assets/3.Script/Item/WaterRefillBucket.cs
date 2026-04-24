@@ -39,6 +39,9 @@ public class WaterRefillBucket : MonoBehaviour
         if (player == null) return;
 
         player.ApplyWaterRefill(refillAmount);
+
+        AudioManager.Instance.PlaySFX("Item");
+
         RequestCollect_ServerRpc();
     }
 
