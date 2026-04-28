@@ -38,7 +38,7 @@ public class HealthUI : MonoBehaviour, INetworkContextListener
     {
         Debug.Log($"OnHpChanged: {oldVal} -> {newVal}");
         if (vignette == null) return;
-        if (playerHealth.State.Value == PlayerState.Down) return;
+        if (playerHealth.State.Value != PlayerState.Alive) return;
 
         float ratio = newVal / 100f;
 
@@ -72,15 +72,31 @@ public class HealthUI : MonoBehaviour, INetworkContextListener
     {
         if (vignette == null) return;
 
-        if (newState == PlayerState.Down)
+        switch (newState)
         {
-            StopBlink();
-            vignette.intensity.value = 0f;
-        }
-        else if (newState == PlayerState.Alive)
-        {
-            StopBlink();
-            OnHpChanged(0, playerHealth.Hp.Value);
+            case PlayerState.Alive:
+                // HP 기반으로 다시 계산
+                StopBlink();
+                currentBlinkInterval = -1f;
+                OnHpChanged(0, playerHealth.Hp.Value);
+                break;
+
+            case PlayerState.Down:
+                // 검은색 번쩍
+                StopBlink();
+                currentBlinkInterval = -1f;
+                vignette.color.value = Color.black;
+                StartBlink(0.4f);
+                currentBlinkInterval = 0.4f;
+                break;
+
+            case PlayerState.Dead:
+                // 비네트 끄고 흑백
+                StopBlink();
+                currentBlinkInterval = -1f;
+                vignette.intensity.value = 0f;
+                PlayerEffectUI.Instance?.SetGrayscale(true);
+                break;
         }
     }
 
