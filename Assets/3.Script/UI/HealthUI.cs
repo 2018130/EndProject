@@ -9,11 +9,21 @@ public class HealthUI : MonoBehaviour, INetworkContextListener
     private PlayerHealth playerHealth;
     private Vignette vignette;
     private Coroutine blinkCoroutine;
+    private ColorAdjustments colorAdjustments;
+
+    private float currentBlinkInterval = -1f;
 
     public void OnNetworkSceneContextBuilt()
     {
         bool result = volume.profile.TryGet(out vignette);
+        volume.profile.TryGet(out colorAdjustments);
         Debug.Log($"Vignette Ã£À½: {result}, vignette: {vignette}");
+    }
+
+    public void SetGrayscale(bool active)
+    {
+        if (colorAdjustments == null) return;
+        colorAdjustments.saturation.value = active ? -100f : 0f;
     }
 
     public void SetPlayer(PlayerHealth health)
@@ -37,16 +47,25 @@ public class HealthUI : MonoBehaviour, INetworkContextListener
         {
             vignette.intensity.value = 0f;
             StopBlink();
+            currentBlinkInterval = -1f;
         }
         else if (ratio > 0.1f)
         {
             vignette.color.value = new Color(1f, 0.5f, 0f);
-            StartBlink(0.6f); // 
+            if (currentBlinkInterval != 0.6f)
+            {
+                currentBlinkInterval = 0.6f;
+                StartBlink(0.6f);
+            }
         }
         else
         {
             vignette.color.value = Color.red;
-            StartBlink(0.2f);
+            if (currentBlinkInterval != 0.2f)
+            {
+                currentBlinkInterval = 0.2f;
+                StartBlink(0.2f);
+            }
         }
     }
     private void OnStateChanged(PlayerState oldState, PlayerState newState)
@@ -56,8 +75,7 @@ public class HealthUI : MonoBehaviour, INetworkContextListener
         if (newState == PlayerState.Down)
         {
             StopBlink();
-            vignette.color.value = Color.black;
-            StartBlink(0.4f); // È¸»öÀ¸·Î ±ôºý
+            vignette.intensity.value = 0f;
         }
         else if (newState == PlayerState.Alive)
         {

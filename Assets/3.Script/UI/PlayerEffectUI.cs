@@ -1,12 +1,15 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class BubbleEffectUI : MonoBehaviour
+public class PlayerEffectUI : MonoBehaviour
 {
-    public static BubbleEffectUI Instance { get; private set; }
+    public static PlayerEffectUI Instance { get; private set; }
 
     [SerializeField] private Image bubbleImage; // 반투명 버블 이미지
+
     private Coroutine effectCoroutine;
 
     private void Awake()
@@ -27,5 +30,11 @@ public class BubbleEffectUI : MonoBehaviour
         bubbleImage.gameObject.SetActive(true);
         yield return new WaitForSeconds(duration);
         bubbleImage.gameObject.SetActive(false);
+    }
+
+    public void SetGrayscale(bool active)
+    {
+        HealthUI healthUI = FindAnyObjectByType<HealthUI>();
+        healthUI?.SetGrayscale(active);
     }
 }

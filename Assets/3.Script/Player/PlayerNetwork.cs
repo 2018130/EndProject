@@ -83,8 +83,25 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (playerInput != null)
         {
-            playerInput.OnRevivePerformed += () => currentZone?.TryRevive();
-            playerInput.OnExecutePerformed += () => currentZone?.TryExecute();
+            playerInput.OnRevivePerformed += () =>
+            {
+                if (currentZone != null)
+                {
+                    currentZone.TryRevive();
+                    aimedDownPlayer = null;
+                    PlayerActionPromptUI.Instance?.HideAllPrompts();
+                }
+            };
+
+            playerInput.OnExecutePerformed += () =>
+            {
+                if (currentZone != null)
+                {
+                    currentZone.TryExecute();
+                    aimedDownPlayer = null;
+                    PlayerActionPromptUI.Instance?.HideAllPrompts();
+                }
+            };
         }
 
         PlayerHealth playerHealth = GetComponent<PlayerHealth>();
@@ -110,12 +127,19 @@ public class PlayerNetwork : NetworkBehaviour
             case PlayerState.Alive:
                 animator.SetBool("IsCrawling", false);
                 moveSpeed = baseMoveSpeed;
-                if (IsOwner) playerInput.IsDown = false;
+                if (IsOwner)
+                {
+                    playerInput.IsDown = false;
+                    PlayerEffectUI.Instance?.SetGrayscale(false);
+                }
                 break;
 
             case PlayerState.Dead:
                 animator.SetBool("IsCrawling", false);
-                if (IsOwner) playerInput.IsDown = true;
+                if (IsOwner) {
+                    playerInput.IsDown = true;
+                    PlayerEffectUI.Instance?.SetGrayscale(true);
+                }
                 break;
         }
     }
@@ -554,7 +578,7 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
         // BubbleEffectUI ¶ç¿ì±â
-        BubbleEffectUI.Instance.Show(duration);
+        PlayerEffectUI.Instance.Show(duration);
         AudioManager.Instance.PlaySFX("Bubble");
     }
 
@@ -587,24 +611,39 @@ public class PlayerNetwork : NetworkBehaviour
     public void SetCurrentZone(ZoneInteraction zone)
     {
         currentZone = zone;
+
+        Faction myFaction = (Faction)GetComponent<PlayerHealth>().PlayerFactionInt.Value;
+        Faction targetFaction = (Faction)zone.GetComponentInParent<PlayerHealth>().PlayerFactionInt.Value;
+        bool isAlly = myFaction == targetFaction;
+
+        PlayerActionPromptUI.Instance?.ShowPrompts(
+            zone.GetComponentInParent<PlayerHealth>().transform,
+            showRevive: isAlly,
+            showExecute: !isAlly
+        );
     }
 
     public void ClearCurrentZone(ZoneInteraction zone)
     {
         if (currentZone == zone)
+        {
             currentZone = null;
+            PlayerActionPromptUI.Instance?.HideAllPrompts();
+        }
     }
 
     #region Ã³Çü
     private void CheckKillEffect()
     {
+
         RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, 10f);
         Debug.DrawRay(transform.position, transform.forward * 10f, Color.red, 1f);
+
         foreach (var hit in hits)
         {
-            if(hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+            if (hit.transform.TryGetComponent(out PlayerHealth playerHealth))
             {
-                if(playerHealth.State.Value == PlayerState.Down)
+                if (playerHealth.State.Value == PlayerState.Down)
                 {
                     aimedDownPlayer = playerHealth;
                     return;
@@ -622,7 +661,10 @@ public class PlayerNetwork : NetworkBehaviour
             return;
         }
 
-        StartCoroutine(PlayUppercutAnimation(aimedDownPlayer));
+        var target = aimedDownPlayer;
+        aimedDownPlayer = null;
+        PlayerActionPromptUI.Instance?.HideAllPrompts();
+        StartCoroutine(PlayUppercutAnimation(target));
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
@@ -696,6 +738,9 @@ public class PlayerNetwork : NetworkBehaviour
         yield return new WaitForSeconds(floatingDuration);
 
         otherPlayerCharacter.SetGravity_Rpc(true);
+
+        ExecuteEnemy_ServerRpc(otherPlayer.OwnerClientId);
+
         EndKillEffect(camera);
     }
 
