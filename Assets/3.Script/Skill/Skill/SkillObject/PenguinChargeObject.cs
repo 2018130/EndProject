@@ -14,6 +14,13 @@ public class PenguinChargeObject : NetworkBehaviour
     private ulong ownerClientId;
     private Faction ownerFaction;
 
+    [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private float spawnInterval = 0.1f;
+    [SerializeField] private Transform effectPos;
+    private float effectTimer;
+
+    public NetworkVariable<bool> isMoving = new NetworkVariable<bool>();
+
     private void Awake()
     {
         TryGetComponent(out rb);
@@ -36,6 +43,9 @@ public class PenguinChargeObject : NetworkBehaviour
         this.ownerClientId = ownerClientId;
         this.ownerFaction = ownerFaction;
         rb.AddForce(dir * speed, ForceMode.Impulse);
+
+        isMoving.Value = true;
+
         StartCoroutine(LifeRoutine());
     }
 
@@ -57,6 +67,19 @@ public class PenguinChargeObject : NetworkBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (isMoving.Value)
+        {
+            effectTimer -= Time.deltaTime;
+            if (effectTimer <= 0f)
+            {
+                effectTimer = spawnInterval;
+
+                SkillEffectPool.Instance.Get(effectPrefab, effectPos.position, Quaternion.identity);
+            }
+        }
+    }
     private IEnumerator LifeRoutine()
     {
         yield return new WaitForSeconds(3f);

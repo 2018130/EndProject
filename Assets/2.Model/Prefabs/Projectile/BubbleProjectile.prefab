@@ -180,6 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BubbleProjectile
   ShowTopMostFoldoutHeaderGroup: 1
+  effectPrefab: {fileID: 8866987181904549775, guid: 8c8d8385f96bd054a88a3df780d77bcc, type: 3}
 --- !u!114 &8340358226564039421
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -204,6 +204,7 @@ MonoBehaviour:
   segments: 128
   Width: 0.1
   healInterval: 1
+  effectPrefab: {fileID: 5551718882146614446, guid: ca5678a67971360408484fc2051d9d2e, type: 3}
 --- !u!120 &8807444435228950591
 LineRenderer:
   serializedVersion: 2

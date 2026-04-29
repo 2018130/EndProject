@@ -14,8 +14,12 @@ public class GoatMilkDispenser : NetworkBehaviour
     private float healRange;
     private float duration;
 
+    [SerializeField] private GameObject effectPrefab;
+
     public override void OnNetworkSpawn()
     {
+        SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
+
         lineRenderer.loop = true;
         lineRenderer.positionCount = segments;
         lineRenderer.startWidth = Width;

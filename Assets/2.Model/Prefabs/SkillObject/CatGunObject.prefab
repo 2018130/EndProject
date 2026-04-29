@@ -76,6 +76,7 @@ MonoBehaviour:
   detectRange: 3
   lineRenderer: {fileID: 582827579542619305}
   circleSegments: 36
+  effectPrefab: {fileID: 5551718882146614446, guid: ca5678a67971360408484fc2051d9d2e, type: 3}
 --- !u!1 &7957762533299695895
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,6 +8,8 @@ public class BubbleProjectile : NetworkBehaviour
     private ulong shooterClientId;
     private Vector3 shootDir;
 
+    [SerializeField] private GameObject effectPrefab;
+
     private void Awake()
     {
         TryGetComponent(out rb);
@@ -31,6 +33,7 @@ public class BubbleProjectile : NetworkBehaviour
         if (other.TryGetComponent(out PlayerNetwork player))
         {
             if (player.OwnerClientId == shooterClientId) return;
+            SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
             player.ApplyBubbleEffect_ClientRpc(3.5f);
             GetComponent<NetworkObject>().Despawn();
         }
