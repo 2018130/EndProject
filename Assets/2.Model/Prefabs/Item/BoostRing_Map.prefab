@@ -35,6 +35,7 @@ Transform:
   m_Children:
   - {fileID: 178102312908231592}
   - {fileID: 5143073357503350065}
+  - {fileID: 2706770027165706668}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5406551522423689635
@@ -149,7 +150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5143073357503350065
 Transform:
   m_ObjectHideFlags: 0
@@ -221,6 +222,76 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &5516782419665286088
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7404471409292438192}
+    m_Modifications:
+    - target: {fileID: 212884238536199452, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: InitialModule.startRotationX.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 212884238536199452, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: InitialModule.startRotationX.minScalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430461643900741852, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+      propertyPath: m_Name
+      value: WaterRing
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+--- !u!4 &2706770027165706668 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7575033261855218276, guid: 3a5b090f9379469439a2e0385df1e476, type: 3}
+  m_PrefabInstance: {fileID: 5516782419665286088}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8141819812483388644
 PrefabInstance:
   m_ObjectHideFlags: 0
