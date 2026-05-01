@@ -33,6 +33,7 @@ public class PlayerNetwork : NetworkBehaviour
     private PlayerInput playerInput;
 
     [SerializeField] private Transform cameraPivot;
+    [SerializeField] private Transform model;
 
     // 처형 관련 스크립트
     PlayerHealth aimedDownPlayer;
@@ -49,7 +50,7 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField]
     private ParticleSystem dashEffect;
     [SerializeField]
-    private ParticleSystem jetpackEffect;
+    private GameObject jetpackEffectParticle;
     [SerializeField]
     private ParticleSystem upperHitEffect;
 
@@ -290,7 +291,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (isJetpacking)
         {
-            jetpackEffect.Play();
+            Instantiate(jetpackEffectParticle, model.transform.position, Quaternion.identity);
             rb.AddForce(-Physics.gravity * rb.mass, ForceMode.Force);
             rb.AddForce(Vector3.up * jetpackForce, ForceMode.Force);
         }
