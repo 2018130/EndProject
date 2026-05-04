@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3063037953850618667}
   m_Layer: 0
   m_Name: WaterBalloonObject
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,7 +172,8 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   lineRenderer: {fileID: 8923992114443493905}
   circleSegments: 36
-  effectPrefab: {fileID: 8294947810415399850, guid: 7a16f43b4abbc0846a15aa17f7ba39bd, type: 3}
+  playerEffectPrefab: {fileID: 8294947810415399850, guid: 7a16f43b4abbc0846a15aa17f7ba39bd, type: 3}
+  groundEffectPrefab: {fileID: 185518, guid: 2ef436b6c6313494daf190cd68ebf636, type: 3}
 --- !u!1 &5587935066897242289
 GameObject:
   m_ObjectHideFlags: 0

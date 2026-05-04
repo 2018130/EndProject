@@ -131,6 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7943489111776926660}
+  - component: {fileID: 4316475806215005852}
   m_Layer: 6
   m_Name: PlayerGun
   m_TagString: Untagged
@@ -153,6 +154,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7944161950026807466}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4316475806215005852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964103647958995472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2184088504
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &3084919394178001710
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,7 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4091172347
+  GlobalObjectIdHash: 322427461
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -345,6 +371,7 @@ MonoBehaviour:
   dashDuration: 0.3
   dashCooldown: 1
   cameraPivot: {fileID: 2053117649158748490}
+  weaponPivot: {fileID: 7943489111776926660}
   model: {fileID: 4826801807631978227}
   kickJumpForce: 7
   knockbackForce: 3
@@ -416,7 +443,7 @@ MonoBehaviour:
   maxHp: 100
   downedHpDrain: 10
   actionZone: {fileID: 7912213531098341626}
-  hitParticlePrefab: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}
+  hitParticlePrefab: {fileID: 198012786351023796, guid: 46e56f62e4ff899488d1b27766d1eb6d, type: 3}
   Hp:
     m_InternalValue: 100
   State:
@@ -814,7 +841,7 @@ PrefabInstance:
     - target: {fileID: 6091249284180459995, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 0f52fbc9895e32d4f92b737eadf516a9, type: 2}
+      objectReference: {fileID: 9100000, guid: 13960050ec9c89849ba8f9596944e286, type: 2}
     - target: {fileID: 6488425948188162880, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
       propertyPath: m_Layer
       value: 6

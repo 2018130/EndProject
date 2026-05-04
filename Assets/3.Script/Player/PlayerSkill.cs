@@ -43,7 +43,7 @@ public class PlayerSkill : MonoBehaviour
         if (isOnCooldown)
         {
             coolTimeRemaining -= Time.deltaTime;
-            skillSlotUI?.UpdateCoolTime(coolTimeRemaining,currentCardData.Cooldown);
+            skillSlotUI?.UpdateCoolTime(coolTimeRemaining, currentCardData.Cooldown);
 
             if (coolTimeRemaining <= 0)
             {
@@ -87,9 +87,23 @@ public class PlayerSkill : MonoBehaviour
             else
                 balloonSkill.StopHolding();
         }
+        else if (currentSkill is MalrangBongSkill)
+        {
+            // 말랑봉은 장착 시 쿨타임 없음 - 다른 무기로 스왑할 때 쿨타임 시작
+            currentSkill.Execute(playerNetwork);
+        }
         else
         {
             currentSkill?.Execute(playerNetwork);
+            StartCooldown();
+        }
+    }
+
+    // WeaponController에서 말랑봉 → 일반무기 스왑 시 호출
+    public void StartMalrangBongCooldown()
+    {
+        if (currentSkill is MalrangBongSkill)// && currentCardData != null)
+        {
             StartCooldown();
         }
     }
