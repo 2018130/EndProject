@@ -7,6 +7,8 @@ public class WeaponController : NetworkBehaviour
     [SerializeField] private AimRigController aimRigController;
     private List<BaseWeapon> _weapons = new List<BaseWeapon>();
 
+    public event System.Action<BaseWeapon> OnWeaponRegistered;
+
     private NetworkVariable<int> _currentWeaponIndex = new NetworkVariable<int>(
         0,
         NetworkVariableReadPermission.Everyone,
@@ -96,6 +98,7 @@ public class WeaponController : NetworkBehaviour
             if (IsOwner && _weapons[0] is RangedWeapon rangedWeapon)
                 rangedWeapon.InitializeAfterEquip();
         }
+        OnWeaponRegistered?.Invoke(weapon); //AimRigController에서 HandBone 주입
     }
 
     [ServerRpc]
