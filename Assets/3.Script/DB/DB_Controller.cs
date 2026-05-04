@@ -3,10 +3,13 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 using MySql.Data.MySqlClient;
+using System.Timers;
 
 public class DB_Controller
 {
-    private MySqlConnection connection;
+    private MySqlConnection connection; 
+    
+    private Timer keepAliveTimer;
 
     private string server = "127.0.0.1"; //"your-rds-endpoint.amazonaws.com";
     private string database = "projectLoginData";
@@ -23,6 +26,8 @@ public class DB_Controller
         {
             connection.Open();
             Debug.Log("DB connection successful.");
+
+            StartKeepAliveTimer(3600000);
         }
         catch (Exception e)
         {
@@ -254,6 +259,33 @@ public class DB_Controller
             {
                 Debug.LogError("Data update failed: " + e.Message);
                 return false;
+            }
+        }
+    }
+
+    private void StartKeepAliveTimer(double intervalMilliseconds)
+    {
+        keepAliveTimer = new Timer(intervalMilliseconds);
+        keepAliveTimer.Elapsed += OnKeepAlivePing;
+        keepAliveTimer.AutoReset = true; // 반복 실행
+        keepAliveTimer.Enabled = true;   // 타이머 시작
+    }
+
+    private void OnKeepAlivePing(object source, ElapsedEventArgs e)
+    {
+        if (connection != null && connection.State == System.Data.ConnectionState.Open)
+        {
+            try
+            {
+                bool isAlive = connection.Ping();
+                if (isAlive)
+                {
+                    Debug.Log("DB Keep-Alive Ping 전송 완료 (연결 정상)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("DB Keep-Alive Ping 실패: " + ex.Message);
             }
         }
     }

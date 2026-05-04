@@ -60,6 +60,16 @@ public class Projectile : NetworkBehaviour
         if (!IsServer) return;
         if (isHit) return;
 
+        // 모래성 체크 먼저
+        if (other.TryGetComponent(out SandDestructible sand))
+        {
+            Debug.Log($"모래성이닷!");
+            sand.RegisterHit(other.ClosestPoint(transform.position));
+            isHit = true;
+            GetComponent<NetworkObject>().Despawn();
+            return;
+        }
+
         Debug.Log($"충돌: {other.gameObject.name}, 레이어: {LayerMask.LayerToName(other.gameObject.layer)}");
 
         PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
