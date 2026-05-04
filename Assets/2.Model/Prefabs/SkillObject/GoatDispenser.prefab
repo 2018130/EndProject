@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2109245181
+  GlobalObjectIdHash: 2608781131
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -204,7 +204,7 @@ MonoBehaviour:
   segments: 128
   Width: 0.1
   healInterval: 1
-  effectPrefab: {fileID: 5551718882146614446, guid: ca5678a67971360408484fc2051d9d2e, type: 3}
+  effectPrefab: {fileID: 1708544336482566, guid: ca5dad4b41345f740b9a72fa69bd69ae, type: 3}
 --- !u!120 &8807444435228950591
 LineRenderer:
   serializedVersion: 2
