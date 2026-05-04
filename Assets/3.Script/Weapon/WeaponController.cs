@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WeaponController : NetworkBehaviour
 {
+    [SerializeField] private AimRigController aimRigController;
     private List<BaseWeapon> _weapons = new List<BaseWeapon>();
 
     private NetworkVariable<int> _currentWeaponIndex = new NetworkVariable<int>(
@@ -76,20 +77,25 @@ public class WeaponController : NetworkBehaviour
     {
         _weapons.Add(weapon);
 
-        Debug.Log($"RegisterWeapon 호출됨 - 무기: {weapon.gameObject.name}, 총 무기 수: {_weapons.Count}");
+        // ★ GunAlignToHand가 있으면 handBone 주입
+        // handBone은 AimRigController가 OnNetworkSpawn에서 이미 찾아둠
+        if (aimRigController != null)
+        {
+            var align = weapon.GetComponent<GunAlignToHand>();
+            if (align != null)
+                align.SetHandBone(aimRigController.HandBone);
+        }
 
         if (_weapons.Count == 1)
             weapon.gameObject.SetActive(true);
         else
             weapon.gameObject.SetActive(false);
 
-        // 모든 무기가 등록됐을 때 한 번만 초기화
         if (_weapons.Count == _expectedWeaponCount)
         {
             if (IsOwner && _weapons[0] is RangedWeapon rangedWeapon)
                 rangedWeapon.InitializeAfterEquip();
         }
-
     }
 
     [ServerRpc]
