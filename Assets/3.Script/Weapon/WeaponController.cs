@@ -30,6 +30,7 @@ public class WeaponController : NetworkBehaviour
         ? _weapons[_currentWeaponIndex.Value] : null;
     //public BaseWeapon CurrentWeapon => (_weapons.Count > 0 && _currentWeaponIndex.Value < _weapons.Count) ? _weapons[_currentWeaponIndex.Value] : null;
 
+    public event System.Action<BaseWeapon> OnWeaponRegistered;
     public bool IsMalrangBongActive => _isMalrangbongActive.Value;
 
     private int _expectedWeaponCount = 3;
