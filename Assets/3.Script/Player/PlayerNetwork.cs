@@ -449,11 +449,11 @@ public class PlayerNetwork : NetworkBehaviour
     public void UseSkill_ServerRpc(string cardId)
     {
         // 말랑봉 장착 중에는 스킬 사용 불가 (무기 슬롯 전환으로만 해제 가능)
-        if (TryGetComponent(out WeaponController skillCheckWc) && skillCheckWc.IsMalrangBongActive)
-        {
-            Debug.Log("[PlayerNetwork] 말랑봉 장착 중 스킬 사용 불가");
-            return;
-        }
+        //if (TryGetComponent(out WeaponController skillCheckWc) && skillCheckWc.IsMalrangBongActive)
+        //{
+        //    Debug.Log("[PlayerNetwork] 말랑봉 장착 중 스킬 사용 불가");
+        //    return;
+        //}
 
         CardData card = GameManager.Instance.SceneContext
                             .GameDataManager.GetCardData(cardId);
@@ -525,7 +525,7 @@ public class PlayerNetwork : NetworkBehaviour
                     mb.Initialize(card.Damage, card.Speed, OwnerClientId, animator);
 
                     // 4. WeaponController에 장착 알림 → 기존 무기 SetActive(false) 트리거
-                    weaponController.SetMalrangBongEquipped(mbNo);
+                    //weaponController.SetMalrangBongEquipped(mbNo);
 
                     // 5. 모든 클라이언트에서 weaponPivot follow 설정
                     //    (RPC가 스폰보다 먼저 도착할 수 있어 코루틴으로 대기)

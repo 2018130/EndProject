@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using Unity.Netcode;
 using System.Collections.Generic;
@@ -12,16 +12,15 @@ public class AimRigController : NetworkBehaviour
     [SerializeField] private Transform aimTarget;
 
     [Header("Hand Bone")]
-    // PlayerRootÀÇ Animator ±âÁØ RightHand º»
-    // Awake¿¡¼­ Animator.GetBoneTransformÀ¸·Î ÀÚµ¿ Ã£À½
-    [SerializeField] private Transform handBone;
-
-    public Transform HandBone => handBone;
+    // Inspector ì—°ê²° ë¶ˆí•„ìš” â€” OnNetworkSpawnì—ì„œ ìë™ìœ¼ë¡œ ì°¾ìŒ
+    private Transform _handBone;
+    public Transform HandBone => _handBone;
 
     [Header("Rig Layers")]
     [SerializeField] private Rig headAimRig;
     [SerializeField] private Rig spineAimRig;
     [SerializeField] private Rig armIKRig;
+    //[SerializeField] private Rig handAimRig;
 
     [Header("Constraint References")]
     [SerializeField] private TwoBoneIKConstraint armIKConstraint;
@@ -30,25 +29,53 @@ public class AimRigController : NetworkBehaviour
     [SerializeField] private float aimingHeadWeight = 0.5f;
     [SerializeField] private float aimingSpineWeight = 0.25f;
     [SerializeField] private float aimingArmWeight = 1.0f;
+    //[SerializeField] private float aimingHandWeight = 1.0f;
     [SerializeField] private float idleHeadWeight = 0.15f;
     [SerializeField] private float idleArmWeight = 0.0f;
     [SerializeField] private float weightLerpSpeed = 6f;
     [SerializeField] private float targetLerpSpeed = 12f;
 
     private GunAlignToHand _currentGunAlign;
+    private BaseWeapon _lastWeapon;
     private RigBuilder _rigBuilder;
 
     public override void OnNetworkSpawn()
     {
         _rigBuilder = GetComponent<RigBuilder>();
 
-        // handBoneÀÌ Inspector¿¡¼­ ¾È ¿¬°áµÆÀ¸¸é ÀÚµ¿À¸·Î Ã£À½
-        if (handBone == null)
+        // Animatorì—ì„œ RightHand ë³¸ ìë™ìœ¼ë¡œ ì°¾ê¸°
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
         {
-            Animator animator = GetComponent<Animator>();
-            if (animator != null)
-                handBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            _handBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            if (_handBone == null)
+                Debug.LogWarning("[AimRigController] RightHand ë³¸ì„ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. Avatar ë§¤í•‘ì„ í™•ì¸í•˜ì„¸ìš”.");
         }
+
+        // WeaponControllerì˜ ë¬´ê¸° ë“±ë¡ ì´ë²¤íŠ¸ êµ¬ë…
+        // ì´ì´ ë‚˜ì¤‘ì— ìƒì„±ë˜ë¯€ë¡œ WeaponControllerì— ì½œë°±ì„ ì—°ê²°
+        if (weaponController != null)
+            weaponController.OnWeaponRegistered += OnWeaponRegistered;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (weaponController != null)
+            weaponController.OnWeaponRegistered -= OnWeaponRegistered;
+    }
+
+    // WeaponController.RegisterWeapon()ì´ í˜¸ì¶œë  ë•Œë§ˆë‹¤ ì‹¤í–‰
+    private void OnWeaponRegistered(BaseWeapon weapon)
+    {
+        // GunAlignToHandì— HandBone ì£¼ì…
+        var align = weapon.GetComponent<GunAlignToHand>();
+        if (align != null && _handBone != null)
+            align.SetHandBone(_handBone);
+
+        // â˜… GripTargetAimì— AimTarget ì£¼ì…
+        var gripAim = weapon.GetComponentInChildren<GripTargetAim>();
+        if (gripAim != null && aimTarget != null)
+            gripAim.Initialize(aimTarget);
     }
 
     private void LateUpdate()
@@ -58,7 +85,6 @@ public class AimRigController : NetworkBehaviour
         SyncCurrentGun();
     }
 
-    // ¦¡¦¡ AimTarget À§Ä¡ °»½Å ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
     private void UpdateAimTarget()
     {
         if (aimTarget == null || aimController == null) return;
@@ -71,7 +97,6 @@ public class AimRigController : NetworkBehaviour
             aimTarget.position, targetPos, targetLerpSpeed * Time.deltaTime);
     }
 
-    // ¦¡¦¡ Rig °¡ÁßÄ¡ °»½Å ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
     private void UpdateRigWeights()
     {
         if (aimController == null) return;
@@ -88,28 +113,28 @@ public class AimRigController : NetworkBehaviour
             spineAimRig.weight = Mathf.Lerp(spineAimRig.weight,
                 isAiming ? aimingSpineWeight : 0f, t);
 
-        // ÃÑÀÌ ¾ø°Å³ª ºñÈ°¼ºÀÌ¸é ArmIKµµ ²û
         if (armIKRig != null)
             armIKRig.weight = Mathf.Lerp(armIKRig.weight,
                 (isAiming && hasGun) ? aimingArmWeight : idleArmWeight, t);
+
+        //if (handAimRig != null)
+        //    handAimRig.weight = Mathf.Lerp(handAimRig.weight,
+        //        (isAiming && hasGun) ? aimingHandWeight : idleArmWeight, t);
     }
 
-    // ¦¡¦¡ ÇöÀç È°¼º ÃÑÀÇ GripTargetÀ» IK¿¡ ¿¬°á ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    // WeaponController°¡ SetActive·Î ÃÑÀ» ±³Ã¼ÇÏ¹Ç·Î
-    // ¸Å ÇÁ·¹ÀÓ CurrentWeaponÀ» Ã¼Å©ÇØ¼­ º¯°æ ½Ã¿¡¸¸ °»½Å
-    private BaseWeapon _lastWeapon = null;
+    private BaseWeapon _lastSyncedWeapon = null;
 
     private void SyncCurrentGun()
     {
         if (weaponController == null) return;
 
         BaseWeapon current = weaponController.CurrentWeapon;
-        if (current == _lastWeapon) return;
+        if (current == _lastSyncedWeapon) return;
 
         if (_currentGunAlign != null)
             _currentGunAlign.StopAlign();
 
-        _lastWeapon = current;
+        _lastSyncedWeapon = current;
 
         if (current == null)
         {
@@ -124,16 +149,21 @@ public class AimRigController : NetworkBehaviour
         if (armIKConstraint != null)
         {
             Transform gripTarget = current.transform.Find("GripTarget");
-            armIKConstraint.data.target = gripTarget;
-
-            // ¡Ú Áï½Ã Build ´ë½Å ÇÑ ÇÁ·¹ÀÓ µÚ¿¡ ½ÇÇà
-            StartCoroutine(RebuildNextFrame());
+            if (gripTarget != null)
+            {
+                armIKConstraint.data.target = gripTarget;
+                StartCoroutine(RebuildNextFrame());
+            }
+            else
+            {
+                Debug.LogWarning($"[AimRigController] {current.name}ì— GripTargetì´ ì—†ìŠµë‹ˆë‹¤.");
+            }
         }
     }
 
-    private IEnumerator RebuildNextFrame()
+    private System.Collections.IEnumerator RebuildNextFrame()
     {
-        yield return null; // ÇÑ ÇÁ·¹ÀÓ ´ë±â
+        yield return null;
         _rigBuilder?.Build();
     }
 }

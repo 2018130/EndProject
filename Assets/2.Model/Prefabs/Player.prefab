@@ -90,6 +90,92 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &333924570548476593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2465474706248060654}
+  - component: {fileID: 5943537827736850747}
+  m_Layer: 6
+  m_Name: HandAimRig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2465474706248060654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 333924570548476593}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3757408484955736777}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5943537827736850747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 333924570548476593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiAimConstraint
+  m_Weight: 1
+  m_Data:
+    m_ConstrainedObject: {fileID: 600673881084399071}
+    m_SourceObjects:
+      m_Length: 1
+      m_Item0:
+        transform: {fileID: 2591438902769139692}
+        weight: 1
+      m_Item1:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item2:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item3:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item4:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item5:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item6:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item7:
+        transform: {fileID: 0}
+        weight: 0
+    m_Offset: {x: 0, y: 0, z: 0}
+    m_MinLimit: -180
+    m_MaxLimit: 180
+    m_AimAxis: 3
+    m_UpAxis: 5
+    m_WorldUpType: 0
+    m_WorldUpObject: {fileID: 0}
+    m_WorldUpAxis: 2
+    m_MaintainOffset: 0
+    m_ConstrainedAxes:
+      x: 1
+      y: 1
+      z: 1
 --- !u!1 &571507490134090171
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 322427461
+  GlobalObjectIdHash: 4091172347
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -413,6 +499,7 @@ MonoBehaviour:
   dashDuration: 0.3
   dashCooldown: 1
   cameraPivot: {fileID: 2053117649158748490}
+  weaponPivot: {fileID: 0}
   model: {fileID: 4826801807631978227}
   kickJumpForce: 7
   knockbackForce: 3
@@ -668,14 +755,15 @@ MonoBehaviour:
   aimController: {fileID: -350024074868699166}
   weaponController: {fileID: 954310614772573187}
   aimTarget: {fileID: 2591438902769139692}
-  handBone: {fileID: 600673881084399071}
   headAimRig: {fileID: 8663147917519234271}
   spineAimRig: {fileID: 8663147917519234271}
   armIKRig: {fileID: 8663147917519234271}
-  armIKConstraint: {fileID: 0}
+  handAimRig: {fileID: 8663147917519234271}
+  armIKConstraint: {fileID: 703394759152612145}
   aimingHeadWeight: 0.5
   aimingSpineWeight: 0.25
   aimingArmWeight: 1
+  aimingHandWeight: 1
   idleHeadWeight: 0.15
   idleArmWeight: 0
   weightLerpSpeed: 6
@@ -799,8 +887,8 @@ MonoBehaviour:
     m_Offset: {x: 0, y: 0, z: 0}
     m_MinLimit: -180
     m_MaxLimit: 180
-    m_AimAxis: 4
-    m_UpAxis: 2
+    m_AimAxis: 2
+    m_UpAxis: 1
     m_WorldUpType: 0
     m_WorldUpObject: {fileID: 0}
     m_WorldUpAxis: 2
@@ -979,7 +1067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiAimConstraint
   m_Weight: 1
   m_Data:
-    m_ConstrainedObject: {fileID: 7875192380592406709}
+    m_ConstrainedObject: {fileID: 5838084910682557623}
     m_SourceObjects:
       m_Length: 1
       m_Item0:
@@ -1009,8 +1097,8 @@ MonoBehaviour:
     m_Offset: {x: 0, y: 0, z: 0}
     m_MinLimit: -180
     m_MaxLimit: 180
-    m_AimAxis: 4
-    m_UpAxis: 2
+    m_AimAxis: 2
+    m_UpAxis: 1
     m_WorldUpType: 0
     m_WorldUpObject: {fileID: 0}
     m_WorldUpAxis: 2
@@ -1052,6 +1140,7 @@ Transform:
   - {fileID: 5906125697427559972}
   - {fileID: 3043106970736667690}
   - {fileID: 3199778560505964489}
+  - {fileID: 2465474706248060654}
   m_Father: {fileID: 1344549063242009821}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8663147917519234271
@@ -1325,6 +1414,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2745202330493455144, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5051938803523839811}
+    - targetCorrespondingSourceObject: {fileID: 5695277974825506928, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4215745338305920757}
   m_SourcePrefab: {fileID: 100100000, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
 --- !u!4 &391357200304846249 stripped
 Transform:
@@ -1580,6 +1672,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5480138711926080049, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
   m_PrefabInstance: {fileID: 1207129730647578492}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6902091044781510412 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5695277974825506928, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
+  m_PrefabInstance: {fileID: 1207129730647578492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4215745338305920757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6902091044781510412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f77d848084b4b444d95f2e80d3d7bd84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugBoneAxis
+  length: 0.3
 --- !u!4 &7035808250639726697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8170831870996213525, guid: b378c8c7799eba342a7c00e83058151c, type: 3}
