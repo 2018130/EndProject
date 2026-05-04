@@ -158,8 +158,16 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
             isMoving.Value = true;
 
+            SyncStats_ClientRpc(duration, moveSpeed);
         }
         StartCoroutine(StopSkill());
+    }
+
+    [ClientRpc]
+    private void SyncStats_ClientRpc(float duration, float speed)
+    {
+        this.duration = duration;
+        this.moveSpeed = speed;
     }
 
     private void FixedUpdate()
@@ -167,18 +175,21 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         if (!IsOwner || driver == null) return;
 
         moveInput = driver.netMoveInput.Value;
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+
+        // PlayerNetwork와 동일한 카메라 기준 이동 연산
+        Vector3 camForward = Camera.main.transform.forward;
+        Vector3 camRight = Camera.main.transform.right;
+        camForward.y = 0; camForward.Normalize();
+        camRight.y = 0; camRight.Normalize();
+
+        Vector3 move = camForward * moveInput.y + camRight * moveInput.x;
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         if (move.magnitude > 0.01f)
         {
-            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.15f);
-
             Quaternion targetRot = Quaternion.LookRotation(move);
             rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRot, 0.2f));
         }
-
-        //animator.SetBool("IsMoving", move != Vector3.zero);
     }
 
     private void Update()
@@ -253,6 +264,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         if (driver != null)
         {
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.Alive;
+            driver.EnableInputOnLandClientRpc();
             driver.ApplyKnockback_ClientRpc(Vector3.zero);
 
             driver = null;
