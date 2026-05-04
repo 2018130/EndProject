@@ -39,11 +39,11 @@ public abstract class BaseWeapon : NetworkBehaviour, INetworkContextListener
 
     // NetworkTransform의 위치 동기화보다 LateUpdate가 나중에 실행되므로
     // 매 프레임 weaponPivot 위치/회전을 강제로 덮어씀
-    private void LateUpdate()
-    {
-        if (_followTarget == null) return;
+    //private void LateUpdate()
+    //{
+    //    if (_followTarget == null) return;
 
-        transform.position = _followTarget.position;
-        transform.rotation = _followTarget.rotation;
-    }
+    //    transform.position = _followTarget.position;
+    //    transform.rotation = _followTarget.rotation;
+    //}
 }
