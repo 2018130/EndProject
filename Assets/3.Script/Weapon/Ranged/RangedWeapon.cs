@@ -35,23 +35,34 @@ public class RangedWeapon : BaseWeapon
         Debug.Log($"InitializeAfterEquip È£ÃâµÊ - È½¼ö È®ÀÎ");
 
         if (playerInput == null) return;
-
         if (isSubscribed) return;
 
-        if (playerInput != null)
-        {
-            playerInput.OnFirePerformed -= Attack;
-            playerInput.OnFirePerformed += Attack;
-            Debug.Log($"InitializeAfterEquip È£ÃâµÊ - ¹«±â: {gameObject.name}");
-        }
+        playerInput.OnFirePerformed += Attack;
+        isSubscribed = true;
+
+        //if (playerInput != null)
+        //{
+        //    playerInput.OnFirePerformed -= Attack;
+        //    //playerInput.OnFirePerformed += Attack;
+        //    Debug.Log($"InitializeAfterEquip È£ÃâµÊ - ¹«±â: {gameObject.name}");
+        //}
         
     }
 
     public void UnsubscribeInput()
     {
-        if (playerInput != null)
+        if (playerInput != null && isSubscribed)
+        {
             playerInput.OnFirePerformed -= Attack;
             isSubscribed = false;
+        }
+
+
+        //if (playerInput != null)
+        //{
+        //    //playerInput.OnFirePerformed -= Attack;
+        //    isSubscribed = false;
+        //}
 
     }
 

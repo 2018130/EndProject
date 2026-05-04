@@ -20,14 +20,16 @@ public class WeaponController : NetworkBehaviour
 
     private NetworkVariable<NetworkObjectReference> _spawnedmalrangBongRef = new NetworkVariable<NetworkObjectReference>();
 
+    private NetworkObject _equippedMalrangBongNetObj;
+
     private PlayerInput _playerInput;
     private AimController _aimController;
-
 
     public BaseWeapon CurrentWeapon => (_weapons.Count > 0 && _currentWeaponIndex.Value < _weapons.Count && !_isMalrangbongActive.Value)
         ? _weapons[_currentWeaponIndex.Value] : null;
 
-    //public BaseWeapon CurrentWeapon => (_weapons.Count > 0 && _currentWeaponIndex.Value < _weapons.Count) ? _weapons[_currentWeaponIndex.Value] : null;
+    // PlayerNetwork.UseSkill_ServerRpc 및 클라이언트에서 스킬 차단에 사용
+    public bool IsMalrangBongActive => _isMalrangbongActive.Value;
 
     private int _expectedWeaponCount = 3;
 
@@ -62,10 +64,13 @@ public class WeaponController : NetworkBehaviour
 
         if (_playerInput.isFiring && _isMalrangbongActive.Value)
         {
+            Debug.Log("1111");
             if (_spawnedmalrangBongRef.Value.TryGet(out NetworkObject no))
             {
+                Debug.Log("2222");
                 if (no.TryGetComponent(out MalangBong mb))
                 {
+                    Debug.Log("3333");
                     mb.RequestAttack();
                 }
             }
@@ -76,12 +81,21 @@ public class WeaponController : NetworkBehaviour
     {
         _weapons.Add(weapon);
 
+        // PlayerGun(weaponPivot)을 따라가도록 SetFollowTarget 설정
+        // BaseWeapon.LateUpdate에서 매 프레임 weaponPivot 위치/회전을 적용함
+        PlayerNetwork playerNetwork = GetComponent<PlayerNetwork>();
+        if (playerNetwork != null && playerNetwork.WeaponPivot != null)
+        {
+            weapon.SetFollowTarget(playerNetwork.WeaponPivot);
+        }
+
         Debug.Log($"RegisterWeapon 호출됨 - 무기: {weapon.gameObject.name}, 총 무기 수: {_weapons.Count}");
 
-        if (_weapons.Count == 1)
-            weapon.gameObject.SetActive(true);
-        else
-            weapon.gameObject.SetActive(false);
+        //if (_weapons.Count == 1)
+        //    weapon.gameObject.SetActive(true);
+        //else
+        //    weapon.gameObject.SetActive(false);
+
 
         // 모든 무기가 등록됐을 때 한 번만 초기화
         if (_weapons.Count == _expectedWeaponCount)
@@ -90,27 +104,46 @@ public class WeaponController : NetworkBehaviour
                 rangedWeapon.InitializeAfterEquip();
         }
 
+        UpdateWeaponVisibility(_currentWeaponIndex.Value, _isMalrangbongActive.Value);
     }
 
-    [ServerRpc]
-    public void EquipMalrangBong_ServerRpc(NetworkObjectReference mbRef)
+    public void SetMalrangBongEquipped(NetworkObject mbNetObj)
     {
-        _spawnedmalrangBongRef.Value = mbRef;
+        if (!IsServer) return;
+
+        _equippedMalrangBongNetObj = mbNetObj;
+        _spawnedmalrangBongRef.Value = mbNetObj;
         _isMalrangbongActive.Value = true;
+
+        ForceWeaponVisibility_Rpc(true);
     }
 
     public void DespawnMalrangBongOnServer()
     {
         if (!IsServer) return;
 
-        if(_isMalrangbongActive.Value)
+        if (_equippedMalrangBongNetObj != null)
         {
-            _isMalrangbongActive.Value = false;
-            if(_spawnedmalrangBongRef.Value.TryGet(out NetworkObject no))
-            {
-                no.Despawn();
-            }
+            // 이미 Despawn된 오브젝트에 Despawn() 재호출 시 예외 방지
+            if (_equippedMalrangBongNetObj.IsSpawned)
+                _equippedMalrangBongNetObj.Despawn();
+
+            _equippedMalrangBongNetObj = null;
         }
+
+        _isMalrangbongActive.Value = false;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ForceWeaponVisibility_Rpc(bool isMalrangActive)
+    {
+        UpdateWeaponVisibility(_currentWeaponIndex.Value, isMalrangActive);
+    }
+
+    [ServerRpc]
+    public void EquipMalrangBong_ServerRpc(NetworkObjectReference mbRef)
+    {
+        if (mbRef.TryGet(out NetworkObject no)) SetMalrangBongEquipped(no);
     }
 
     private void HandleWeaponSwap(int index)
@@ -150,22 +183,33 @@ public class WeaponController : NetworkBehaviour
     private void OnMalrangBongChanged(bool prev, bool current)
     {
         UpdateWeaponVisibility(_currentWeaponIndex.Value, current);
+
+        // 말랑봉 해제(스왑)될 때 오너 클라이언트에서 쿨타임 시작
+        if (prev && !current && IsOwner)
+        {
+            GetComponent<PlayerSkill>()?.StartMalrangBongCooldown();
+        }
     }
 
     private void UpdateWeaponVisibility(int slotIndex, bool isMalrangActive)
     {
+        //if (_weapons.Count == 0) return;
+
         for (int i = 0; i < _weapons.Count; i++)
         {
-            if (IsOwner && _weapons[i] is RangedWeapon rw) rw.UnsubscribeInput();
+            if (_weapons[i] == null) continue;
+            //if (IsOwner && _weapons[i] is RangedWeapon rw) rw.UnsubscribeInput();
+            if (_weapons[i] is RangedWeapon rw) rw.UnsubscribeInput();
             _weapons[i].gameObject.SetActive(false);
         }
 
         if (!isMalrangActive && slotIndex < _weapons.Count)
         {
             _weapons[slotIndex].gameObject.SetActive(true);
-            if (IsOwner && _weapons[slotIndex] is RangedWeapon rw)
+            //if (IsOwner && _weapons[slotIndex] is RangedWeapon rw2)
+            if (_weapons[slotIndex] is RangedWeapon rw2)
             {
-                rw.InitializeAfterEquip();
+                rw2.InitializeAfterEquip();
             }
         }
     }

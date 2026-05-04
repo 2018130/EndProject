@@ -21,7 +21,7 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] private float dashCooldown = 1f; //대쉬 쿨타임
 
 
-    
+
     private float lastDashTime; // 마지막 대쉬한 시간
     private float jumpPressTime; //점프버튼을 누른 시간
 
@@ -33,6 +33,10 @@ public class PlayerNetwork : NetworkBehaviour
     private PlayerInput playerInput;
 
     [SerializeField] private Transform cameraPivot;
+    [SerializeField] private Transform weaponPivot;
+
+    // WeaponController에서 무기 follow target 설정에 사용
+    public Transform WeaponPivot => weaponPivot;
 
     // 처형 관련 스크립트
     PlayerHealth aimedDownPlayer;
@@ -245,7 +249,7 @@ public class PlayerNetwork : NetworkBehaviour
         AimController aimController = GetComponent<AimController>();
         bool isAiming = aimController != null && aimController.GetIsAiming();
 
-        if(isAiming)
+        if (isAiming)
         {
             Vector3 localMove = transform.InverseTransformDirection(move);
             animator.SetFloat("X", localMove.x);
@@ -253,7 +257,7 @@ public class PlayerNetwork : NetworkBehaviour
         }
         else
         {
-            if(move.magnitude > 0.1f)
+            if (move.magnitude > 0.1f)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.5f);
             }
@@ -417,6 +421,13 @@ public class PlayerNetwork : NetworkBehaviour
     [ServerRpc]
     public void UseSkill_ServerRpc(string cardId)
     {
+        // 말랑봉 장착 중에는 스킬 사용 불가 (무기 슬롯 전환으로만 해제 가능)
+        if (TryGetComponent(out WeaponController skillCheckWc) && skillCheckWc.IsMalrangBongActive)
+        {
+            Debug.Log("[PlayerNetwork] 말랑봉 장착 중 스킬 사용 불가");
+            return;
+        }
+
         CardData card = GameManager.Instance.SceneContext
                             .GameDataManager.GetCardData(cardId);
         Debug.Log($"UseSkill_ServerRpc 호출됨: {cardId}");
@@ -470,22 +481,59 @@ public class PlayerNetwork : NetworkBehaviour
                 goat.Initialize(card.Duration, card.Damage, card.Range);
                 break;
             case CardType.MalrangBong:
-                if(TryGetComponent(out WeaponController weaponController))
+                if (TryGetComponent(out WeaponController weaponController))
                 {
+                    // 1. 기존 말랑봉 디스폰 (중복 스폰 방지)
                     weaponController.DespawnMalrangBongOnServer();
 
-                    GameObject mbObj = Instantiate(card.SkillPrefab, transform.position, transform.rotation);
+                    // 2. 새 말랑봉 스폰
+                    GameObject mbObj = Instantiate(card.SkillPrefab, weaponPivot.position, weaponPivot.rotation);
                     NetworkObject mbNo = mbObj.GetComponent<NetworkObject>();
-
                     mbNo.SpawnWithOwnership(OwnerClientId);
-                    mbNo.TrySetParent(transform);
 
+                    // 3. 서버에서 초기화
                     MalangBong mb = mbObj.GetComponent<MalangBong>();
-                    mb.Initialize(card.Damage, card.Cooldown);
+                    mb.Initialize(card.Damage, card.Speed, OwnerClientId, animator);
 
-                    weaponController.EquipMalrangBong_ServerRpc(mbNo);
+                    // 4. WeaponController에 장착 알림 → 기존 무기 SetActive(false) 트리거
+                    weaponController.SetMalrangBongEquipped(mbNo);
+
+                    // 5. 모든 클라이언트에서 weaponPivot follow 설정
+                    //    (RPC가 스폰보다 먼저 도착할 수 있어 코루틴으로 대기)
+                    AttachMalrangBongToWeaponPivot_ClientRpc(mbNo.NetworkObjectId);
                 }
                 break;
+        }
+    }
+
+    [ClientRpc]
+    private void AttachMalrangBongToWeaponPivot_ClientRpc(ulong mbNetworkObjectId)
+    {
+        StartCoroutine(WaitAndAttachMalrangBong_Co(mbNetworkObjectId));
+    }
+
+    // RPC가 NetworkObject 스폰 메시지보다 먼저 클라이언트에 도착할 수 있으므로
+    // 스폰 완료될 때까지 대기한 뒤 SetFollowTarget 설정
+    private IEnumerator WaitAndAttachMalrangBong_Co(ulong mbNetworkObjectId)
+    {
+        float timeout = 3f;
+        float elapsed = 0f;
+
+        while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(mbNetworkObjectId))
+        {
+            elapsed += Time.deltaTime;
+            if (elapsed >= timeout)
+            {
+                Debug.LogWarning($"[MalangBong] 스폰 대기 타임아웃: NetworkObjectId {mbNetworkObjectId}");
+                yield break;
+            }
+            yield return null;
+        }
+
+        NetworkObject mbNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[mbNetworkObjectId];
+        if (mbNetObj.TryGetComponent(out MalangBong mb))
+        {
+            mb.SetFollowTarget(weaponPivot);
         }
     }
 
@@ -545,7 +593,7 @@ public class PlayerNetwork : NetworkBehaviour
             }
         }
     }
-    //진짜 개싫타 학원에 있기....
+
 
     [ClientRpc]
     public void ApplyBubbleEffect_ClientRpc(float duration)
@@ -568,7 +616,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         targetHealth.Revive();
     }
-    //나 송준엽인데 사실 우리팀 버리고 그냥 취업해버리고싶다 >> 옆사람 개못함
+
     [ServerRpc]
     public void ExecuteEnemy_ServerRpc(ulong targetClientId)
     {
@@ -600,9 +648,9 @@ public class PlayerNetwork : NetworkBehaviour
         Debug.DrawRay(transform.position, transform.forward * 10f, Color.red, 1f);
         foreach (var hit in hits)
         {
-            if(hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+            if (hit.transform.TryGetComponent(out PlayerHealth playerHealth))
             {
-                if(playerHealth.State.Value == PlayerState.Down)
+                if (playerHealth.State.Value == PlayerState.Down)
                 {
                     aimedDownPlayer = playerHealth;
                     return;
@@ -656,7 +704,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         // 타격
         // ↓↓↓↓↓↓↓↓↓↓
-        //나 송준엽인데 바지에 똥쌌다 사실...조금 지렸어....
+
         float originalAnimSpeed = animator.speed;
         bool wasGravity = rb.useGravity;
 
@@ -746,10 +794,10 @@ public class PlayerNetwork : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     private void AddForce_Rpc(Vector3 direction, ulong clientId)
     {
-            if (clientId != OwnerClientId)
-                return;
+        if (clientId != OwnerClientId)
+            return;
 
-            rb.linearVelocity = direction;
+        rb.linearVelocity = direction;
     }
 
     [Rpc(SendTo.ClientsAndHost)]
