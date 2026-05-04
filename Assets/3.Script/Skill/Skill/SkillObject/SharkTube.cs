@@ -85,27 +85,39 @@ public class SharkTube : NetworkBehaviour
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
 
             isMoving.Value = true;
+
+            SyncStats_ClientRpc(duration, moveSpeed);
         }
 
         StartCoroutine(StopSkill());
     }
 
+    [ClientRpc]
+    private void SyncStats_ClientRpc(float duration, float speed)
+    {
+        this.duration = duration;
+        this.moveSpeed = speed;
+    }
+
     private void FixedUpdate()
     {
-        //if (driver != null) moveInput = driver.GetMoveInput();
-        if (driver != null) moveInput = driver.netMoveInput.Value;
+        if (!IsOwner || driver == null) return; // 오너 체크 필수 추가
 
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
+        moveInput = driver.netMoveInput.Value;
+
+        // PlayerNetwork와 동일한 카메라 기준 이동 연산
+        Vector3 camForward = Camera.main.transform.forward;
+        Vector3 camRight = Camera.main.transform.right;
+        camForward.y = 0; camForward.Normalize();
+        camRight.y = 0; camRight.Normalize();
+
+        Vector3 move = camForward * moveInput.y + camRight * moveInput.x;
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
         if (move.magnitude > 0.1f)
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                Quaternion.LookRotation(move),
-                0.15f
-            );
-
-        //animator.SetBool("IsMoving", move != Vector3.zero);
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.15f);
+        }
     }
 
     private void Update()

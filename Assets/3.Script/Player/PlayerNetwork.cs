@@ -489,14 +489,16 @@ public class PlayerNetwork : NetworkBehaviour
             case CardType.DuckTube:
                 GameObject duckTube = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
                 NetworkObject duckNo = duckTube.GetComponent<NetworkObject>();
-                duckNo.Spawn();
+                //duckNo.Spawn();
+                duckNo.SpawnWithOwnership(OwnerClientId);
                 ShipDuckNotSsipDuck duck = duckTube.GetComponent<ShipDuckNotSsipDuck>();
                 duck.Initialize(card.Duration, card.Speed, this);
                 break;
             case CardType.SharkTube:
                 GameObject sharkTube = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
                 NetworkObject sharkNo = sharkTube.GetComponent<NetworkObject>();
-                sharkNo.Spawn();
+                //sharkNo.Spawn();
+                sharkNo.SpawnWithOwnership(OwnerClientId);
                 SharkTube shark = sharkTube.GetComponent<SharkTube>();
                 shark.Initialize(card.Duration, card.Speed, this);
                 break;
