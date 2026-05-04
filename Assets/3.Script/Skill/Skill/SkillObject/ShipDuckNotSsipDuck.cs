@@ -132,6 +132,17 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     {
         this.duration = duration;
         this.moveSpeed = moveSpeed;
+
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.constraints = RigidbodyConstraints.FreezePositionY
+                       | RigidbodyConstraints.FreezeRotationX
+                       | RigidbodyConstraints.FreezeRotationZ;
+
+        // 현재 Y 위치 고정
+        Vector3 pos = rb.position;
+        pos.y = transform.position.y;
+        rb.MovePosition(pos);
         //this.driver = driver;
 
         if (IsServer)
@@ -308,6 +319,9 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             KickAllPassengers();
 
             yield return new WaitForSeconds(0.1f);
+
+            rb.useGravity = true;                      
+            rb.constraints = RigidbodyConstraints.None;
 
             GetComponent<NetworkObject>().Despawn();
         }
