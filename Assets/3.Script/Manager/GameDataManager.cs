@@ -21,11 +21,11 @@ public class GameDataManager : NetworkBehaviour
 
     private void Awake()
     {
-        foreach(WeaponData weaponData in weaponDatas)
+        foreach (WeaponData weaponData in weaponDatas)
         {
             weaponDataDictionary.Add(weaponData.ID, weaponData);
         }
-        foreach(CardData cardData in cardDatas)
+        foreach (CardData cardData in cardDatas)
         {
             cardDataDictionary.Add(cardData.ID, cardData);
         }
@@ -33,7 +33,7 @@ public class GameDataManager : NetworkBehaviour
 
     public WeaponData GetWeaponData(string id)
     {
-        if(weaponDataDictionary.ContainsKey(id))
+        if (weaponDataDictionary.ContainsKey(id))
         {
             return weaponDataDictionary[id];
         }
@@ -46,7 +46,7 @@ public class GameDataManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void SpawnWeapon_ServerRpc(string weaponId, ulong clientId)
     {
-        if(weaponDataDictionary.TryGetValue(weaponId, out WeaponData weaponData))
+        if (weaponDataDictionary.TryGetValue(weaponId, out WeaponData weaponData))
         {
             BaseWeapon baseWeapon = Instantiate(weaponData.WeaponPrefab).GetComponent<BaseWeapon>();
             NetworkObject weaponNO = baseWeapon.GetComponent<NetworkObject>();
@@ -77,12 +77,13 @@ public class GameDataManager : NetworkBehaviour
             .TryGetValue(clientId, out Unity.Netcode.NetworkClient client)) return;
 
         BaseWeapon weapon = weaponNO.GetComponent<BaseWeapon>();
-        weapon.transform.localPosition = new Vector3(0.7f, 0.7f, 0f);
+        // 위치는 WeaponController.RegisterWeapon에서 SetFollowTarget(weaponPivot)으로 관리됨
+        weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
         weapon.gameObject.SetActive(false);
 
 
-        if(client.PlayerObject != null)
+        if (client.PlayerObject != null)
         {
             WeaponController weaponController = client.PlayerObject.GetComponent<WeaponController>();
             weaponController?.RegisterWeapon(weapon);

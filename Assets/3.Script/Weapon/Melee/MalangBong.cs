@@ -1,72 +1,153 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class MalangBong : NetworkBehaviour
 {
     [SerializeField] private Collider attackCollider;
-    [SerializeField] private float attackDuration = 0.3f; // 공격 모션(콜라이더 켜져있는) 시간
+    private Animator playerAnimator;
 
     private float damage;
     private float attackCooldown;
-    private bool canAttack = true;
 
-    // PlayerNetwork에서 스폰 직후 호출하여 CardData 값 주입
-    public void Initialize(float cardDamage, float cardCooldown)
+    //private bool canAttack = true;
+    private NetworkVariable<bool> _canAttack = new NetworkVariable<bool>(
+        true,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+        );
+
+    private ulong ownerClientId;
+    private Transform followTarget;
+
+    private HashSet<ulong> hitThisSwing = new HashSet<ulong>();
+
+    public override void OnNetworkSpawn()
     {
-        damage = cardDamage;
-        attackCooldown = cardCooldown;
+        base.OnNetworkSpawn();
 
         if (attackCollider != null)
             attackCollider.enabled = false;
     }
 
+    // PlayerNetwork에서 스폰 직후 호출하여 CardData 값 주입
+    public void Initialize(float cardDamage, float cardSpeed, ulong ownerId, Animator playerAni)
+    {
+        damage = cardDamage;
+        attackCooldown = cardSpeed;
+        this.ownerClientId = ownerId;
+        this.playerAnimator = playerAni;
+
+        if (attackCollider != null)
+            attackCollider.enabled = false;
+        //if (animator == null)
+        //    animator = GetComponent<Animator>();
+    }
+
+    public void SetFollowTarget(Transform target)
+    {
+        followTarget = target;
+    }
+
+    private void LateUpdate()
+    {
+        if (followTarget != null)
+        {
+            transform.position = followTarget.position;
+            transform.rotation = followTarget.rotation;
+        }
+    }
+
     public void RequestAttack()
     {
-        if (!IsOwner || !canAttack) return;
+        if (!IsOwner) return;
+
+        if (!_canAttack.Value) return;
+
+        Debug.Log("4444");
         PerformAttack_ServerRpc();
     }
 
-    [ServerRpc]
-    private void PerformAttack_ServerRpc()
+    [ServerRpc(RequireOwnership = false)]
+    private void PerformAttack_ServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (!canAttack) return;
+        if (rpcParams.Receive.SenderClientId != ownerClientId) return;
+
+        if (!_canAttack.Value) return;
+
+        Debug.Log("5555");
         StartCoroutine(AttackCoroutine());
+
+        // 서버에서 플레이어 NetworkObjectId를 조회해 ClientRpc에 전달
+        // ConnectedClients는 서버 전용이므로 여기서만 사용
+        ulong playerNetObjId = 0;
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(ownerClientId, out var ownerClient))
+            playerNetObjId = ownerClient.PlayerObject.NetworkObjectId;
+
+        PlayAttackAnimator_ClientRpc(playerNetObjId);
     }
 
     private IEnumerator AttackCoroutine()
     {
-        canAttack = false;
-        SetColliderEnabled_ClientRpc(true);
+        Debug.Log("6666");
+        _canAttack.Value = false;
+        hitThisSwing.Clear();
 
-        yield return new WaitForSeconds(attackDuration);
+        yield return new WaitForSeconds(attackCooldown);
 
-        SetColliderEnabled_ClientRpc(false);
-
-        // 전체 쿨타임에서 모션 진행 시간을 뺀 만큼 추가 대기
-        float remainingCooldown = attackCooldown - attackDuration;
-        if (remainingCooldown > 0)
-            yield return new WaitForSeconds(remainingCooldown);
-
-        canAttack = true;
+        _canAttack.Value = true;
     }
 
     [ClientRpc]
-    private void SetColliderEnabled_ClientRpc(bool isEnabled)
+    private void PlayAttackAnimator_ClientRpc(ulong playerNetworkObjectId)
     {
-        if (attackCollider != null)
-            attackCollider.enabled = isEnabled;
+        // SpawnManager.SpawnedObjects는 서버·클라이언트 모두에서 사용 가능
+        if (playerAnimator == null)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects
+                .TryGetValue(playerNetworkObjectId, out NetworkObject playerNetObj))
+            {
+                playerAnimator = playerNetObj.GetComponent<Animator>();
+            }
+        }
+
+        if (playerAnimator != null)
+        {
+            Debug.Log("7777");
+            playerAnimator.SetTrigger("MeleeAttack");
+        }
+        else
+        {
+            Debug.Log($"{ownerClientId} player Animator is null");
+        }
+    }
+
+    public void EnableAttackCollider()//휘두르는 프레임 시작 시 이벤트 호출
+    {
+        if (IsServer && attackCollider != null)
+            attackCollider.enabled = true;
+    }
+
+    public void DisableAttackCollider()//휘두르는 프레임 종료 시 이벤트 호출
+    {
+        if (IsServer && attackCollider != null)
+            attackCollider.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return; // 데미지 판정은 서버에서만
+        if (!IsServer) return;
 
         if (other.TryGetComponent(out Combat targetCombat))
         {
             // 자신을 때리는 것 방지
-            if (other.TryGetComponent(out NetworkObject targetNetObj) && targetNetObj.OwnerClientId == OwnerClientId)
-                return;
+            if (other.TryGetComponent(out NetworkObject targetNetObj))
+            {
+                if (targetNetObj.OwnerClientId == OwnerClientId) return;
+                if (hitThisSwing.Contains(targetNetObj.OwnerClientId)) return;
+                hitThisSwing.Add(targetNetObj.OwnerClientId);
+            }
 
             // 소유자(공격자)의 Combat 컴포넌트 찾기
             if (NetworkManager.Singleton.ConnectedClients.TryGetValue(OwnerClientId, out var client))

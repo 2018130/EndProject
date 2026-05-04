@@ -9,33 +9,37 @@ using static UnityEngine.ParticleSystem;
 public class PlayerNetwork : NetworkBehaviour
 {
     private Rigidbody rb;   // RigidBody
-    private Animator animator;      // ¾Ö´Ï¸ŞÀÌÅÍ
-    private Vector2 moveInput;      // ÀÌµ¿º¤ÅÍ
+    private Animator animator;      // ì• ë‹ˆë©”ì´í„°
+    private Vector2 moveInput;      // ì´ë™ë²¡í„°
 
-    [SerializeField] private float baseMoveSpeed = 5f; // ±âº» ÀÌµ¿ ½ºÇÇµå
-    [SerializeField] private float moveSpeed; // °¡º¯ ÀÌµ¿ ½ºÇÇµå
-    [SerializeField] private float jumpForce = 5f; // Á¡ÇÁ
-    [SerializeField] private float jetpackForce = 8f; // Á¦Æ®ÆÑ
-    [SerializeField] private float dashForce = 10f; // ´ë½¬
-    [SerializeField] private float dashDuration = 0.3f; // ´ë½¬ Áö¼Ó ½Ã°£
-    [SerializeField] private float dashCooldown = 1f; //´ë½¬ ÄğÅ¸ÀÓ
+    [SerializeField] private float baseMoveSpeed = 5f; // ê¸°ë³¸ ì´ë™ ìŠ¤í”¼ë“œ
+    [SerializeField] private float moveSpeed; // ê°€ë³€ ì´ë™ ìŠ¤í”¼ë“œ
+    [SerializeField] private float jumpForce = 5f; // ì í”„
+    [SerializeField] private float jetpackForce = 8f; // ì œíŠ¸íŒ©
+    [SerializeField] private float dashForce = 10f; // ëŒ€ì‰¬
+    [SerializeField] private float dashDuration = 0.3f; // ëŒ€ì‰¬ ì§€ì† ì‹œê°„
+    [SerializeField] private float dashCooldown = 1f; //ëŒ€ì‰¬ ì¿¨íƒ€ì„
 
 
-    
-    private float lastDashTime; // ¸¶Áö¸· ´ë½¬ÇÑ ½Ã°£
-    private float jumpPressTime; //Á¡ÇÁ¹öÆ°À» ´©¸¥ ½Ã°£
 
-    private bool isJetpacking; // Á¦Æ®ÆÑ »ç¿ë ÁßÀÎÁö
-    private bool isDashing;    // ´ë½¬ ÁßÀÎÁö
+    private float lastDashTime; // ë§ˆì§€ë§‰ ëŒ€ì‰¬í•œ ì‹œê°„
+    private float jumpPressTime; //ì í”„ë²„íŠ¼ì„ ëˆ„ë¥¸ ì‹œê°„
 
-    private ZoneInteraction currentZone; // »ì¸®±â, Ã³Çü
+    private bool isJetpacking; // ì œíŠ¸íŒ© ì‚¬ìš© ì¤‘ì¸ì§€
+    private bool isDashing;    // ëŒ€ì‰¬ ì¤‘ì¸ì§€
+
+    private ZoneInteraction currentZone; // ì‚´ë¦¬ê¸°, ì²˜í˜•
 
     private PlayerInput playerInput;
 
     [SerializeField] private Transform cameraPivot;
+    [SerializeField] private Transform weaponPivot;
+
+    // WeaponControllerì—ì„œ ë¬´ê¸° follow target ì„¤ì •ì— ì‚¬ìš©
+    public Transform WeaponPivot => weaponPivot;
     [SerializeField] private Transform model;
 
-    // Ã³Çü °ü·Ã ½ºÅ©¸³Æ®
+    // ì²˜í˜• ê´€ë ¨ ìŠ¤í¬ë¦½íŠ¸
     PlayerHealth aimedDownPlayer;
     [Header("Kick")]
     [SerializeField]
@@ -74,7 +78,7 @@ public class PlayerNetwork : NetworkBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // ½Ã³×¸Ó½Å Ä«¸Ş¶ó ¿¬°á
+        // ì‹œë„¤ë¨¸ì‹  ì¹´ë©”ë¼ ì—°ê²°
         CinemachineCamera virtualCam = FindAnyObjectByType<CinemachineCamera>();
         if (virtualCam != null)
         {
@@ -120,7 +124,7 @@ public class PlayerNetwork : NetworkBehaviour
         {
             case PlayerState.Down:
                 animator.SetBool("IsCrawling", true);
-                // Down »óÅÂ ÀÌµ¿¼Óµµ °¨¼Ò
+                // Down ìƒíƒœ ì´ë™ì†ë„ ê°ì†Œ
                 moveSpeed = baseMoveSpeed * 0.4f;
                 if (IsOwner) playerInput.IsDown = true;
                 break;
@@ -181,7 +185,7 @@ public class PlayerNetwork : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void SpawnPlayerCall_Rpc(ulong clientId)
     {
-        Debug.Log($"{clientId} player°¡ Å¬¶óÀÌ¾ğÆ®¿¡ ½ºÆùµÇ¾ú½À´Ï´Ù");
+        Debug.Log($"{clientId} playerê°€ í´ë¼ì´ì–¸íŠ¸ì— ìŠ¤í°ë˜ì—ˆìŠµë‹ˆë‹¤");
 
         GameManager.Instance.SpawnPlayerCharacter(clientId);
     }
@@ -195,7 +199,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     private IEnumerator EnableInputOnLand_Co()
     {
-        // ÂøÁöÇÒ ¶§±îÁö ´ë±â
+        // ì°©ì§€í•  ë•Œê¹Œì§€ ëŒ€ê¸°
         yield return new WaitUntil(() => IsGrounded());
         var playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
@@ -227,7 +231,7 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // jumpPressTimeÀÌ 0º¸´Ù Å©°í 0.4ÃÊ Áö³µÀ¸¸é Á¦Æ®ÆÑ ¹ßµ¿
+        // jumpPressTimeì´ 0ë³´ë‹¤ í¬ê³  0.4ì´ˆ ì§€ë‚¬ìœ¼ë©´ ì œíŠ¸íŒ© ë°œë™
         if (jumpPressTime > 0 && Time.time - jumpPressTime > 0.4f)
         {
             isJetpacking = true;
@@ -255,24 +259,24 @@ public class PlayerNetwork : NetworkBehaviour
         //Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
-        //ÀÌµ¿ ¹æÇâÀ¸·Î È¸Àü
+        //ì´ë™ ë°©í–¥ìœ¼ë¡œ íšŒì „
         //if (move.magnitude > 0.1f)
         //    transform.rotation = Quaternion.Slerp(
         //        transform.rotation,
         //    Quaternion.LookRotation(move),
         //        0.5f
         //    );
-        // ¾Ö´Ï¸ŞÀÌ¼Ç
+        // ì• ë‹ˆë©”ì´ì…˜
         //Vector3 localMove = transform.InverseTransformDirection(move);
-        //animator.SetFloat("X", localMove.x);  // ÁÂ¿ì
-        //animator.SetFloat("Y", localMove.z);  // ¾ÕµÚ
-        //animator.SetFloat("X", 0);  // ÁÂ¿ì
-        //animator.SetFloat("Y", move.magnitude);  // ¾ÕµÚ
+        //animator.SetFloat("X", localMove.x);  // ì¢Œìš°
+        //animator.SetFloat("Y", localMove.z);  // ì•ë’¤
+        //animator.SetFloat("X", 0);  // ì¢Œìš°
+        //animator.SetFloat("Y", move.magnitude);  // ì•ë’¤
 
         AimController aimController = GetComponent<AimController>();
         bool isAiming = aimController != null && aimController.GetIsAiming();
 
-        if(isAiming)
+        if (isAiming)
         {
             Vector3 localMove = transform.InverseTransformDirection(move);
             animator.SetFloat("X", localMove.x);
@@ -280,7 +284,7 @@ public class PlayerNetwork : NetworkBehaviour
         }
         else
         {
-            if(move.magnitude > 0.1f)
+            if (move.magnitude > 0.1f)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.5f);
             }
@@ -305,7 +309,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (!playerWater.HasWater())
         {
-            // ¹° ¾øÀ¸¸é Å¬¶óÀÌ¾ğÆ®ÇÑÅ× Á¦Æ®ÆÑ ²ô¶ó°í ¾Ë·ÁÁÜ
+            // ë¬¼ ì—†ìœ¼ë©´ í´ë¼ì´ì–¸íŠ¸í•œí…Œ ì œíŠ¸íŒ© ë„ë¼ê³  ì•Œë ¤ì¤Œ
             StopJetpackClientRpc();
             return;
         }
@@ -322,7 +326,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     public NetworkVariable<Vector2> netMoveInput = new NetworkVariable<Vector2>();
 
-    // PlayerInput¿¡¼­ È£Ãâ
+    // PlayerInputì—ì„œ í˜¸ì¶œ
     public void SendMoveInput(Vector2 input)
     {
         moveInput = input;
@@ -359,14 +363,14 @@ public class PlayerNetwork : NetworkBehaviour
         if (!active)
         {
             isJetpacking = false;
-            jumpPressTime = 0; // ¸®¼Â
+            jumpPressTime = 0; // ë¦¬ì…‹
             return;
         }
     }
 
     public void SendDashInput()
     {
-        //ÄğÅ¸ÀÓ Ã¼Å©
+        //ì¿¨íƒ€ì„ ì²´í¬
         if (isDashing) return;
         if (Time.time - lastDashTime < dashCooldown) return;
 
@@ -374,7 +378,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         PlayerWater playerWater = GetComponent<PlayerWater>();
 
-        Debug.Log($"´ë½¬ ½Ãµµ - ¹° ÃæºĞ: {playerWater?.HasEnoughWater(25f)}, ÇöÀç ¹°: {playerWater?.Water.Value}");
+        Debug.Log($"ëŒ€ì‰¬ ì‹œë„ - ë¬¼ ì¶©ë¶„: {playerWater?.HasEnoughWater(25f)}, í˜„ì¬ ë¬¼: {playerWater?.Water.Value}");
         if (playerWater == null || !playerWater.HasEnoughWater(25f)) return;
 
         Vector3 dashDir;
@@ -392,12 +396,12 @@ public class PlayerNetwork : NetworkBehaviour
         {
             dashDir = transform.forward;
         }
-        // ±âº» ¼Óµµ ÃÊ±âÈ­ ÈÄ ´ë½Ã
+        // ê¸°ë³¸ ì†ë„ ì´ˆê¸°í™” í›„ ëŒ€ì‹œ
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         rb.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
         AudioManager.Instance.PlaySFX("Dash");
 
-        // ¸¶Áö¸·¿¡ ´ë½¬ÇÑ ½Ã°£ ±â·Ï
+        // ë§ˆì§€ë§‰ì— ëŒ€ì‰¬í•œ ì‹œê°„ ê¸°ë¡
         lastDashTime = Time.time;
         StartCoroutine(Dash_Co());
 
@@ -428,7 +432,7 @@ public class PlayerNetwork : NetworkBehaviour
             layerMask
         );
 
-        Debug.Log($"IsGrounded: {grounded} / °Å¸®: {hit.distance}");
+        Debug.Log($"IsGrounded: {grounded} / ê±°ë¦¬: {hit.distance}");
         return grounded;
     }
 
@@ -444,23 +448,30 @@ public class PlayerNetwork : NetworkBehaviour
     [ServerRpc]
     public void UseSkill_ServerRpc(string cardId)
     {
+        // ë§ë‘ë´‰ ì¥ì°© ì¤‘ì—ëŠ” ìŠ¤í‚¬ ì‚¬ìš© ë¶ˆê°€ (ë¬´ê¸° ìŠ¬ë¡¯ ì „í™˜ìœ¼ë¡œë§Œ í•´ì œ ê°€ëŠ¥)
+        if (TryGetComponent(out WeaponController skillCheckWc) && skillCheckWc.IsMalrangBongActive)
+        {
+            Debug.Log("[PlayerNetwork] ë§ë‘ë´‰ ì¥ì°© ì¤‘ ìŠ¤í‚¬ ì‚¬ìš© ë¶ˆê°€");
+            return;
+        }
+
         CardData card = GameManager.Instance.SceneContext
                             .GameDataManager.GetCardData(cardId);
-        Debug.Log($"UseSkill_ServerRpc È£ÃâµÊ: {cardId}");
+        Debug.Log($"UseSkill_ServerRpc í˜¸ì¶œë¨: {cardId}");
 
         Faction myFaction = (Faction)GetComponent<PlayerHealth>().PlayerFactionInt.Value;
 
         switch (card.CardType)
         {
             case CardType.CatGun:
-                // °í¾çÀÌ ¸Ó½Å°Ç ½ºÆù
+                // ê³ ì–‘ì´ ë¨¸ì‹ ê±´ ìŠ¤í°
                 Debug.Log($"CatGun SkillPrefab: {card.SkillPrefab}");
                 GameObject catGunObj = Instantiate(card.SkillPrefab, transform.position, Quaternion.identity);
                 catGunObj.GetComponent<NetworkObject>().Spawn();
                 catGunObj.GetComponent<CatGunObject>().Initialize(card.Duration, card.Damage, OwnerClientId, myFaction);
                 break;
             case CardType.BubbleGun:
-                // ¹öºí°Ç
+                // ë²„ë¸”ê±´
                 GameObject bubbleObj = Instantiate(card.SkillPrefab, transform.position + Vector3.up, transform.rotation);
                 NetworkObject bubbleNo = bubbleObj.GetComponent<NetworkObject>();
                 bubbleNo.Spawn();
@@ -468,7 +479,7 @@ public class PlayerNetwork : NetworkBehaviour
                 bubble.Initialize(card.Speed, OwnerClientId, transform.forward);
                 break;
             case CardType.PenguinCharge:
-                // Æë±Ï µ¹Áø Ã³¸®
+                // í­ê·„ ëŒì§„ ì²˜ë¦¬
                 GameObject penguinObj = Instantiate(card.SkillPrefab, transform.position + Vector3.up * 0.5f, transform.rotation);
                 NetworkObject penguinNo = penguinObj.GetComponent<NetworkObject>();
                 penguinNo.Spawn();
@@ -497,29 +508,66 @@ public class PlayerNetwork : NetworkBehaviour
                 goat.Initialize(card.Duration, card.Damage, card.Range);
                 break;
             case CardType.MalrangBong:
-                if(TryGetComponent(out WeaponController weaponController))
+                if (TryGetComponent(out WeaponController weaponController))
                 {
+                    // 1. ê¸°ì¡´ ë§ë‘ë´‰ ë””ìŠ¤í° (ì¤‘ë³µ ìŠ¤í° ë°©ì§€)
                     weaponController.DespawnMalrangBongOnServer();
 
-                    GameObject mbObj = Instantiate(card.SkillPrefab, transform.position, transform.rotation);
+                    // 2. ìƒˆ ë§ë‘ë´‰ ìŠ¤í°
+                    GameObject mbObj = Instantiate(card.SkillPrefab, weaponPivot.position, weaponPivot.rotation);
                     NetworkObject mbNo = mbObj.GetComponent<NetworkObject>();
-
                     mbNo.SpawnWithOwnership(OwnerClientId);
-                    mbNo.TrySetParent(transform);
 
+                    // 3. ì„œë²„ì—ì„œ ì´ˆê¸°í™”
                     MalangBong mb = mbObj.GetComponent<MalangBong>();
-                    mb.Initialize(card.Damage, card.Cooldown);
+                    mb.Initialize(card.Damage, card.Speed, OwnerClientId, animator);
 
-                    weaponController.EquipMalrangBong_ServerRpc(mbNo);
+                    // 4. WeaponControllerì— ì¥ì°© ì•Œë¦¼ â†’ ê¸°ì¡´ ë¬´ê¸° SetActive(false) íŠ¸ë¦¬ê±°
+                    weaponController.SetMalrangBongEquipped(mbNo);
+
+                    // 5. ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ì„œ weaponPivot follow ì„¤ì •
+                    //    (RPCê°€ ìŠ¤í°ë³´ë‹¤ ë¨¼ì € ë„ì°©í•  ìˆ˜ ìˆì–´ ì½”ë£¨í‹´ìœ¼ë¡œ ëŒ€ê¸°)
+                    AttachMalrangBongToWeaponPivot_ClientRpc(mbNo.NetworkObjectId);
                 }
                 break;
+        }
+    }
+
+    [ClientRpc]
+    private void AttachMalrangBongToWeaponPivot_ClientRpc(ulong mbNetworkObjectId)
+    {
+        StartCoroutine(WaitAndAttachMalrangBong_Co(mbNetworkObjectId));
+    }
+
+    // RPCê°€ NetworkObject ìŠ¤í° ë©”ì‹œì§€ë³´ë‹¤ ë¨¼ì € í´ë¼ì´ì–¸íŠ¸ì— ë„ì°©í•  ìˆ˜ ìˆìœ¼ë¯€ë¡œ
+    // ìŠ¤í° ì™„ë£Œë  ë•Œê¹Œì§€ ëŒ€ê¸°í•œ ë’¤ SetFollowTarget ì„¤ì •
+    private IEnumerator WaitAndAttachMalrangBong_Co(ulong mbNetworkObjectId)
+    {
+        float timeout = 3f;
+        float elapsed = 0f;
+
+        while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(mbNetworkObjectId))
+        {
+            elapsed += Time.deltaTime;
+            if (elapsed >= timeout)
+            {
+                Debug.LogWarning($"[MalangBong] ìŠ¤í° ëŒ€ê¸° íƒ€ì„ì•„ì›ƒ: NetworkObjectId {mbNetworkObjectId}");
+                yield break;
+            }
+            yield return null;
+        }
+
+        NetworkObject mbNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[mbNetworkObjectId];
+        if (mbNetObj.TryGetComponent(out MalangBong mb))
+        {
+            mb.SetFollowTarget(weaponPivot);
         }
     }
 
     [ServerRpc]
     public void UseSkillWithDir_ServerRpc(string cardId, Vector3 throwDir)
     {
-        Debug.Log($"UseSkillWithDir_ServerRpc È£ÃâµÊ: {cardId}, ¹æÇâ: {throwDir}");
+        Debug.Log($"UseSkillWithDir_ServerRpc í˜¸ì¶œë¨: {cardId}, ë°©í–¥: {throwDir}");
 
         CardData card = GameManager.Instance.SceneContext
                             .GameDataManager.GetCardData(cardId);
@@ -572,13 +620,13 @@ public class PlayerNetwork : NetworkBehaviour
             }
         }
     }
-    //ÁøÂ¥ °³½ÈÅ¸ ÇĞ¿ø¿¡ ÀÖ±â....
+
 
     [ClientRpc]
     public void ApplyBubbleEffect_ClientRpc(float duration)
     {
         if (!IsOwner) return;
-        // BubbleEffectUI ¶ç¿ì±â
+        // BubbleEffectUI ë„ìš°ê¸°
         PlayerEffectUI.Instance.Show(duration);
         AudioManager.Instance.PlaySFX("Bubble");
     }
@@ -595,7 +643,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         targetHealth.Revive();
     }
-    //³ª ¼ÛÁØ¿±ÀÎµ¥ »ç½Ç ¿ì¸®ÆÀ ¹ö¸®°í ±×³É Ãë¾÷ÇØ¹ö¸®°í½Í´Ù >> ¿·»ç¶÷ °³¸øÇÔ
+
     [ServerRpc]
     public void ExecuteEnemy_ServerRpc(ulong targetClientId)
     {
@@ -633,7 +681,7 @@ public class PlayerNetwork : NetworkBehaviour
         }
     }
 
-    #region Ã³Çü
+    #region ì²˜í˜•
     private void CheckKillEffect()
     {
 
@@ -686,8 +734,8 @@ public class PlayerNetwork : NetworkBehaviour
                 break;
             }
         }
-        // Á¡ÇÁ ÈÄ ÃÖ°í³ôÀÌ µµ´Ş
-        // ¡é¡é¡é¡é¡é¡é¡é¡é¡é¡é
+        // ì í”„ í›„ ìµœê³ ë†’ì´ ë„ë‹¬
+        // â†“â†“â†“â†“â†“â†“â†“â†“â†“â†“
 
         animator.SetTrigger("Kick");
         float dashDuration = 0.15f;
@@ -699,9 +747,9 @@ public class PlayerNetwork : NetworkBehaviour
 
         yield return new WaitForSeconds(dashDuration);
 
-        // Å¸°İ
-        // ¡é¡é¡é¡é¡é¡é¡é¡é¡é¡é
-        //³ª ¼ÛÁØ¿±ÀÎµ¥ ¹ÙÁö¿¡ ¶Ë½Õ´Ù »ç½Ç...Á¶±İ Áö·È¾î....
+        // íƒ€ê²©
+        // â†“â†“â†“â†“â†“â†“â†“â†“â†“â†“
+
         float originalAnimSpeed = animator.speed;
         bool wasGravity = rb.useGravity;
 
@@ -711,7 +759,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // 4. »óÅÂ ¿ø»ó º¹±¸
+        // 4. ìƒíƒœ ì›ìƒ ë³µêµ¬
         animator.speed = originalAnimSpeed;
         rb.useGravity = wasGravity;
 
@@ -795,10 +843,10 @@ public class PlayerNetwork : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     private void AddForce_Rpc(Vector3 direction, ulong clientId)
     {
-            if (clientId != OwnerClientId)
-                return;
+        if (clientId != OwnerClientId)
+            return;
 
-            rb.linearVelocity = direction;
+        rb.linearVelocity = direction;
     }
 
     [Rpc(SendTo.ClientsAndHost)]
