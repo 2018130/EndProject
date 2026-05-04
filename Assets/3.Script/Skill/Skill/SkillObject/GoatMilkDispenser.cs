@@ -18,8 +18,6 @@ public class GoatMilkDispenser : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
-
         lineRenderer.loop = true;
         lineRenderer.positionCount = segments;
         lineRenderer.startWidth = Width;
@@ -31,6 +29,10 @@ public class GoatMilkDispenser : NetworkBehaviour
         this.duration = duration;
         this.healAmount = damage;
         this.healRange = range;
+
+        GameObject effect = SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
+
+        effect.transform.localScale = Vector3.one * range;
 
         if (IsServer)
         {
