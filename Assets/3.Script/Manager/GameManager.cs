@@ -183,8 +183,12 @@ public class GameManager : SingletonBehaviour<GameManager>
                          ? Faction.TeamA : Faction.TeamB;
 
         Debug.Log($"End game!!! winner : {winner.ToString()}");
+
+        GameUIManager.Instance.SetActiveEndingText(true);
+
         OnEndGame?.Invoke(winner);
     }
+
 
     // 서버에서 실행될 함수
     public void SpawnPlayerCharacter(ulong clientId)

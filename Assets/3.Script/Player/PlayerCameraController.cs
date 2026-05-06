@@ -29,6 +29,8 @@ public class PlayerCameraController : NetworkBehaviour
 
     [SerializeField] private float lerpSpeed = 8f;
 
+    [SerializeField] private bool isEnding = false;
+
     private bool isZooming;
     //public bool IsZooming => isZooming;
 
@@ -47,6 +49,8 @@ public class PlayerCameraController : NetworkBehaviour
         }
 
         TryGetComponent(out input);
+
+        GameManager.Instance.OnEndGame += (faction) => isEnding = true;
 
         if (cinemachineCam == null)
         {
@@ -69,7 +73,7 @@ public class PlayerCameraController : NetworkBehaviour
 
     private void LateUpdate()
     {
-        if (cinemachineCam == null) return;
+        if (cinemachineCam == null || isEnding) return;
 
 
         if(isKillEffectPlaying)
@@ -141,5 +145,35 @@ public class PlayerCameraController : NetworkBehaviour
         {
             cinemachineCam.GetComponent<CinemachineInputAxisController>().enabled = true;
         }
+    }
+
+    public void SetLookAtTarget(Transform target)
+    {
+        if (!IsOwner)
+            return;
+
+        cinemachineCam.Target.TrackingTarget = target;
+        cinemachineCam.Target.LookAtTarget = target;
+    }
+
+    public void SetCameraOffset(Vector3 offset)
+    {
+        if (!IsOwner)
+            return;
+
+        cameraOffset.Offset = offset;
+    }
+
+    public void SetCameraFOV(float value)
+    {
+        if (!IsOwner)
+            return;
+
+        cinemachineCam.Lens.FieldOfView = value;
+    }
+
+    public void SetCameraRotate(bool active)
+    {
+        cinemachineCam.GetComponent<CinemachineInputAxisController>().enabled = active;
     }
 }
