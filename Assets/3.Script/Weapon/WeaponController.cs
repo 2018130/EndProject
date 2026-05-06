@@ -116,6 +116,19 @@ public class WeaponController : NetworkBehaviour
         _spawnedmalrangBongRef.Value = mbNetObj;
         _isMalrangbongActive.Value = true;
 
+        if(aimRigController != null)
+        {
+            if(mbNetObj.TryGetComponent(out GunAlignToHand align))
+            {
+                align.SetHandBone(aimRigController.HandBone);
+            }
+
+            if(mbNetObj.TryGetComponent(out MalangBong mb))
+            {
+                mb.SetFollowTarget(aimRigController.HandBone);
+            }
+        }
+
         ForceWeaponVisibility_Rpc(true);
     }
 

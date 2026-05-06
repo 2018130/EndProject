@@ -413,6 +413,7 @@ MonoBehaviour:
   dashDuration: 0.3
   dashCooldown: 1
   cameraPivot: {fileID: 2053117649158748490}
+  weaponPivot: {fileID: 7943489111776926660}
   model: {fileID: 4826801807631978227}
   kickJumpForce: 7
   knockbackForce: 3

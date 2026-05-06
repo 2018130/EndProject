@@ -513,10 +513,15 @@ public class PlayerNetwork : NetworkBehaviour
                 if (TryGetComponent(out WeaponController weaponController))
                 {
                     // 1. 기존 말랑봉 디스폰 (중복 스폰 방지)
+
+                    AimRigController arc = GetComponent<AimRigController>();
+                    Transform spawnAnchor = (arc != null && arc.HandBone != null) ? arc.HandBone :weaponPivot;
+                    Debug.Log((arc != null && spawnAnchor == arc.HandBone) ? "HandBone 사용" : "weaponPivot 사용");
+
                     weaponController.DespawnMalrangBongOnServer();
 
                     // 2. 새 말랑봉 스폰
-                    GameObject mbObj = Instantiate(card.SkillPrefab, weaponPivot.position, weaponPivot.rotation);
+                    GameObject mbObj = Instantiate(card.SkillPrefab, spawnAnchor.position, spawnAnchor.rotation);
                     NetworkObject mbNo = mbObj.GetComponent<NetworkObject>();
                     mbNo.SpawnWithOwnership(OwnerClientId);
 
@@ -529,14 +534,14 @@ public class PlayerNetwork : NetworkBehaviour
 
                     // 5. 모든 클라이언트에서 weaponPivot follow 설정
                     //    (RPC가 스폰보다 먼저 도착할 수 있어 코루틴으로 대기)
-                    AttachMalrangBongToWeaponPivot_ClientRpc(mbNo.NetworkObjectId);
+                    AttachMalrangBongToHand_ClientRpc(mbNo.NetworkObjectId);
                 }
                 break;
         }
     }
 
     [ClientRpc]
-    private void AttachMalrangBongToWeaponPivot_ClientRpc(ulong mbNetworkObjectId)
+    private void AttachMalrangBongToHand_ClientRpc(ulong mbNetworkObjectId)
     {
         StartCoroutine(WaitAndAttachMalrangBong_Co(mbNetworkObjectId));
     }
@@ -562,7 +567,11 @@ public class PlayerNetwork : NetworkBehaviour
         NetworkObject mbNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[mbNetworkObjectId];
         if (mbNetObj.TryGetComponent(out MalangBong mb))
         {
-            mb.SetFollowTarget(weaponPivot);
+            AimRigController arc = GetComponent<AimRigController>();
+            if(arc != null && arc.HandBone != null)
+            {
+                mb.SetFollowTarget(arc.HandBone);
+            }
         }
     }
 
