@@ -24,6 +24,7 @@ public class GunAlignToHand : NetworkBehaviour
             return;
         }
         _isAligning = true;
+        Debug.Log($"[GunAlignToHand] {gameObject.name}: StartAlign");
     }
 
     public void StopAlign() => _isAligning = false;
@@ -32,9 +33,9 @@ public class GunAlignToHand : NetworkBehaviour
     {
         if (!_isAligning || _handBone == null) return;
 
+        // ★ 위치만 복사, 회전은 건드리지 않음
         transform.position = _handBone.position
             + _handBone.TransformDirection(localPositionOffset);
-        transform.rotation = _handBone.rotation
-            * Quaternion.Euler(localRotationOffset);
+
     }
 }

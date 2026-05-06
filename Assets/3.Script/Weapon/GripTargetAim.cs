@@ -1,32 +1,41 @@
-// GripTargetAim.cs
-// 각 Gun의 GripTarget 오브젝트에 부착
 using UnityEngine;
 
 public class GripTargetAim : MonoBehaviour
 {
-    // AimRigController에서 런타임에 주입
     private Transform _aimTarget;
+    private AimController _aimController;
 
-    [Tooltip("손목 회전 보정값 (총 모델마다 다름, Inspector에서 조정)")]
     [SerializeField] private Vector3 rotationOffset = Vector3.zero;
+    [SerializeField] private float aimLerpSpeed = 8f;
 
-    public void Initialize(Transform aimTarget)
+    public void Initialize(Transform aimTarget, AimController aimController)
     {
         _aimTarget = aimTarget;
+        _aimController = aimController;
+        Debug.Log($"[GripTargetAim] Initialize 완료 - {gameObject.name}");
     }
 
-    // Two Bone IK가 LateUpdate에서 실행되므로
-    // 그 이전에 GripTarget 회전을 확정해야 함
-    // → Script Execution Order에서 이 스크립트를 AimRigController보다 먼저 실행
     private void LateUpdate()
     {
-        if (_aimTarget == null) return;
+        if (_aimTarget == null || _aimController == null)
+        {
+            Debug.LogWarning($"[GripTargetAim] {gameObject.name}: 레퍼런스 없음 - aimTarget:{_aimTarget != null}, aimController:{_aimController != null}");
+            return;
+        }
 
-        // GripTarget에서 AimTarget 방향을 바라보도록 회전
-        Vector3 direction = (_aimTarget.position - transform.position).normalized;
-        if (direction.sqrMagnitude < 0.001f) return;
+        if (!_aimController.GetIsAiming())
+        {
+            // 이 로그가 계속 찍히면 GetIsAiming()이 항상 false
+            Debug.Log($"[GripTargetAim] {gameObject.name}: Not aiming");
+            return;
+        }
 
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = lookRotation * Quaternion.Euler(rotationOffset);
+        Debug.Log($"[GripTargetAim] {gameObject.name}: Aiming 실행 중");
+
+        Vector3 dir = (_aimTarget.position - transform.position).normalized;
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        Quaternion targetRot = Quaternion.LookRotation(dir) * Quaternion.Euler(rotationOffset);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, aimLerpSpeed * Time.deltaTime);
     }
 }
