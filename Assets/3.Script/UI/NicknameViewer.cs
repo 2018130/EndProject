@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NicknameViewer : NetworkBehaviour
 {
     [SerializeField]
     private NetworkObject owner;
+
+    [SerializeField]
+    private Image panel;
 
     [SerializeField]
     private TMP_Text nicknameText;
@@ -37,7 +41,12 @@ public class NicknameViewer : NetworkBehaviour
             return;
 
         RectTransform rect = GetComponent<RectTransform>();
-        rect.sizeDelta =  new Vector2(20f, 8);
+        //rect.sizeDelta =  new Vector2(20f, 8);
+        panel.enabled = false;
+        Vector3 localScale = rect.localScale;
+        localScale.x = -1;
+        rect.localScale = localScale;
+
         isEnding = true;
     }
 

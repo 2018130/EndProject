@@ -183,6 +183,7 @@ public class LobbySceneManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void GoToInGameScene_Rpc()
     {
+        
         for(int i = 1; i < userDatas.Count; i++)
         {
             if(!userDatas[i].IsReady)
@@ -191,7 +192,7 @@ public class LobbySceneManager : NetworkBehaviour
                 return;
             }
         }
-
+        
         Debug.Log($"Go to ingame scene");
         SceneChangeManager.Instance.ChangeSceneForMultiPlay(SceneType.IngameScene);
     }
