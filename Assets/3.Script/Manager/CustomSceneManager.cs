@@ -68,6 +68,17 @@ public class CustomSceneManager : NetworkBehaviour
                         Debug.Log($"Scene loaded spawned client id : {clientId}");
                     }
                 }
+                else
+                {
+                    foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+                    {
+                        if (client.PlayerObject != null)
+                        {
+                            // Despawn(true)를 호출하면 네트워크 상에서 지워지고 로컬 게임오브젝트도 파괴됩니다.
+                            client.PlayerObject.Despawn(true);
+                        }
+                    }
+                }
                 break;
         }
     }

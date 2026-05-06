@@ -84,6 +84,7 @@ public class CatGunObject : NetworkBehaviour
 
             if (closest != null)
             {
+                AudioManager.Instance.PlaySFX("MachineGunCat");
                 // 레이저 이펙트 (나중에 추가)
                 closest.TakeDamage(damage, ownerFaction, ownerClientId, hitPos, transform.position);
             }

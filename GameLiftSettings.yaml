@@ -1,8 +1,9 @@
 version: 1
-CurrentRegion: ap-northeast-2
+LastOpenTab: Anywhere
 CurrentProfileName: GameLiftUnityUser
+CurrentRegion: ap-northeast-2
 UserProfiles: >+
-  - Region: 
+  - Region: ap-northeast-2
 
     Name: GameLiftUnityUser
 
@@ -167,5 +168,4 @@ UserProfiles: >+
     DeploymentBuildFolderPath: 
 
 CurrentBucketName: aws-gamelift-unity-477223649536-ap-northeast-2-an
-LastOpenTab: Anywhere
 ...

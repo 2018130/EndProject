@@ -1,26 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameUIManager : MonoBehaviour, INetworkContextListener
+public class GameUIManager : MonoBehaviour
 {
-    // Test Line
-    [SerializeField]
-    private List<Button> spawnBtn = new List<Button>();
+    public static GameUIManager Instance;
 
-    public void OnNetworkSceneContextBuilt()
+    [SerializeField]
+    private TMP_Text endingText;
+
+    private void Awake()
     {
-        /*
-        for (int i = 0; i < spawnBtn.Count; i++)
+        if(Instance == null)
         {
-            string weaponId = "0" + (i + 1);
-            spawnBtn[i].onClick.AddListener(() =>
-            {
-                GameManager.Instance.SceneContext.GameDataManager.SpawnWeapon_ServerRpc(weaponId, ClientIdChecker.OwnedClientId);
-                Debug.Log($"Spawn weapon id : {weaponId} owner client id : {ClientIdChecker.OwnedClientId}");
-            });
-        }*/
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void SetActiveEndingText(bool active)
+    {
+        endingText.gameObject.SetActive(active);
     }
 }

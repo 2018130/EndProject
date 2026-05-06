@@ -58,7 +58,7 @@ public class GameClientManager : MonoBehaviour
     {
         playerId = "Tester_" + UnityEngine.Random.Range(1000, 10000).ToString();
 
-#if !UNITY_SERVER || UNITY_EDITOR
+#if !UNITY_SERVER
         InitializeCognito();
 #endif
     }

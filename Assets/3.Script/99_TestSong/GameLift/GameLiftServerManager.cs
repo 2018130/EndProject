@@ -25,7 +25,7 @@ public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
         if (!Instance.isInitialized)
         {
             isInitialized = true;
-#if UNITY_SERVER && !UNITY_EDITOR
+#if UNITY_SERVER
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
             InitializeGameLift();
 #endif

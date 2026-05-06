@@ -63,6 +63,8 @@ public class WaterBalloonObject : NetworkBehaviour
 
     private void Explode()
     {
+        PlayExplosionSound_Rpc();
+
         Collider[] hits = Physics.OverlapSphere(
             transform.position,
             range,
@@ -85,5 +87,11 @@ public class WaterBalloonObject : NetworkBehaviour
     {
         Debug.Log($"Throw 방향: {dir}, 속도: {speed}");
         GetComponent<Rigidbody>().AddForce(dir * speed, ForceMode.Impulse);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void PlayExplosionSound_Rpc()
+    {
+        AudioManager.Instance.PlaySFX("WaterBalloonExplode");
     }
 }

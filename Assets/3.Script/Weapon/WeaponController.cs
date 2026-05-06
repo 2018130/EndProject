@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class WeaponController : NetworkBehaviour
 {
-    [SerializeField] private AimRigController aimRigController;
+    [SerializeField] private AimRigController aimRigController; // ★ HEAD 브랜치
+
     private List<BaseWeapon> _weapons = new List<BaseWeapon>();
+
+    public event System.Action<BaseWeapon> OnWeaponRegistered; // ★ HEAD 브랜치
 
     private NetworkVariable<int> _currentWeaponIndex = new NetworkVariable<int>(
         0,
@@ -17,20 +20,19 @@ public class WeaponController : NetworkBehaviour
         false,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server
-        );
+    );
 
     private NetworkVariable<NetworkObjectReference> _spawnedmalrangBongRef = new NetworkVariable<NetworkObjectReference>();
 
-    private NetworkObject _equippedMalrangBongNetObj;
+    private NetworkObject _equippedMalrangBongNetObj; // ★ main 브랜치
 
     private PlayerInput _playerInput;
     private AimController _aimController;
 
     public BaseWeapon CurrentWeapon => (_weapons.Count > 0 && _currentWeaponIndex.Value < _weapons.Count && !_isMalrangbongActive.Value)
         ? _weapons[_currentWeaponIndex.Value] : null;
-    //public BaseWeapon CurrentWeapon => (_weapons.Count > 0 && _currentWeaponIndex.Value < _weapons.Count) ? _weapons[_currentWeaponIndex.Value] : null;
 
-    public bool IsMalrangBongActive => _isMalrangbongActive.Value;
+    public bool IsMalrangBongActive => _isMalrangbongActive.Value; // ★ main 브랜치
 
     private int _expectedWeaponCount = 3;
 
@@ -59,18 +61,14 @@ public class WeaponController : NetworkBehaviour
         if (!IsOwner || _playerInput == null) return;
 
         if (_playerInput.isFiring && CurrentWeapon != null)
-        {
             CurrentWeapon.Attack();
-        }
 
         if (_playerInput.isFiring && _isMalrangbongActive.Value)
         {
             if (_spawnedmalrangBongRef.Value.TryGet(out NetworkObject no))
             {
                 if (no.TryGetComponent(out MalangBong mb))
-                {
                     mb.RequestAttack();
-                }
             }
         }
     }
@@ -79,8 +77,7 @@ public class WeaponController : NetworkBehaviour
     {
         _weapons.Add(weapon);
 
-        // ★ GunAlignToHand가 있으면 handBone 주입
-        // handBone은 AimRigController가 OnNetworkSpawn에서 이미 찾아둠
+        // ★ HEAD: GunAlignToHand에 HandBone 주입
         if (aimRigController != null)
         {
             var align = weapon.GetComponent<GunAlignToHand>();
@@ -88,16 +85,10 @@ public class WeaponController : NetworkBehaviour
                 align.SetHandBone(aimRigController.HandBone);
         }
 
+        // ★ main: WeaponPivot 추적 설정 (총이 몸에 박히지 않는 핵심)
         PlayerNetwork playerNetwork = GetComponent<PlayerNetwork>();
-        if(playerNetwork != null && playerNetwork.WeaponPivot != null)
-        {
+        if (playerNetwork != null && playerNetwork.WeaponPivot != null)
             weapon.SetFollowTarget(playerNetwork.WeaponPivot);
-        }
-
-        //if (_weapons.Count == 1)
-        //    weapon.gameObject.SetActive(true);
-        //else
-        //    weapon.gameObject.SetActive(false);
 
         if (_weapons.Count == _expectedWeaponCount)
         {
@@ -105,9 +96,14 @@ public class WeaponController : NetworkBehaviour
                 rangedWeapon.InitializeAfterEquip();
         }
 
+        // ★ main: 등록 시 가시성 즉시 갱신
         UpdateWeaponVisibility(_currentWeaponIndex.Value, _isMalrangbongActive.Value);
+
+        // ★ HEAD: AimRigController에 GripTargetAim 주입
+        OnWeaponRegistered?.Invoke(weapon);
     }
 
+    // ★ main 브랜치 추가 메서드
     public void SetMalrangBongEquipped(NetworkObject mbNetObj)
     {
         if (!IsServer) return;
@@ -138,7 +134,6 @@ public class WeaponController : NetworkBehaviour
 
         if (_equippedMalrangBongNetObj != null)
         {
-            // 이미 Despawn된 오브젝트에 Despawn() 재호출 시 예외 방지
             if (_equippedMalrangBongNetObj.IsSpawned)
                 _equippedMalrangBongNetObj.Despawn();
 
@@ -176,21 +171,6 @@ public class WeaponController : NetworkBehaviour
 
     private void OnWeaponChanged(int prev, int current)
     {
-        //Debug.Log($"OnWeaponChanged - prev:{prev}, current:{current}, IsOwner:{IsOwner}, 무기수:{_weapons.Count}");
-        //if (prev < _weapons.Count)
-        //{
-        //    if (IsOwner && _weapons[prev] is RangedWeapon prevRanged)
-        //        prevRanged.UnsubscribeInput();
-        //    _weapons[prev].gameObject.SetActive(false);
-        //}
-
-        //if (current < _weapons.Count)
-        //{
-        //    _weapons[current].gameObject.SetActive(true);
-        //    if (IsOwner && _weapons[current] is RangedWeapon rangedWeapon)
-        //        rangedWeapon.InitializeAfterEquip();
-        //}
-
         UpdateWeaponVisibility(current, _isMalrangbongActive.Value);
     }
 
@@ -198,21 +178,16 @@ public class WeaponController : NetworkBehaviour
     {
         UpdateWeaponVisibility(_currentWeaponIndex.Value, current);
 
-        // 말랑봉 해제(스왑)될 때 오너 클라이언트에서 쿨타임 시작
+        // ★ main: 말랑봉 해제 시 쿨타임 시작
         if (prev && !current && IsOwner)
-        {
             GetComponent<PlayerSkill>()?.StartMalrangBongCooldown();
-        }
     }
 
     private void UpdateWeaponVisibility(int slotIndex, bool isMalrangActive)
     {
-        //if (_weapons.Count == 0) return;
-
         for (int i = 0; i < _weapons.Count; i++)
         {
             if (_weapons[i] == null) continue;
-            //if (IsOwner && _weapons[i] is RangedWeapon rw) rw.UnsubscribeInput();
             if (_weapons[i] is RangedWeapon rw) rw.UnsubscribeInput();
             _weapons[i].gameObject.SetActive(false);
         }
@@ -220,11 +195,8 @@ public class WeaponController : NetworkBehaviour
         if (!isMalrangActive && slotIndex < _weapons.Count)
         {
             _weapons[slotIndex].gameObject.SetActive(true);
-            //if (IsOwner && _weapons[slotIndex] is RangedWeapon rw2)
             if (_weapons[slotIndex] is RangedWeapon rw2)
-            {
                 rw2.InitializeAfterEquip();
-            }
         }
     }
 }

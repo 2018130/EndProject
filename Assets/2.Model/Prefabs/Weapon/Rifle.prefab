@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: -3803386250729678447}
   - component: {fileID: -6168875209505223851}
   - component: {fileID: -6227807058617060483}
+  - component: {fileID: -3479854282295322387}
   m_Layer: 0
   m_Name: Rifle
   m_TagString: Untagged
@@ -195,9 +196,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunAlignToHand
   ShowTopMostFoldoutHeaderGroup: 1
-  handBone: {fileID: 0}
   localPositionOffset: {x: 0, y: 0, z: 0}
   localRotationOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &-3479854282295322387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2196245245374383465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a57506555a96154d92be262968dc111, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GripTargetAim
+  rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &3240279867669112763
 GameObject:
   m_ObjectHideFlags: 0
