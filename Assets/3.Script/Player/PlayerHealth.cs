@@ -111,6 +111,7 @@ public class PlayerHealth : NetworkBehaviour
             case PlayerState.OnVehicle:
                 // 이동, 공격 불가 처리
                 // PlayerNetwork의 IsGrounded 체크 후 state = alive로 변경
+                DisableInputClientRpc();
                 if (IsOwner)
                 {
                     StartCoroutine(CheckVehicleGroundedRoutine());
