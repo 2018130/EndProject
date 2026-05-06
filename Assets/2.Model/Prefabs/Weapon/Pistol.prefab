@@ -144,6 +144,37 @@ Transform:
   - {fileID: 3656800975380890564}
   m_Father: {fileID: 8057516533756732188}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3342248370781419738
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5920452917018978863}
+  m_Layer: 0
+  m_Name: GripTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5920452917018978863
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3342248370781419738}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.139, z: 0.015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8057516533756732188}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5841418922655563921
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,6 +333,8 @@ GameObject:
   - component: {fileID: 8057516533756732188}
   - component: {fileID: 6388871198179810395}
   - component: {fileID: 3779135162039503417}
+  - component: {fileID: -6368634561299040189}
+  - component: {fileID: -6991540804634029191}
   m_Layer: 0
   m_Name: Pistol
   m_TagString: Untagged
@@ -325,6 +358,7 @@ Transform:
   - {fileID: 1833657621731207345}
   - {fileID: 1215132727194323834}
   - {fileID: 3457023855828935668}
+  - {fileID: 5920452917018978863}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6388871198179810395
@@ -383,6 +417,34 @@ MonoBehaviour:
   waterSpawnPoint: {fileID: 1215132727194323834}
   waterPrefab: {fileID: 3576342576533310494, guid: 2254d8bca3d34b54aa8712d84d35d614, type: 3}
   shotParticle: {fileID: 4787740936991213230}
+--- !u!114 &-6368634561299040189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8456758896228530781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42089a98de555e444848cf4705becf60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunAlignToHand
+  ShowTopMostFoldoutHeaderGroup: 1
+  localPositionOffset: {x: 0, y: 0, z: 0}
+  localRotationOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &-6991540804634029191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8456758896228530781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a57506555a96154d92be262968dc111, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GripTargetAim
+  rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &6990484328311800581
 PrefabInstance:
   m_ObjectHideFlags: 0

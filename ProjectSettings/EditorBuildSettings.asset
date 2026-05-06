@@ -62,6 +62,54 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1.Scene/JangTest/Test 1.unity
     guid: 69152b09ff04ca8419941063c82334dc
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_cards.unity
+    guid: 855bb038b5077e74082152830a86f4fe
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_combat.unity
+    guid: 49c44520099ebe541a86e958bb498f24
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_decals.unity
+    guid: 5b495297bbe0d2549aa87a2ef68dd6f5
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_decals2.unity
+    guid: beb66570ff0561047abfb8082eaa8e70
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_emojis.unity
+    guid: b0de468b5dc93da4d8ee716d4782d2ba
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_explosions.unity
+    guid: f91c322868183cc4a96eb6242e73deac
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_explosions2.unity
+    guid: 23b30f55479243746a484e7a7ba74b29
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_fire.unity
+    guid: 88a9ddda0ca72bb488c72771c26caba4
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_fireworks.unity
+    guid: 32ddbd81248ad9c43a2fc3edfba6e326
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_flares.unity
+    guid: e2bb5f0193a596246b4de5a53732a695
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_fruit.unity
+    guid: 308a48ec02d5ab14bbaa222116dfde72
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_healing.unity
+    guid: 5dc0fb5f1c3c34d47baefa2a3c5f19e1
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_lightning.unity
+    guid: 237fa454a1c11d24d8a92ad2acf18735
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_magic.unity
+    guid: 1e1bb871721d63e4f92474359db37b3d
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_magic2.unity
+    guid: c5094e256f2a7a04b913a7b17313517a
+  - enabled: 1
+    path: Assets/Epic Toon FX/Demo/Scenes/etfx_magic3.unity
+    guid: d70a7dcb427d83b48bd82c3e982e09b4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 97b35763f3dbd7547815f9a4df92d129, type: 3}
   m_UseUCBPForAssetBundles: 0
