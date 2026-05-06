@@ -25,7 +25,7 @@ public class BubbleProjectile : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        AudioManager.Instance.PlaySFX("BubbleShot");
+        AudioManager.Instance.PlaySFX("BubbleShot"); 
     }
 
     private void OnTriggerEnter(Collider other)

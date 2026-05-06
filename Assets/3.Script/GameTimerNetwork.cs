@@ -1,8 +1,11 @@
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
 public class GameTimerNetwork : NetworkBehaviour
 {
+    private bool playedTenSecondWarning = false;
+
     public static GameTimerNetwork Instance { get; private set; }
 
     public NetworkVariable<float> TimeRemaining = new NetworkVariable<float>(
@@ -34,6 +37,13 @@ public class GameTimerNetwork : NetworkBehaviour
         if (!IsServer) return;
 
         TimeRemaining.Value -= Time.deltaTime;
+
+        if (!playedTenSecondWarning && TimeRemaining.Value <= 10f)
+        {
+            playedTenSecondWarning = true;
+            PlayTenSecondWarning_Rpc();
+        }
+
         if (TimeRemaining.Value <= 0)
         {
             TimeRemaining.Value = 0;
@@ -49,6 +59,7 @@ public class GameTimerNetwork : NetworkBehaviour
         TimeRemaining.Value = 17f;
         TeamAKills.Value = 0;
         TeamBKills.Value = 0;
+        playedTenSecondWarning = false;
     }
 
     public void AddKill(Faction faction)
@@ -62,5 +73,18 @@ public class GameTimerNetwork : NetworkBehaviour
     private void EndGame_Rpc()
     {
         GameManager.Instance.EndGame();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void PlayTenSecondWarning_Rpc()
+    {
+        StartCoroutine(PlayWarningLoop_Co());
+    }
+
+    private IEnumerator PlayWarningLoop_Co()
+    {
+        AudioManager.Instance.PlaySFX("Warning", loop: true);
+        yield return new WaitForSeconds(10f);
+        AudioManager.Instance.StopSFX();
     }
 }
