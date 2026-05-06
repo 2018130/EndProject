@@ -141,6 +141,7 @@ public class PlayerNetwork : NetworkBehaviour
 
             case PlayerState.Dead:
                 animator.SetBool("IsCrawling", false);
+                AudioManager.Instance.PlaySFX("Dead");
                 if (IsOwner) {
                     playerInput.IsDown = true;
                     PlayerEffectUI.Instance?.SetGrayscale(true);

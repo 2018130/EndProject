@@ -71,6 +71,13 @@ public class GoatMilkDispenser : NetworkBehaviour
 
         StartCoroutine(PlayEffectNextFrame());
         ApplyVisuals(range);
+        AudioManager.Instance.PlaySFX("GoatSkillStart");
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void PlayHealSound_Rpc()
+    {
+        AudioManager.Instance.PlaySFX("GoatHeal");
     }
 
 
@@ -122,7 +129,7 @@ public class GoatMilkDispenser : NetworkBehaviour
                     {
                         float targetHP = player.Hp.Value + healAmount;
                         player.Hp.Value = Mathf.Min(targetHP, player.maxHp);
-                        Debug.Log($"player hp : {targetHP}");
+                        PlayHealSound_Rpc();
                     }
                 }
             }
