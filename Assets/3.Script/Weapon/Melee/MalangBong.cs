@@ -65,7 +65,6 @@ public class MalangBong : NetworkBehaviour
 
         if (!_canAttack.Value) return;
 
-        Debug.Log("4444");
         PerformAttack_ServerRpc();
     }
 
@@ -76,7 +75,6 @@ public class MalangBong : NetworkBehaviour
 
         if (!_canAttack.Value) return;
 
-        Debug.Log("5555");
         StartCoroutine(AttackCoroutine());
 
         // 서버에서 플레이어 NetworkObjectId를 조회해 ClientRpc에 전달
@@ -90,7 +88,6 @@ public class MalangBong : NetworkBehaviour
 
     private IEnumerator AttackCoroutine()
     {
-        Debug.Log("6666");
         _canAttack.Value = false;
         hitThisSwing.Clear();
 
@@ -114,7 +111,6 @@ public class MalangBong : NetworkBehaviour
 
         if (playerAnimator != null)
         {
-            Debug.Log("7777");
             playerAnimator.SetTrigger("MeleeAttack");
         }
         else

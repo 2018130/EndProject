@@ -111,7 +111,35 @@ public class PlayerHealth : NetworkBehaviour
             case PlayerState.OnVehicle:
                 // 이동, 공격 불가 처리
                 // PlayerNetwork의 IsGrounded 체크 후 state = alive로 변경
+                DisableInputClientRpc();
+                if (IsOwner)
+                {
+                    StartCoroutine(CheckVehicleGroundedRoutine());
+                }
                 break;
+        }
+    }
+
+    private IEnumerator CheckVehicleGroundedRoutine()
+    {
+        PlayerNetwork net = GetComponent<PlayerNetwork>();
+
+        // 튜브 파괴 혹은 넉백 등의 외부 요인으로 OnVehicle 상태가 풀리기를 대기 (탈것에 타고 있는 동안 무한 대기)
+        yield return new WaitWhile(() => State.Value == PlayerState.OnVehicle);
+
+        // 허공에 뜬 상태에서 땅에 닿을 때까지 대기
+        yield return new WaitUntil(() => net.IsGrounded());
+
+        // 착지가 확인되면 서버에 Alive 상태로 전환 요청
+        RequestSetAliveServerRpc();
+    }
+
+    [ServerRpc]
+    private void RequestSetAliveServerRpc()
+    {
+        if (State.Value != PlayerState.Down && State.Value != PlayerState.Dead)
+        {
+            State.Value = PlayerState.Alive;
         }
     }
 

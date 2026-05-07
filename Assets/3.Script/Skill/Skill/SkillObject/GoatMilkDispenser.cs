@@ -14,7 +14,9 @@ public class GoatMilkDispenser : NetworkBehaviour
     private float healRange;
     private float duration;
 
-    [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private ParticleSystem healEffect;
+
+    private GameObject spawnedEffect;
 
     public override void OnNetworkSpawn()
     {
@@ -30,9 +32,9 @@ public class GoatMilkDispenser : NetworkBehaviour
         this.healAmount = damage;
         this.healRange = range;
 
-        GameObject effect = SkillEffectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
+        healEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
-        effect.transform.localScale = Vector3.one * range;
+        StartCoroutine(PlayEffectNextFrame());
 
         if (IsServer)
         {
@@ -49,6 +51,13 @@ public class GoatMilkDispenser : NetworkBehaviour
         StartCoroutine(BrightenEverySecond());
     }
 
+    private IEnumerator PlayEffectNextFrame()
+    {
+        yield return null;
+        healEffect.Play(true);
+    }
+
+
     private IEnumerator SetupVisualsDelay(float range)
     {
         yield return null;
@@ -60,8 +69,17 @@ public class GoatMilkDispenser : NetworkBehaviour
     {
         if (IsServer) return;
 
+        StartCoroutine(PlayEffectNextFrame());
         ApplyVisuals(range);
+        AudioManager.Instance.PlaySFX("GoatSkillStart");
     }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void PlayHealSound_Rpc()
+    {
+        AudioManager.Instance.PlaySFX("GoatHeal");
+    }
+
 
     private void DrawCircle()
     {
@@ -88,6 +106,13 @@ public class GoatMilkDispenser : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    private void StopEffect_ClientRpc()
+    {
+        if (IsServer) return;
+        healEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+
     private IEnumerator GoatHealPerSecond()
     {
         float timer = 0;
@@ -104,7 +129,7 @@ public class GoatMilkDispenser : NetworkBehaviour
                     {
                         float targetHP = player.Hp.Value + healAmount;
                         player.Hp.Value = Mathf.Min(targetHP, player.maxHp);
-                        Debug.Log($"player hp : {targetHP}");
+                        PlayHealSound_Rpc();
                     }
                 }
             }
@@ -112,6 +137,11 @@ public class GoatMilkDispenser : NetworkBehaviour
             timer += healInterval;
             yield return new WaitForSeconds(healInterval);
         }
+
+        Debug.Log("»˙ ¡æ∑· - ¿Ã∆Â∆Æ π›»Ø");
+        if (spawnedEffect != null)
+            SkillEffectPool.Instance.Return(spawnedEffect);
+            StopEffect_ClientRpc();
 
         if (IsServer)
         {
