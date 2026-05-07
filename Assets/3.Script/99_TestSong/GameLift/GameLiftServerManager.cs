@@ -20,15 +20,18 @@ public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
     private bool isInitialized = false; 
     private bool _sessionStartRequested = false;
 
+    private Dictionary<ulong, string> _activePlayerSessions = new Dictionary<ulong, string>();
+
     private void Start()
     {
         if (!Instance.isInitialized)
         {
             isInitialized = true;
-#if UNITY_SERVER
+#if UNITY_SERVER && !UNITY_EDITOR
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
             InitializeGameLift();
 #endif
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
         }
 
     }
@@ -190,6 +193,35 @@ public class GameLiftServerManager : SingletonBehaviour<GameLiftServerManager>
         {
             Debug.LogError($"[Netcode] Exception in ApprovalCheck: {ex.Message}");
             response.Approved = false;
+        }
+    }
+
+    private void OnClientDisconnect(ulong clientId)
+    {
+        // 1. 게임리프트에 플레이어 퇴장 알림
+        if (_activePlayerSessions.TryGetValue(clientId, out string playerSessionId))
+        {
+            GameLiftServerAPI.RemovePlayerSession(playerSessionId);
+            _activePlayerSessions.Remove(clientId);
+            Debug.Log($"[GameLift] Player removed from session: {clientId}");
+        }
+
+        // 2. 남은 유저 확인 후 서버 종료
+        // 콜백 발생 시점에 해당 clientId가 딕셔너리에 남아있을 수 있으므로 
+        // 딕셔너리 크기가 0이거나(모두 나감), Count <= 1 이면 빈 방으로 간주
+        if (NetworkManager.Singleton.ConnectedClients.Count <= 1)
+        {
+            Debug.Log("[GameLift] All players left. Ending Process.");
+
+            // NGO 서버를 먼저 안전하게 내리고
+            if (NetworkManager.Singleton.IsServer)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+
+            // 게임리프트 프로세스 종료 보고 후 앱 종료
+            GameLiftServerAPI.ProcessEnding();
+            Application.Quit();
         }
     }
 }

@@ -3426,6 +3426,7 @@ GameObject:
   - component: {fileID: 1348067199}
   - component: {fileID: 1348067198}
   - component: {fileID: 1348067200}
+  - component: {fileID: 1348067201}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -3520,6 +3521,18 @@ MonoBehaviour:
     OldPrefabList: []
   RunInBackground: 1
   LogLevel: 1
+--- !u!114 &1348067201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348067196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ec4e6e46717b664291559d927f57a6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CustomNetworkManager
 --- !u!1 &1439210860
 GameObject:
   m_ObjectHideFlags: 0
@@ -5076,6 +5089,10 @@ PrefabInstance:
     - target: {fileID: 3804719043713286725, guid: 7c1b3aa32dd98b04d8feb8f5d0f52504, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 1554075937
+      objectReference: {fileID: 0}
+    - target: {fileID: 6376010804386586972, guid: 7c1b3aa32dd98b04d8feb8f5d0f52504, type: 3}
+      propertyPath: maxPlayer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6376010804386586972, guid: 7c1b3aa32dd98b04d8feb8f5d0f52504, type: 3}
       propertyPath: roomCanvas

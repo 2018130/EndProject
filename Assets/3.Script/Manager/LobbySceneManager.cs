@@ -9,6 +9,8 @@ public class LobbySceneManager : NetworkBehaviour
 {
     public static LobbySceneManager Instance { get; set; }
 
+    [SerializeField]
+    private int maxPlayer = 4;
 
     // 서버에서 관리될 텍스트 목록
     [SerializeField]
@@ -47,6 +49,21 @@ public class LobbySceneManager : NetworkBehaviour
     private void Start()
     {
         NetworkManager.Singleton.OnClientStarted += CloseRoomAndOpenLobbyCanvas;
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += SpawnClient;
+
+            //씬 재진입시
+            if (NetworkManager.Singleton.ConnectedClients.Count == maxPlayer)
+            {
+                foreach (var player in NetworkManager.Singleton.ConnectedClients)
+                {
+                    Debug.Log($"connected client : {player.Key} {player.Value}");
+                    SpawnClient(player.Key);
+                }
+            }
+        }
     }
     public void CloseRoomAndOpenLobbyCanvas()
     {
@@ -123,7 +140,14 @@ public class LobbySceneManager : NetworkBehaviour
     {
         Debug.Log($"Spawn Network Player, id : {clientId}");
         NetworkObject spawn = NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(networkPlayer, clientId);
-        int clientCount = NetworkManager.Singleton.ConnectedClientsIds.Count;
+        int idx = 0;
+        for(idx = 0; idx < NetworkManager.Singleton.ConnectedClientsIds.Count; idx++)
+        {
+            if(NetworkManager.Singleton.ConnectedClientsIds[idx] == clientId)
+            {
+                break;
+            }
+        }
 
         RpcParams rpcParams = new RpcParams
         {
@@ -142,7 +166,8 @@ public class LobbySceneManager : NetworkBehaviour
             }
         }
 
-        SetClientRoomAuthority_Rpc(clientCount - 1, clientCount == 1 ? true : false, rpcParams);
+        
+        SetClientRoomAuthority_Rpc(idx, idx == 0 ? true : false, rpcParams);
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
