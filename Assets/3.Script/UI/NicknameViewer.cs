@@ -90,6 +90,9 @@ public class NicknameViewer : NetworkBehaviour
         if(owner != null)
         {
             transform.position = isEnding? owner.transform.position + endOffset : owner.transform.position + offset;
+            Quaternion rot = owner.GetComponent<PlayerNetwork>().Model.rotation;
+            transform.rotation = rot;
+
         }  
     }
 }

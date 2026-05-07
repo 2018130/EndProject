@@ -133,41 +133,40 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         this.duration = duration;
         this.moveSpeed = moveSpeed;
 
-        rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+        rb.linearVelocity = Vector3.zero;
+
         rb.constraints = RigidbodyConstraints.FreezePositionY
                        | RigidbodyConstraints.FreezeRotationX
                        | RigidbodyConstraints.FreezeRotationZ;
 
-        // 현재 Y 위치 고정
-        Vector3 pos = rb.position;
-        pos.y = transform.position.y;
-        rb.MovePosition(pos);
-        //this.driver = driver;
 
         if (IsServer)
         {
-            //driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
-            ////driver.GetComponent<Collider>().isTrigger = true;
-            //SetPlayerTrigger_ClientRpc(true);
-
             this.driver = driver;
-
             driverRef.Value = new NetworkObjectReference(driver.NetworkObject);
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
-
             isMoving.Value = true;
-
             SyncStats_ClientRpc(duration, moveSpeed);
         }
         StartCoroutine(StopSkill());
     }
+
 
     [ClientRpc]
     private void SyncStats_ClientRpc(float duration, float speed)
     {
         this.duration = duration;
         this.moveSpeed = speed;
+
+        if (!IsServer)
+        {
+            rb.useGravity = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.constraints = RigidbodyConstraints.FreezePositionY
+                           | RigidbodyConstraints.FreezeRotationX
+                           | RigidbodyConstraints.FreezeRotationZ;
+        }
     }
 
     private void FixedUpdate()

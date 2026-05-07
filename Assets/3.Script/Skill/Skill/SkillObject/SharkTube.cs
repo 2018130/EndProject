@@ -47,7 +47,10 @@ public class SharkTube : NetworkBehaviour
 
         if (driver != null)
         {
-            SetupDriverPhysics(driver, false);
+            Collider col = driver.GetComponent<Collider>();
+            if (col != null) col.isTrigger = false;
+
+            driver = null;
         }
     }
 
@@ -78,6 +81,12 @@ public class SharkTube : NetworkBehaviour
         this.duration = duration;
         this.moveSpeed = moveSpeed;
         this.driver = driver;
+
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.constraints = RigidbodyConstraints.FreezePositionY
+                       | RigidbodyConstraints.FreezeRotationX
+                       | RigidbodyConstraints.FreezeRotationZ;
 
         if (IsServer)
         {
@@ -175,6 +184,26 @@ public class SharkTube : NetworkBehaviour
     private IEnumerator StopSkill()
     {
         yield return new WaitForSeconds(duration);
+
+        if (!IsServer) yield break;
+
+        isMoving.Value = false;
+
+        if (driver != null)
+        {
+            driver.GetComponent<PlayerHealth>().State.Value = PlayerState.Alive;
+
+            // »ìÂ¦ À§·Î ¶ç¿ö¼­ ÂøÁö Ã³¸®
+            Vector3 kickDir = driver.transform.up;
+            driver.ApplyKnockback_ClientRpc(kickDir * knockbackPower);
+        }
+
+        rb.useGravity = true;
+        rb.constraints = RigidbodyConstraints.None;
+
+        yield return new WaitForSeconds(0.1f);
+
+
         GetComponent<NetworkObject>().Despawn();
     }
 }

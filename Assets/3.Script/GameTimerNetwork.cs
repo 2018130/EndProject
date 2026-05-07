@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameTimerNetwork : NetworkBehaviour
 {
@@ -56,7 +57,7 @@ public class GameTimerNetwork : NetworkBehaviour
     {
         if (!IsServer) return;
         isGameRunning = true;
-        TimeRemaining.Value = 1700f;
+        TimeRemaining.Value = 302f;
         TeamAKills.Value = 0;
         TeamBKills.Value = 0;
         playedTenSecondWarning = false;
@@ -73,6 +74,21 @@ public class GameTimerNetwork : NetworkBehaviour
     private void EndGame_Rpc()
     {
         GameManager.Instance.EndGame();
+
+        StartCoroutine(DisconnectAndReturnToOfflineRoutine());
+    }
+
+    private IEnumerator DisconnectAndReturnToOfflineRoutine()
+    {
+        yield return new WaitForSeconds(10f);
+
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+        yield return new WaitUntil(() => !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsServer);
+
+        SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.RoomScene);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
