@@ -11,8 +11,7 @@ public class DebugBones : MonoBehaviour
         {
             if (bone == HumanBodyBones.LastBone) continue;
             Transform t = anim.GetBoneTransform(bone);
-            if (t != null)
-                Debug.Log($"{bone} ¡æ {t.name} (path: {GetPath(t)})");
+            //if (t != null)                Debug.Log($"{bone} ¡æ {t.name} (path: {GetPath(t)})");
         }
     }
 

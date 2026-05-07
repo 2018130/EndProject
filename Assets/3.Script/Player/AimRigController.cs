@@ -138,45 +138,54 @@ public class AimRigController : NetworkBehaviour
     private BaseWeapon _lastSyncedWeapon = null;
 
     private void SyncCurrentGun()
+{
+    if (weaponController == null) return;
+
+    BaseWeapon current = weaponController.CurrentWeapon;
+    if (current == _lastSyncedWeapon) return;
+
+    if (_currentGunAlign != null)
+        _currentGunAlign.StopAlign();
+
+    _lastSyncedWeapon = current;
+
+    if (current == null)
     {
-        if (weaponController == null) return;
-
-        BaseWeapon current = weaponController.CurrentWeapon;
-        if (current == _lastSyncedWeapon) return;
-
-        if (_currentGunAlign != null)
-            _currentGunAlign.StopAlign();
-
-        _lastSyncedWeapon = current;
-
-        if (current == null)
-        {
-            _currentGunAlign = null;
-            return;
-        }
-
-        _currentGunAlign = current.GetComponent<GunAlignToHand>();
-        if (_currentGunAlign != null)
-            _currentGunAlign.StartAlign();
-
-        if (armIKConstraint != null)
-        {
-            Transform gripTarget = current.transform.Find("GripTarget");
-            if (gripTarget != null)
-            {
-                armIKConstraint.data.target = gripTarget;
-                StartCoroutine(RebuildNextFrame());
-            }
-            else
-            {
-                Debug.LogWarning($"[AimRigController] {current.name}에 GripTarget이 없습니다.");
-            }
-        }
+        _currentGunAlign = null;
+        return;
     }
 
-    private System.Collections.IEnumerator RebuildNextFrame()
+    _currentGunAlign = current.GetComponent<GunAlignToHand>();
+    if (_currentGunAlign != null)
+        _currentGunAlign.StartAlign();
+
+    if (armIKConstraint != null)
     {
-        yield return null;
-        _rigBuilder?.Build();
+        Transform gripTarget = current.transform.Find("GripTarget");
+        if (gripTarget != null)
+        {
+            armIKConstraint.data.target = gripTarget;
+
+            // ★ 진행 중인 코루틴 모두 중단 후 재시작
+            StopAllCoroutines();
+            StartCoroutine(RebuildSequence());
+        }
+        else
+        {
+            Debug.LogWarning($"[AimRigController] {current.name}에 GripTarget이 없습니다.");
+        }
     }
+}
+
+private IEnumerator RebuildSequence()
+{
+    // 즉시 한 번
+    _rigBuilder?.Build();
+    
+    // 다음 프레임에 한 번 더 (Animator 초기화 완료 후)
+    yield return null;
+    _rigBuilder?.Build();
+    
+    Debug.Log($"[AimRigController] RebuildSequence 완료 - target: {armIKConstraint?.data.target?.name}");
+}
 }
