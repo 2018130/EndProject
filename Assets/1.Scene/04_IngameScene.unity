@@ -19520,6 +19520,18 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1698942399}
+    - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDepth
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformRadius
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: maxDeformDepth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 955532375084122404, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -19528,6 +19540,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 6624926}
+    - target: {fileID: 995372536303816783, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_VersionIndex
+      value: 193
+      objectReference: {fileID: 0}
     - target: {fileID: 1105679803563518972, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -19552,10 +19568,34 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1813777245}
+    - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDepth
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformRadius
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: maxDeformDepth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 2690238167848440057, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 6624926}
+    - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDepth
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformRadius
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: maxDeformDepth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 2862645781090975949, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -19572,6 +19612,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1813777245}
+    - target: {fileID: 3205750843028673463, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_VersionIndex
+      value: 193
+      objectReference: {fileID: 0}
     - target: {fileID: 3374412276355832565, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 270519187
@@ -19596,6 +19640,18 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1813777245}
+    - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDepth
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformRadius
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: maxDeformDepth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 6081849606101403825, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -19624,10 +19680,38 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 474746733}
+    - target: {fileID: 7137848887466915346, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_VersionIndex
+      value: 270
+      objectReference: {fileID: 0}
+    - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDepth
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformRadius
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: maxDeformDepth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 7275596615736518886, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1267778510}
+    - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDepth
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformRadius
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: maxDeformDepth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 7833707310399223380, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -19672,6 +19756,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1698942399}
+    - target: {fileID: 7859301081321201805, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_VersionIndex
+      value: 270
+      objectReference: {fileID: 0}
     - target: {fileID: 8064088732187957078, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1618215464
@@ -35870,6 +35958,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -35914,6 +36003,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -35958,6 +36048,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -36002,6 +36093,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -36046,6 +36138,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -36090,6 +36183,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -36134,6 +36228,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   deformRadius: 0.2
   deformDepth: 0.1
+  maxDeformDepth: 0.15
   falloff:
     serializedVersion: 2
     m_Curve:
