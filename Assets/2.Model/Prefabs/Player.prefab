@@ -502,7 +502,7 @@ MonoBehaviour:
   weaponPivot: {fileID: 7943489111776926660}
   model: {fileID: 4826801807631978227}
   kickJumpForce: 7
-  knockbackForce: 3
+  knockbackForce: 8
   spawnEffect: {fileID: 7271120117267811006}
   dashEffect: {fileID: 9143996807421856966}
   jetpackEffectParticle: {fileID: 128572, guid: 6de3984542d819c49996fdf80b25e412, type: 3}
@@ -721,8 +721,9 @@ MonoBehaviour:
   normalOffset: {x: 0, y: -0.5, z: -1}
   zoomOffset: {x: 1, y: -1.5, z: -1}
   lerpSpeed: 8
+  isEnding: 0
   isKillEffectPlaying: 0
-  killEffectOffset: {x: 2, y: 2, z: 2}
+  killEffectOffset: {x: 3, y: 5, z: -3}
 --- !u!114 &4636896785812393527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -764,6 +765,7 @@ MonoBehaviour:
   aimingArmWeight: 1
   idleHeadWeight: 0.15
   idleArmWeight: 0
+  idleSpineWeight: 0
   weightLerpSpeed: 6
   targetLerpSpeed: 12
 --- !u!114 &8675480272257844670

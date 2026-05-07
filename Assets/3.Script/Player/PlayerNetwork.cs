@@ -726,7 +726,24 @@ public class PlayerNetwork : NetworkBehaviour
         var target = aimedDownPlayer;
         aimedDownPlayer = null;
         PlayerActionPromptUI.Instance?.HideAllPrompts();
-        StartCoroutine(PlayUppercutAnimation(target));
+
+        float distToTarget = Vector3.Distance(target.transform.position, transform.position);
+        Debug.Log($"Target to dist : " + distToTarget);
+        if(distToTarget >= 3f)
+        {
+            StartCoroutine(PlayKickAnimation(target));
+        }
+        else
+        {
+            if(UnityEngine.Random.Range(0, 2) == 0)
+            {
+                StartCoroutine(PlayUppercutAnimation(target));
+            }
+            else
+            {
+                StartCoroutine(PlaySwingAnimation(target));
+            }
+        }
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
