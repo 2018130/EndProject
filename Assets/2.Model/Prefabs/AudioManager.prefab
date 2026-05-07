@@ -67,6 +67,22 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: e9c622c1de2bae3458cc5c4e38098b6a, type: 3}
   - key: Item
     clip: {fileID: 8300000, guid: d2a989d479f3a7545bcf012bf2293175, type: 3}
+  - key: PenguinCharge
+    clip: {fileID: 8300000, guid: 785204d15e85e9e4a88735c8e881a109, type: 3}
+  - key: GoatHeal
+    clip: {fileID: 8300000, guid: d2132d83aca7f2f4da576bce4205a8c7, type: 3}
+  - key: GoatSkillStart
+    clip: {fileID: 8300000, guid: 38e8b36917708354da7c7c11a105be95, type: 3}
+  - key: MachineGunCat
+    clip: {fileID: 8300000, guid: 8961df926ca1b0043833addef11bc388, type: 3}
+  - key: MachineGunCat
+    clip: {fileID: 8300000, guid: 8961df926ca1b0043833addef11bc388, type: 3}
+  - key: Dead
+    clip: {fileID: 8300000, guid: 09685b9752998e840990d4f0a7e4b491, type: 3}
+  - key: WaterBalloonExplode
+    clip: {fileID: 8300000, guid: 8700fb427ec563b4dadf65befda4dc0d, type: 3}
+  - key: Warning
+    clip: {fileID: 8300000, guid: 2793ab331d9b61940aac8aff9cb5079e, type: 3}
 --- !u!82 &8859457531566801884
 AudioSource:
   m_ObjectHideFlags: 0

@@ -31,7 +31,8 @@ public class AimRigController : NetworkBehaviour
     [SerializeField] private float aimingArmWeight = 1.0f;
     //[SerializeField] private float aimingHandWeight = 1.0f;
     [SerializeField] private float idleHeadWeight = 0.15f;
-    [SerializeField] private float idleArmWeight = 0.0f;
+    [SerializeField] private float idleArmWeight = 0f;
+    [SerializeField] private float idleSpineWeight = 0f;
     [SerializeField] private float weightLerpSpeed = 6f;
     [SerializeField] private float targetLerpSpeed = 12f;
 
@@ -75,7 +76,7 @@ public class AimRigController : NetworkBehaviour
         // ★ GripTargetAim에 AimTarget 주입
         var gripAim = weapon.GetComponentInChildren<GripTargetAim>();
         if (gripAim != null && aimTarget != null)
-            gripAim.Initialize(aimTarget);
+            gripAim.Initialize(aimTarget, aimController);
     }
 
     private void LateUpdate()
@@ -111,7 +112,7 @@ public class AimRigController : NetworkBehaviour
 
         if (spineAimRig != null)
             spineAimRig.weight = Mathf.Lerp(spineAimRig.weight,
-                isAiming ? aimingSpineWeight : 0f, t);
+                isAiming ? aimingSpineWeight : idleSpineWeight, t);
 
         if (armIKRig != null)
             armIKRig.weight = Mathf.Lerp(armIKRig.weight,
