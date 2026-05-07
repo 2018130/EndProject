@@ -16,7 +16,7 @@ public class NetworkPlayer : NetworkBehaviour
         DontDestroyOnLoad(gameObject);
         nickname = new NetworkVariable<FixedString32Bytes>();
 
-        GameManager.Instance.OnEndGame += RestartGameGoToLobby;
+        //GameManager.Instance.OnEndGame += RestartGameGoToLobby;
     }
 
     [Rpc(SendTo.Server)]

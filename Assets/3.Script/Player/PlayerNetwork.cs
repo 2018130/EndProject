@@ -38,6 +38,7 @@ public class PlayerNetwork : NetworkBehaviour
     // WeaponController에서 무기 follow target 설정에 사용
     public Transform WeaponPivot => weaponPivot;
     [SerializeField] private Transform model;
+    public Transform Model => model;
 
     // 처형 관련 스크립트
     PlayerHealth aimedDownPlayer;
