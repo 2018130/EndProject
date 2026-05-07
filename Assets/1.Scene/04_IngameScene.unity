@@ -23576,6 +23576,63 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &1590433413635569620
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443579399783330413, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563170566076626423, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
+      propertyPath: m_Name
+      value: ParticleManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bdeed45037e50e243b80d4e91e66d9db, type: 3}
 --- !u!114 &1607761237061742845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34569,8 +34626,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandDestructible
   ShowTopMostFoldoutHeaderGroup: 1
-  deformRadius: 0.2
-  deformDepth: 0.1
+  deformRadius: 0.5
+  deformDepth: 0.3
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -34613,8 +34670,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandDestructible
   ShowTopMostFoldoutHeaderGroup: 1
-  deformRadius: 0.2
-  deformDepth: 0.1
+  deformRadius: 0.5
+  deformDepth: 0.3
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -34657,8 +34714,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandDestructible
   ShowTopMostFoldoutHeaderGroup: 1
-  deformRadius: 0.2
-  deformDepth: 0.1
+  deformRadius: 0.5
+  deformDepth: 0.3
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -34701,8 +34758,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandDestructible
   ShowTopMostFoldoutHeaderGroup: 1
-  deformRadius: 0.2
-  deformDepth: 0.1
+  deformRadius: 0.5
+  deformDepth: 0.3
   falloff:
     serializedVersion: 2
     m_Curve:
@@ -43012,3 +43069,4 @@ SceneRoots:
   - {fileID: 2108294750}
   - {fileID: 23015016}
   - {fileID: 1142989815}
+  - {fileID: 1590433413635569620}
