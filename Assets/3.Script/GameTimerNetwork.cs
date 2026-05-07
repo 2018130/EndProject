@@ -56,7 +56,7 @@ public class GameTimerNetwork : NetworkBehaviour
     {
         if (!IsServer) return;
         isGameRunning = true;
-        TimeRemaining.Value = 17f;
+        TimeRemaining.Value = 302f;
         TeamAKills.Value = 0;
         TeamBKills.Value = 0;
         playedTenSecondWarning = false;
