@@ -30,7 +30,7 @@ public class GripTargetAim : MonoBehaviour
             return;
         }
 
-        Debug.Log($"[GripTargetAim] {gameObject.name}: Aiming 실행 중");
+        //Debug.Log($"[GripTargetAim] {gameObject.name}: Aiming 실행 중");
 
         Vector3 dir = (_aimTarget.position - transform.position).normalized;
         if (dir.sqrMagnitude < 0.001f) return;

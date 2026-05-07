@@ -36,6 +36,11 @@ public class AimRigController : NetworkBehaviour
     [SerializeField] private float weightLerpSpeed = 6f;
     [SerializeField] private float targetLerpSpeed = 12f;
 
+    [Header("Animator")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private int upperBodyLayerIndex = 1; // Upper Body Layer 인덱스
+    [SerializeField] private float animLayerLerpSpeed = 6f;
+
     private GunAlignToHand _currentGunAlign;
     private BaseWeapon _lastWeapon;
     private RigBuilder _rigBuilder;
@@ -118,6 +123,13 @@ public class AimRigController : NetworkBehaviour
             armIKRig.weight = Mathf.Lerp(armIKRig.weight,
                 (isAiming && hasGun) ? aimingArmWeight : idleArmWeight, t);
 
+        if (animator != null)
+        {
+            float currentLayerWeight = animator.GetLayerWeight(upperBodyLayerIndex);
+            float targetLayerWeight = isAiming ? 1f : 0f;
+            animator.SetLayerWeight(upperBodyLayerIndex,
+                Mathf.Lerp(currentLayerWeight, targetLayerWeight, animLayerLerpSpeed * t));
+        }
         //if (handAimRig != null)
         //    handAimRig.weight = Mathf.Lerp(handAimRig.weight,
         //        (isAiming && hasGun) ? aimingHandWeight : idleArmWeight, t);

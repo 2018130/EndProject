@@ -721,6 +721,7 @@ MonoBehaviour:
   normalOffset: {x: 0, y: -0.5, z: -1}
   zoomOffset: {x: 1, y: -1.5, z: -1}
   lerpSpeed: 8
+  isEnding: 0
   isKillEffectPlaying: 0
   killEffectOffset: {x: 2, y: 2, z: 2}
 --- !u!114 &4636896785812393527
@@ -764,8 +765,12 @@ MonoBehaviour:
   aimingArmWeight: 1
   idleHeadWeight: 0.15
   idleArmWeight: 0
+  idleSpineWeight: 0
   weightLerpSpeed: 6
   targetLerpSpeed: 12
+  animator: {fileID: 5646414900619511927}
+  upperBodyLayerIndex: 1
+  animLayerLerpSpeed: 6
 --- !u!114 &8675480272257844670
 MonoBehaviour:
   m_ObjectHideFlags: 0
