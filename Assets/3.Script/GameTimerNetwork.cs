@@ -63,11 +63,27 @@ public class GameTimerNetwork : NetworkBehaviour
         playedTenSecondWarning = false;
     }
 
-    public void AddKill(Faction faction)
+    public void AddKill(Faction faction, ulong killerClientId)
     {
         if (!IsServer) return;
         if (faction == Faction.TeamA) TeamAKills.Value++;
         else if (faction == Faction.TeamB) TeamBKills.Value++;
+
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(killerClientId, out var client))
+        {
+            ulong killerNetObjId = client.PlayerObject.NetworkObjectId;
+            PlayKillParticle_Rpc(killerNetObjId);
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void PlayKillParticle_Rpc(ulong killerNetworkObjectId)
+    {
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
+            .TryGetValue(killerNetworkObjectId, out var netObj)) return;
+
+        ParticleManager.Instance.PlayKillParticle(netObj.transform);
+
     }
 
     [Rpc(SendTo.ClientsAndHost)]
