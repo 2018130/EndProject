@@ -584,7 +584,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 112
+  m_VersionIndex: 190
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1387,7 +1387,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 112
+  m_VersionIndex: 190
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1659,7 +1659,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3673858957199127823}
-  m_Mesh: {fileID: -1326074482412326269, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
+  m_Mesh: {fileID: -305854651033091899, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
 --- !u!23 &6857006671633426112
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1729,7 +1729,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: -1326074482412326269, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
+  m_Mesh: {fileID: -305854651033091899, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
 --- !u!1 &3961028887882444885
 GameObject:
   m_ObjectHideFlags: 0
@@ -1978,7 +1978,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 189
+  m_VersionIndex: 267
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -5617,7 +5617,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 189
+  m_VersionIndex: 267
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -7145,7 +7145,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8426478531015307884}
-  m_Mesh: {fileID: -1326074482412326269, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
+  m_Mesh: {fileID: -305854651033091899, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
 --- !u!23 &1593334666563784953
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7215,7 +7215,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: -1326074482412326269, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
+  m_Mesh: {fileID: -305854651033091899, guid: 92e39533c726c8a4eadaab09b7bacb72, type: 3}
 --- !u!1 &8779578395461288641
 GameObject:
   m_ObjectHideFlags: 0
@@ -7543,7 +7543,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: ab635cd177ee4784d97417b92a95242d, type: 2}
-  - {fileID: -6478536213147159724, guid: b03cb637d005f5d41aae1b517312c501, type: 3}
+  - {fileID: 2100000, guid: ab635cd177ee4784d97417b92a95242d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9371,6 +9371,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1410821971012765669, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
       propertyPath: m_Name
       value: Sand_Castle_Small
@@ -9465,7 +9469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 3750137473
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -9517,10 +9521,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fragmentPrefabs: []
+  fragmentPrefabs:
+  - {fileID: 7629691413894698492, guid: 2f6c93c9e47160f439beda59823e026d, type: 3}
+  - {fileID: 5512551114976581341, guid: 2edf5a777abcf4348af8b2511f54aaf7, type: 3}
+  - {fileID: 883509288447398261, guid: 7d107dabc551d9241a7797371f0cd09e, type: 3}
   fragmentCount: 8
   fragmentForce: 4
-  hitParticle: {fileID: 0}
+  hitParticle: {fileID: 132052560157809450, guid: bb314f93ee7f0c042bef5ff242179f81, type: 3}
 --- !u!4 &7228256972720302824 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6776459873118687323, guid: 3df96732ac2701b438aa7215dc53e978, type: 3}
@@ -9606,7 +9613,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 3575828919
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -9658,10 +9665,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fragmentPrefabs: []
+  fragmentPrefabs:
+  - {fileID: 7629691413894698492, guid: 2f6c93c9e47160f439beda59823e026d, type: 3}
+  - {fileID: 5512551114976581341, guid: 2edf5a777abcf4348af8b2511f54aaf7, type: 3}
+  - {fileID: 883509288447398261, guid: 7d107dabc551d9241a7797371f0cd09e, type: 3}
   fragmentCount: 8
   fragmentForce: 4
-  hitParticle: {fileID: 0}
+  hitParticle: {fileID: 132052560157809450, guid: bb314f93ee7f0c042bef5ff242179f81, type: 3}
 --- !u!4 &7146905545476802206 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6776459873118687323, guid: 3df96732ac2701b438aa7215dc53e978, type: 3}
@@ -9752,7 +9762,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 1655738907
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -9804,10 +9814,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fragmentPrefabs: []
+  fragmentPrefabs:
+  - {fileID: 7629691413894698492, guid: 2f6c93c9e47160f439beda59823e026d, type: 3}
+  - {fileID: 5512551114976581341, guid: 2edf5a777abcf4348af8b2511f54aaf7, type: 3}
+  - {fileID: 883509288447398261, guid: 7d107dabc551d9241a7797371f0cd09e, type: 3}
   fragmentCount: 8
   fragmentForce: 4
-  hitParticle: {fileID: 0}
+  hitParticle: {fileID: 132052560157809450, guid: bb314f93ee7f0c042bef5ff242179f81, type: 3}
 --- !u!1001 &6341569075998317298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9901,7 +9914,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 511431252
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -9953,10 +9966,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fragmentPrefabs: []
+  fragmentPrefabs:
+  - {fileID: 7629691413894698492, guid: 2f6c93c9e47160f439beda59823e026d, type: 3}
+  - {fileID: 5512551114976581341, guid: 2edf5a777abcf4348af8b2511f54aaf7, type: 3}
+  - {fileID: 883509288447398261, guid: 7d107dabc551d9241a7797371f0cd09e, type: 3}
   fragmentCount: 8
   fragmentForce: 4
-  hitParticle: {fileID: 0}
+  hitParticle: {fileID: 132052560157809450, guid: bb314f93ee7f0c042bef5ff242179f81, type: 3}
 --- !u!1001 &6620446577281927442
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10050,7 +10066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 1360860458
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -10102,10 +10118,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fragmentPrefabs: []
+  fragmentPrefabs:
+  - {fileID: 7629691413894698492, guid: 2f6c93c9e47160f439beda59823e026d, type: 3}
+  - {fileID: 5512551114976581341, guid: 2edf5a777abcf4348af8b2511f54aaf7, type: 3}
+  - {fileID: 883509288447398261, guid: 7d107dabc551d9241a7797371f0cd09e, type: 3}
   fragmentCount: 8
   fragmentForce: 4
-  hitParticle: {fileID: 0}
+  hitParticle: {fileID: 132052560157809450, guid: bb314f93ee7f0c042bef5ff242179f81, type: 3}
 --- !u!1001 &6841288824553225359
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10248,7 +10267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 2669793435
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -10300,10 +10319,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fragmentPrefabs: []
+  fragmentPrefabs:
+  - {fileID: 7629691413894698492, guid: 2f6c93c9e47160f439beda59823e026d, type: 3}
+  - {fileID: 5512551114976581341, guid: 2edf5a777abcf4348af8b2511f54aaf7, type: 3}
+  - {fileID: 883509288447398261, guid: 7d107dabc551d9241a7797371f0cd09e, type: 3}
   fragmentCount: 8
   fragmentForce: 4
-  hitParticle: {fileID: 0}
+  hitParticle: {fileID: 132052560157809450, guid: bb314f93ee7f0c042bef5ff242179f81, type: 3}
 --- !u!4 &2826319428489233518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6776459873118687323, guid: 3df96732ac2701b438aa7215dc53e978, type: 3}

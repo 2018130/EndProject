@@ -9,6 +9,7 @@ public class SandDestructible : NetworkBehaviour
     [Header("Deform (구멍)")]
     [SerializeField] private float deformRadius = 1.2f;
     [SerializeField] private float deformDepth = 0.8f;
+    [SerializeField] private float maxDeformDepth = 0.15f;
     [SerializeField] private AnimationCurve falloff = AnimationCurve.EaseInOut(0, 1, 1, 0);
 
     [Header("Fragments (파편)")]
@@ -133,7 +134,7 @@ public class SandDestructible : NetworkBehaviour
 
             // 이미 많이 패인 버텍스는 덜 파임
             float alreadyDeformed = originalVertices[i].y - vertices[i].y;
-            float maxDeform = 0.3f; // 최대 패임 깊이 제한
+            float maxDeform = maxDeformDepth; // 최대 패임 깊이 제한
             if (alreadyDeformed >= maxDeform) continue;
 
             float actualDepth = Mathf.Min(
