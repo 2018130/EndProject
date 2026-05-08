@@ -31,10 +31,12 @@ public class NicknameViewer : NetworkBehaviour
     {
         isEnding = false;
         initalizedClientId = new List<ulong>();
-        GameManager.Instance.OnSpawnedPlayerCharacter += InitViewer_Rpc;
         GameManager.Instance.OnEndGame += OnEndingStart;
     }
-
+    private void Start()
+    {
+        GameManager.Instance.OnSpawnedPlayerCharacter += InitViewer_Rpc;
+    }
     private void OnEndingStart(Faction faction)
     {
         if (owner == null)
@@ -77,6 +79,7 @@ public class NicknameViewer : NetworkBehaviour
                     {
                         nicknameText.text = player.Nickname;
                         initalizedClientId.Add(clientId);
+
                         break;
                     }
                 }
@@ -93,6 +96,17 @@ public class NicknameViewer : NetworkBehaviour
             Quaternion rot = owner.GetComponent<PlayerNetwork>().Model.rotation;
             transform.rotation = rot;
 
+            if (owner.TryGetComponent(out PlayerHealth playerHealth))
+            {
+                if ((Faction)playerHealth.PlayerFactionInt.Value == Faction.TeamA)
+                {
+                    panel.color = Color.lightCoral;
+                }
+                else
+                {
+                    panel.color = Color.lightBlue;
+                }
+            }
         }  
     }
 }

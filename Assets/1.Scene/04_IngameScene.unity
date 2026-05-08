@@ -1205,6 +1205,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: JumpPad (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2777,6 +2781,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: JumpPad (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2846,6 +2854,10 @@ PrefabInstance:
     - target: {fileID: 3447820604848183289, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
       propertyPath: m_Name
       value: JumpPad (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5597,6 +5609,10 @@ PrefabInstance:
     - target: {fileID: 3447820604848183289, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
       propertyPath: m_Name
       value: JumpPad (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11328,6 +11344,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: JumpPad (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13824,6 +13844,10 @@ PrefabInstance:
     - target: {fileID: 3447820604848183289, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
       propertyPath: m_Name
       value: JumpPad
+      objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16501,6 +16525,10 @@ PrefabInstance:
     - target: {fileID: 3447820604848183289, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
       propertyPath: m_Name
       value: JumpPad (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26663,6 +26691,10 @@ PrefabInstance:
     - target: {fileID: 3447820604848183289, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
       propertyPath: m_Name
       value: JumpPad (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7676754823447088417, guid: 81262cabc979e2f4c89ee44f47fd96ce, type: 3}
+      propertyPath: verticalForce
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37020,6 +37052,63 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &3592681322226236478
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1100194032827997080, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_Name
+      value: ParticleManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388799146631985276, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f9769ad5ba0674a4c995d40bd80b95f6, type: 3}
 --- !u!23 &3600913403552176719
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -50211,3 +50300,4 @@ SceneRoots:
   - {fileID: 23015016}
   - {fileID: 1142989815}
   - {fileID: 1972580551}
+  - {fileID: 3592681322226236478}
