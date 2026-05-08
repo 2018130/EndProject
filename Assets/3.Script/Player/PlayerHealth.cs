@@ -41,11 +41,11 @@ public class PlayerHealth : NetworkBehaviour
     NetworkVariableReadPermission.Everyone,
     NetworkVariableWritePermission.Server
 );
-
-    private void Start()
+    private void Awake()
     {
         GameManager.Instance.OnSpawnedPlayerCharacter += InitializeOnSpawned;
     }
+
     public override void OnNetworkSpawn()
     {
         Hp.OnValueChanged += onHPChanged;
