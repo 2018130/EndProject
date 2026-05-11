@@ -1,10 +1,9 @@
-using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine;
 
 // 각 BeachObject 프리팹에 부착
-// 서버: Rigidbody로 물리 주도
-// 클라이언트: Kinematic + 보간으로 시각적 표현
+// 서버/클라이언트 판단을 _pool.IsServer로 직접 참조
+// → Initialize의 파라미터 전달 실수로 인한 오동작 원천 차단
 public class BeachObject : MonoBehaviour
 {
     [Header("물리 설정")]
@@ -13,10 +12,10 @@ public class BeachObject : MonoBehaviour
 
     [Header("동기화 설정")]
     [SerializeField] private float interpSpeed = 15f;
+    [SerializeField] private float teleportThreshold = 3f;
 
     // 서버 전용
     private Rigidbody _rb;
-    private float _syncTimer;
     private bool _isSleeping;
     private float _aliveTime;
     private const float SleepCheckDelay = 1.5f;
@@ -28,29 +27,23 @@ public class BeachObject : MonoBehaviour
 
     // 공용
     private BeachObjectPool _pool;
-    private bool _isServer;
 
-    // Pool에서 ID로 오브젝트를 찾기 위한 고정 식별자
-    // BeachObjectPool.OnNetworkSpawn에서 생성 순서에 따라 부여
+    // BeachObjectPool이 생성 순서에 따라 부여하는 고정 식별자
     public int ObjectId { get; set; }
     public bool IsSleeping => _isSleeping;
 
     // ── 초기화 ───────────────────────────────────────────────────────────────
-    // BeachObjectPool.SpawnOne / SpawnObject_ClientRpc에서 호출
-    public void Initialize(BeachObjectPool pool, bool isServer)
+    // isServer 파라미터 없이 _pool.IsServer로 직접 판단
+    public void Initialize(BeachObjectPool pool)
     {
         _pool = pool;
-        _isServer = isServer;
         _rb = GetComponent<Rigidbody>();
         _aliveTime = 0f;
 
-        if (_isServer)
+        if (_pool.IsServer)
         {
             _rb.isKinematic = false;
             _isSleeping = false;
-            _syncTimer = 0f;
-
-            // ★ 한 프레임 뒤에 WakeUp (SetActive 직후 물리 초기화 완료 보장)
             StartCoroutine(WakeUpNextFrame());
         }
         else
@@ -58,13 +51,14 @@ public class BeachObject : MonoBehaviour
             _rb.isKinematic = true;
             _hasTarget = false;
         }
+
+        Debug.Log($"[BeachObject] {gameObject.name} Id:{ObjectId} IsServer:{_pool.IsServer}");
     }
 
-    // ── 클라이언트: 서버로부터 위치/회전 수신 ────────────────────────────────
-    // BeachObjectPool.SyncObjectState_ClientRpc / BatchSyncState_ClientRpc에서 호출
+    // ── 클라이언트: 위치/회전 수신 ───────────────────────────────────────────
     public void ApplyNetworkState(Vector3 pos, Quaternion rot)
     {
-        if (_isServer) return;
+        if (_pool != null && _pool.IsServer) return;
 
         _targetPosition = pos;
         _targetRotation = rot;
@@ -74,10 +68,9 @@ public class BeachObject : MonoBehaviour
     // ── Update ───────────────────────────────────────────────────────────────
     private void Update()
     {
-        // Pool이 아직 네트워크 스폰 안 됐으면 대기
         if (_pool == null || !_pool.IsSpawned) return;
 
-        if (_isServer)
+        if (_pool.IsServer)
             ServerUpdate();
         else
             ClientUpdate();
@@ -87,7 +80,7 @@ public class BeachObject : MonoBehaviour
     {
         _aliveTime += Time.deltaTime;
 
-        // 스폰 직후 물리가 불안정한 구간에서 Sleep 판정 방지
+        // 스폰 직후 물리 불안정 구간에서 Sleep 판정 방지
         if (_aliveTime < SleepCheckDelay) return;
 
         bool shouldSleep = _rb.linearVelocity.magnitude < sleepSpeedThreshold
@@ -98,8 +91,7 @@ public class BeachObject : MonoBehaviour
             _rb.Sleep();
             _isSleeping = true;
 
-            // Sleep 진입 시 최종 위치를 클라이언트에 강제 전송
-            // BatchSyncAll에서 IsSleeping 오브젝트는 제외되므로 여기서 직접 전송
+            // BatchSyncAll에서 제외되므로 마지막 위치 강제 전송
             _pool.BroadcastObjectState(this, transform.position, transform.rotation);
         }
     }
@@ -108,32 +100,40 @@ public class BeachObject : MonoBehaviour
     {
         if (!_hasTarget) return;
 
-        // 서버에서 받은 위치/회전으로 부드럽게 보간
-        transform.position = Vector3.Lerp(
-            transform.position, _targetPosition, interpSpeed * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation, _targetRotation, interpSpeed * Time.deltaTime);
+        float dist = Vector3.Distance(transform.position, _targetPosition);
+
+        if (dist > teleportThreshold)
+        {
+            // 거리가 너무 멀면 즉시 이동 (보간 지연 방지)
+            transform.position = _targetPosition;
+            transform.rotation = _targetRotation;
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(
+                transform.position, _targetPosition, interpSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, _targetRotation, interpSpeed * Time.deltaTime);
+        }
     }
 
-    // ── 충돌 감지 (서버 전용) ────────────────────────────────────────────────
+    // ── 충돌 감지 ────────────────────────────────────────────────────────────
     private void OnTriggerEnter(Collider other)
     {
-        if (!_isServer) return;
+        if (_pool == null || !_pool.IsServer) return;
 
-        // Projectile 충돌 → 진행 방향으로 힘 적용
         if (other.TryGetComponent(out Projectile _))
         {
             Vector3 force = other.transform.forward * impactForceMultiplier;
-            force.y = Mathf.Abs(force.y) + 2f; // 약간 위로 튕기게
+            force.y = Mathf.Abs(force.y) + 2f;
             WakeAndAddForce(force);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!_isServer) return;
+        if (_pool == null || !_pool.IsServer) return;
 
-        // 다른 BeachObject와 충돌 시 Sleep 해제
         if (collision.gameObject.TryGetComponent(out BeachObject _))
             WakeIfSleeping();
     }
@@ -141,22 +141,29 @@ public class BeachObject : MonoBehaviour
     private void WakeAndAddForce(Vector3 force)
     {
         if (_rb.IsSleeping()) _rb.WakeUp();
+
+        bool wasSleeping = _isSleeping;
         _isSleeping = false;
         _rb.AddForce(force, ForceMode.Impulse);
+
+        // Sleep 상태에서 깨어난 경우 즉시 동기화
+        if (wasSleeping)
+            _pool.BroadcastObjectState(this, transform.position, transform.rotation);
     }
 
     private void WakeIfSleeping()
     {
         if (!_isSleeping) return;
+
         _rb.WakeUp();
         _isSleeping = false;
+        _pool.BroadcastObjectState(this, transform.position, transform.rotation);
     }
 
     // ── 풀 반환 ──────────────────────────────────────────────────────────────
-    // BeachObjectPool.ReturnToPool / DeactivateObject_ClientRpc에서 호출
     public void ReturnToPool()
     {
-        if (_isServer && _rb != null)
+        if (_pool != null && _pool.IsServer && _rb != null)
         {
             _rb.linearVelocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
@@ -168,6 +175,8 @@ public class BeachObject : MonoBehaviour
         _isSleeping = false;
         gameObject.SetActive(false);
     }
+
+    // SetActive 직후 물리 초기화 완료 후 WakeUp
     private IEnumerator WakeUpNextFrame()
     {
         yield return new WaitForFixedUpdate();
@@ -175,7 +184,6 @@ public class BeachObject : MonoBehaviour
         {
             _rb.isKinematic = false;
             _rb.WakeUp();
-            // 아주 작은 힘을 줘서 물리 시뮬레이션 강제 시작
             _rb.AddForce(Vector3.down * 0.01f, ForceMode.Impulse);
         }
     }

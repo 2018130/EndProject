@@ -8339,6 +8339,7 @@ MonoBehaviour:
   boundsBuffer: 2
   enableRespawn: 1
   respawnDelay: 5
+  syncInterval: 0.1
   boundsCheckInterval: 0.5
 --- !u!4 &817464008
 Transform:
@@ -24907,6 +24908,10 @@ PrefabInstance:
     - target: {fileID: 8973591383595135110, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 9059423025814950392, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9099183134791827997, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags

@@ -30,7 +30,7 @@ public class GripTargetAim : MonoBehaviour
         {
             _defaultLocalRotation = transform.localRotation;
             _isInitialized = true;
-            Debug.Log($"[GripTargetAim] 기본 회전 저장: {_defaultLocalRotation.eulerAngles}");
+            //Debug.Log($"[GripTargetAim] 기본 회전 저장: {_defaultLocalRotation.eulerAngles}");
         }
 
         if (!_aimController.GetIsAiming())
@@ -49,7 +49,7 @@ public class GripTargetAim : MonoBehaviour
         Quaternion targetRot = Quaternion.LookRotation(dir) * Quaternion.Euler(rotationOffset);
 
         // ★ 적용 전후 값 확인
-        Debug.Log($"[GripTargetAim] 적용 전: {transform.rotation.eulerAngles} → 적용 후 목표: {targetRot.eulerAngles}");
+        //Debug.Log($"[GripTargetAim] 적용 전: {transform.rotation.eulerAngles} → 적용 후 목표: {targetRot.eulerAngles}");
 
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, aimLerpSpeed * Time.deltaTime);
     }
