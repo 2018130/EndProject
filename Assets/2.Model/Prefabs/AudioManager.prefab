@@ -99,6 +99,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: bcaa6f0a2a98f234ea2c9c2ce10ce339, type: 3}
   - key: Mallangbong
     clip: {fileID: 8300000, guid: 622adbef885d5ec448d84b38787fd3ab, type: 3}
+  - key: Player_walk
+    clip: {fileID: 8300000, guid: acb68928f11955b4790f0540f4a67399, type: 3}
 --- !u!82 &8859457531566801884
 AudioSource:
   m_ObjectHideFlags: 0
