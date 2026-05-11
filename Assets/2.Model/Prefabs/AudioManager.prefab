@@ -83,6 +83,24 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 8700fb427ec563b4dadf65befda4dc0d, type: 3}
   - key: Warning
     clip: {fileID: 8300000, guid: 2793ab331d9b61940aac8aff9cb5079e, type: 3}
+  - key: start_shark
+    clip: {fileID: 8300000, guid: f7d59c18979735648bb20ebe0c6f4da2, type: 3}
+  - key: end_shark
+    clip: {fileID: 8300000, guid: 1e8e6df5f577bf640b9087dbcf6e1f13, type: 3}
+  - key: start_duck
+    clip: {fileID: 8300000, guid: d400c3368bccd694bbdb540362d06336, type: 3}
+  - key: end_duck
+    clip: {fileID: 8300000, guid: 33e0b6a542ce3f6458458bfe08ff355c, type: 3}
+  - key: Start_skill_card
+    clip: {fileID: 8300000, guid: 6dd15a749fc270b429f9947130361ead, type: 3}
+  - key: water_splash1
+    clip: {fileID: 8300000, guid: d986f10b5b4e26b489201af456f20a5b, type: 3}
+  - key: tube
+    clip: {fileID: 8300000, guid: bcaa6f0a2a98f234ea2c9c2ce10ce339, type: 3}
+  - key: Mallangbong
+    clip: {fileID: 8300000, guid: 622adbef885d5ec448d84b38787fd3ab, type: 3}
+  - key: Player_walk
+    clip: {fileID: 8300000, guid: acb68928f11955b4790f0540f4a67399, type: 3}
 --- !u!82 &8859457531566801884
 AudioSource:
   m_ObjectHideFlags: 0
