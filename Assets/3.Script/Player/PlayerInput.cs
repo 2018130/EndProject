@@ -52,9 +52,17 @@ public class PlayerInput : MonoBehaviour
         isInitialized = true;
 
         // 움직임
-        inputActions.Player.Move.performed += context => network.SendMoveInput(context.ReadValue<Vector2>());
+        inputActions.Player.Move.performed += context =>
+        {
+            network.SendMoveInput(context.ReadValue<Vector2>());
+            AudioManager.Instance.PlaySFX("Player_walk", loop: true);
+        };
+
         inputActions.Player.Move.canceled += context =>
-           network.SendMoveInput(Vector2.zero);
+        {
+            network.SendMoveInput(Vector2.zero);
+            AudioManager.Instance.StopSFX();
+        };
 
         // 무기 스왑
         inputActions.Player.Weapon1.performed += context => OnWeaponSwap?.Invoke(0);

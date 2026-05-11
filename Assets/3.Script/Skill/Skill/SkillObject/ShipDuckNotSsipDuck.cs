@@ -40,6 +40,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         SkillEffectPool.Instance.Get(spawnEffectPrefab, transform.position, Quaternion.identity);
+        AudioManager.Instance.PlaySFX("start_duck");
 
         passengers = new PlayerNetwork[seats.Length];
         rb = GetComponent<Rigidbody>();
@@ -334,7 +335,14 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             rb.useGravity = true;                      
             rb.constraints = RigidbodyConstraints.None;
 
+            PlayDespawnSFX_ClientRpc();
             GetComponent<NetworkObject>().Despawn();
         }
+    }
+
+    [ClientRpc]
+    private void PlayDespawnSFX_ClientRpc()
+    {
+        AudioManager.Instance.PlaySFX("end_duck");
     }
 }
