@@ -40,6 +40,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         SkillEffectPool.Instance.Get(spawnEffectPrefab, transform.position, Quaternion.identity);
+        AudioManager.Instance.PlaySFX("start_duck");
 
         passengers = new PlayerNetwork[seats.Length];
         rb = GetComponent<Rigidbody>();
@@ -56,10 +57,13 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         {
             AddPassengerLocal(passengerRef);
         }
+
+        isMoving.OnValueChanged += OnIsMovingChanged;
     }
 
     public override void OnNetworkDespawn()
     {
+        isMoving.OnValueChanged -= OnIsMovingChanged;
         driverRef.OnValueChanged -= OnDriverChanged;
         if (passengerRefs != null) passengerRefs.OnListChanged -= OnpassengerChanged;
 
@@ -70,6 +74,12 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
         //터져서 모든 승객들 날라감
         //if (IsServer) KickAllPassengers();
+    }
+
+    private void OnIsMovingChanged(bool previous, bool current)
+    {
+        if (current) AudioManager.Instance.PlaySFX("tube", loop: true);
+        else AudioManager.Instance.StopSFX();
     }
 
     private void OnpassengerChanged(NetworkListEvent<NetworkObjectReference> changeEvent)
@@ -334,7 +344,14 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             rb.useGravity = true;                      
             rb.constraints = RigidbodyConstraints.None;
 
+            PlayDespawnSFX_ClientRpc();
             GetComponent<NetworkObject>().Despawn();
         }
+    }
+
+    [ClientRpc]
+    private void PlayDespawnSFX_ClientRpc()
+    {
+        AudioManager.Instance.PlaySFX("end_duck");
     }
 }

@@ -1075,6 +1075,7 @@ GameObject:
   - component: {fileID: 627765426}
   - component: {fileID: 627765425}
   - component: {fileID: 627765424}
+  - component: {fileID: 627765427}
   m_Layer: 5
   m_Name: IDCheck_Btn
   m_TagString: Untagged
@@ -1184,6 +1185,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 627765422}
   m_CullTransparentMesh: 1
+--- !u!114 &627765427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 627765422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ccffd578b0f214990c179c1ac84ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
+  sfxKey: Button
 --- !u!1 &660534988
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,6 +1346,7 @@ GameObject:
   - component: {fileID: 697510723}
   - component: {fileID: 697510722}
   - component: {fileID: 697510721}
+  - component: {fileID: 697510724}
   m_Layer: 5
   m_Name: SignIn_Btn
   m_TagString: Untagged
@@ -1441,6 +1456,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697510719}
   m_CullTransparentMesh: 1
+--- !u!114 &697510724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697510719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ccffd578b0f214990c179c1ac84ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
+  sfxKey: Button
 --- !u!1 &730956532
 GameObject:
   m_ObjectHideFlags: 0
@@ -2040,6 +2068,7 @@ GameObject:
   - component: {fileID: 859327833}
   - component: {fileID: 859327832}
   - component: {fileID: 859327831}
+  - component: {fileID: 859327834}
   m_Layer: 5
   m_Name: SignUp_Btn
   m_TagString: Untagged
@@ -2149,6 +2178,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 859327829}
   m_CullTransparentMesh: 1
+--- !u!114 &859327834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859327829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ccffd578b0f214990c179c1ac84ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
+  sfxKey: Button
 --- !u!1 &877178858
 GameObject:
   m_ObjectHideFlags: 0
@@ -2866,6 +2908,7 @@ GameObject:
   - component: {fileID: 1145865751}
   - component: {fileID: 1145865750}
   - component: {fileID: 1145865749}
+  - component: {fileID: 1145865752}
   m_Layer: 5
   m_Name: Confirm_Btn
   m_TagString: Untagged
@@ -2975,6 +3018,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1145865747}
   m_CullTransparentMesh: 1
+--- !u!114 &1145865752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1145865747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ccffd578b0f214990c179c1ac84ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
+  sfxKey: Button
 --- !u!1 &1157368204
 GameObject:
   m_ObjectHideFlags: 0
@@ -3343,6 +3399,7 @@ GameObject:
   - component: {fileID: 1192892247}
   - component: {fileID: 1192892246}
   - component: {fileID: 1192892245}
+  - component: {fileID: 1192892248}
   m_Layer: 5
   m_Name: Check_Btn
   m_TagString: Untagged
@@ -3452,6 +3509,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1192892243}
   m_CullTransparentMesh: 1
+--- !u!114 &1192892248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1192892243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ccffd578b0f214990c179c1ac84ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSFX
+  sfxKey: Button
 --- !u!1 &1197224852
 GameObject:
   m_ObjectHideFlags: 0
