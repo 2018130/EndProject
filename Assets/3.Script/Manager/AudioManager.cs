@@ -31,6 +31,19 @@ public class AudioManager : SingletonBehaviour<AudioManager>
     private const string SFX_PARAM = "SFXVolume";
     private const string MASTER_PARAM = "MasterVolume";
 
+    public void Start()
+    {
+        LoadVolume();
+    }
+
+    public void LoadVolume()
+    {
+        float bgm = PlayerPrefs.GetFloat("BGMVolume", 1f); 
+        float sfx = PlayerPrefs.GetFloat("SFXVolume", 1f);
+
+        audioMixer.SetFloat(BGM_PARAM, ToDb(bgm));
+        audioMixer.SetFloat(SFX_PARAM, ToDb(sfx));
+    }
 
     // ─── BGM ───────────────────────────────────────
 
@@ -94,11 +107,13 @@ public class AudioManager : SingletonBehaviour<AudioManager>
     public void SetBGMVolume(float value)
     {
         audioMixer.SetFloat(BGM_PARAM, ToDb(value));
+        PlayerPrefs.SetFloat("BGMVolume", value);
     }
 
     public void SetSFXVolume(float value)
     {
         audioMixer.SetFloat(SFX_PARAM, ToDb(value));
+        PlayerPrefs.SetFloat("SFXVolume", value);
     }
 
     // 0~1 → dB 변환 (0은 -80dB로 무음 처리)
