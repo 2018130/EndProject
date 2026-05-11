@@ -105,6 +105,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: a492a8f5326228a4e8662877b3870ddd, type: 3}
   - key: Yipee
     clip: {fileID: 8300000, guid: 4ba7ce308550a2347a7b9fa70edc4972, type: 3}
+  - key: respawn_sound
+    clip: {fileID: 8300000, guid: 402575544698b33448fe97d3b122c04c, type: 3}
 --- !u!82 &8859457531566801884
 AudioSource:
   m_ObjectHideFlags: 0
