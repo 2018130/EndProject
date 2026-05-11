@@ -221,6 +221,7 @@ public class PlayerHealth : NetworkBehaviour
             GameManager.Instance.AddKill(LastDownedByClientId);
 
         OnDead?.Invoke(this);
+        StartCoroutine(RespawnRoutine());
     }
 
     private IEnumerator RespawnRoutine()
@@ -234,8 +235,15 @@ public class PlayerHealth : NetworkBehaviour
     {
         if (!IsServer) return;
         if (State.Value != PlayerState.Dead) return; // Dead¿œ ∂ß∏∏
+
+        Faction faction = (Faction)PlayerFactionInt.Value;
+        Vector3 spawnPos = GameManager.Instance.SceneContext
+            .SpawnAreaManager.GetSpawnPosition(faction);
+
         Hp.Value = maxHp;
         State.Value = PlayerState.Alive;
+
+        TeleportToSpawnClientRpc(spawnPos);
     }
 
     [ClientRpc]
