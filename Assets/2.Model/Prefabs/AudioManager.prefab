@@ -53,7 +53,7 @@ MonoBehaviour:
   loopSfxSource: {fileID: 871951072259114081}
   bgmList:
   - key: BGM01
-    clip: {fileID: 8300000, guid: 625438a8566d91e4999b6f41bf284320, type: 3}
+    clip: {fileID: 8300000, guid: 18b2fb641ef68074f878df0f93b0e82e, type: 3}
   - key: BGM02
     clip: {fileID: 8300000, guid: 66b479b35b04ab8438b2ea4a4eddc15a, type: 3}
   sfxList:
@@ -101,6 +101,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 622adbef885d5ec448d84b38787fd3ab, type: 3}
   - key: Player_walk
     clip: {fileID: 8300000, guid: acb68928f11955b4790f0540f4a67399, type: 3}
+  - key: Button
+    clip: {fileID: 8300000, guid: a492a8f5326228a4e8662877b3870ddd, type: 3}
 --- !u!82 &8859457531566801884
 AudioSource:
   m_ObjectHideFlags: 0
