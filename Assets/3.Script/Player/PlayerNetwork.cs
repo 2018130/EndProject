@@ -447,6 +447,13 @@ public class PlayerNetwork : NetworkBehaviour
         bool result = playerWater.UseWaterForShot(25f);
     }
 
+    [ClientRpc]
+    public void PlayShootSFX_ClientRpc(string key)
+    {
+        if (IsOwner) return;
+        AudioManager.Instance.PlaySFX(key);
+    }
+
     [ServerRpc]
     public void UseSkill_ServerRpc(string cardId)
     {

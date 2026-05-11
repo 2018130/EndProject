@@ -93,8 +93,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 33e0b6a542ce3f6458458bfe08ff355c, type: 3}
   - key: Start_skill_card
     clip: {fileID: 8300000, guid: 6dd15a749fc270b429f9947130361ead, type: 3}
-  - key: water_splash1
-    clip: {fileID: 8300000, guid: d986f10b5b4e26b489201af456f20a5b, type: 3}
+  - key: gun_shoot
+    clip: {fileID: 8300000, guid: 2ce44eae510c1a7488c4361a266a9846, type: 3}
   - key: tube
     clip: {fileID: 8300000, guid: bcaa6f0a2a98f234ea2c9c2ce10ce339, type: 3}
   - key: Mallangbong
@@ -103,6 +103,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: acb68928f11955b4790f0540f4a67399, type: 3}
   - key: Button
     clip: {fileID: 8300000, guid: a492a8f5326228a4e8662877b3870ddd, type: 3}
+  - key: Yipee
+    clip: {fileID: 8300000, guid: 4ba7ce308550a2347a7b9fa70edc4972, type: 3}
 --- !u!82 &8859457531566801884
 AudioSource:
   m_ObjectHideFlags: 0

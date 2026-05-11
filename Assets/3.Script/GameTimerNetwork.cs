@@ -82,6 +82,7 @@ public class GameTimerNetwork : NetworkBehaviour
         if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
             .TryGetValue(killerNetworkObjectId, out var netObj)) return;
 
+        AudioManager.Instance.PlaySFX("Yipee");
         ParticleManager.Instance.PlayKillParticle(netObj.transform);
 
     }
