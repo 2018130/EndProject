@@ -98,7 +98,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
         Faction faction = (Faction)health.PlayerFactionInt.Value;
 
-        GameTimerNetwork.Instance.AddKill(faction);
+        GameTimerNetwork.Instance.AddKill(faction, killerClientId);
     }
 
     private void OnClientConnected(ulong clientId)
@@ -185,6 +185,14 @@ public class GameManager : SingletonBehaviour<GameManager>
         Debug.Log($"End game!!! winner : {winner.ToString()}");
 
         GameUIManager.Instance.SetActiveEndingText(true);
+
+        PlayerHealth[] allPlayers = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
+        foreach (var p in allPlayers)
+        {
+            if ((Faction)p.PlayerFactionInt.Value == winner)
+                ParticleManager.Instance.PlayWinParticle(p.transform);
+        }
+
 
         OnEndGame?.Invoke(winner);
     }

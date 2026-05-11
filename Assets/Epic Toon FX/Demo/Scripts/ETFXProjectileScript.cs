@@ -36,7 +36,7 @@ namespace EpicToonFX
                 Destroy(muzzleParticle, 1.5f); // Lifetime of muzzle effect.
             }
 
-            // Immediately adjust rotation to match initial velocity direction
+            // Immediately adjust rotation to match initial velocity direction.
             RotateTowardsDirection(true);
         }
 
@@ -79,10 +79,10 @@ namespace EpicToonFX
                 {
                     GameObject curTrail = myTransform.Find(projectileParticle.name + "/" + trail.name).gameObject;
                     curTrail.transform.parent = null;
-                    Destroy(curTrail, 3f);
+                    Destroy(curTrail, 1f);
                 }
-                Destroy(projectileParticle, 3f);
-                Destroy(impactP, 5.0f);
+                Destroy(projectileParticle, 1f);
+                Destroy(impactP, 2.0f);
                 DestroyMissile();
             }
             else
@@ -91,7 +91,7 @@ namespace EpicToonFX
                 destroyTimer += Time.deltaTime;
 
                 // Destroy the missile if the destroyTimer exceeds 5 seconds.
-                if (destroyTimer >= 5f)
+                if (destroyTimer >= 1.5f)
                 {
                     DestroyMissile();
                 }
@@ -108,9 +108,9 @@ namespace EpicToonFX
             {
                 GameObject curTrail = myTransform.Find(projectileParticle.name + "/" + trail.name).gameObject;
                 curTrail.transform.parent = null;
-                Destroy(curTrail, 3f);
+                Destroy(curTrail, 1f);
             }
-            Destroy(projectileParticle, 3f);
+            Destroy(projectileParticle, 1f);
             Destroy(gameObject);
 
             ParticleSystem[] trails = GetComponentsInChildren<ParticleSystem>();
@@ -121,7 +121,7 @@ namespace EpicToonFX
                 if (trail.gameObject.name.Contains("Trail"))
                 {
                     trail.transform.SetParent(null);
-                    Destroy(trail.gameObject, 2f);
+                    Destroy(trail.gameObject, 1.5f);
                 }
             }
         }

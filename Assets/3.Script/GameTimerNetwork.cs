@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameTimerNetwork : NetworkBehaviour
 {
@@ -56,23 +57,54 @@ public class GameTimerNetwork : NetworkBehaviour
     {
         if (!IsServer) return;
         isGameRunning = true;
-        TimeRemaining.Value = 17f;
+        TimeRemaining.Value = 302f;
         TeamAKills.Value = 0;
         TeamBKills.Value = 0;
         playedTenSecondWarning = false;
     }
 
-    public void AddKill(Faction faction)
+    public void AddKill(Faction faction, ulong killerClientId)
     {
         if (!IsServer) return;
         if (faction == Faction.TeamA) TeamAKills.Value++;
         else if (faction == Faction.TeamB) TeamBKills.Value++;
+
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(killerClientId, out var client))
+        {
+            ulong killerNetObjId = client.PlayerObject.NetworkObjectId;
+            PlayKillParticle_Rpc(killerNetObjId);
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void PlayKillParticle_Rpc(ulong killerNetworkObjectId)
+    {
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects
+            .TryGetValue(killerNetworkObjectId, out var netObj)) return;
+
+        ParticleManager.Instance.PlayKillParticle(netObj.transform);
+
     }
 
     [Rpc(SendTo.ClientsAndHost)]
     private void EndGame_Rpc()
     {
         GameManager.Instance.EndGame();
+
+        StartCoroutine(DisconnectAndReturnToOfflineRoutine());
+    }
+
+    private IEnumerator DisconnectAndReturnToOfflineRoutine()
+    {
+        yield return new WaitForSeconds(10f);
+
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+        yield return new WaitUntil(() => !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsServer);
+
+        SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.RoomScene);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
