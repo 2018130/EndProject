@@ -57,10 +57,13 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         {
             AddPassengerLocal(passengerRef);
         }
+
+        isMoving.OnValueChanged += OnIsMovingChanged;
     }
 
     public override void OnNetworkDespawn()
     {
+        isMoving.OnValueChanged -= OnIsMovingChanged;
         driverRef.OnValueChanged -= OnDriverChanged;
         if (passengerRefs != null) passengerRefs.OnListChanged -= OnpassengerChanged;
 
@@ -71,6 +74,12 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
         //터져서 모든 승객들 날라감
         //if (IsServer) KickAllPassengers();
+    }
+
+    private void OnIsMovingChanged(bool previous, bool current)
+    {
+        if (current) AudioManager.Instance.PlaySFX("tube", loop: true);
+        else AudioManager.Instance.StopSFX();
     }
 
     private void OnpassengerChanged(NetworkListEvent<NetworkObjectReference> changeEvent)
