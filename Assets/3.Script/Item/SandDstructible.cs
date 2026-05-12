@@ -52,6 +52,7 @@ public class SandDestructible : NetworkBehaviour
     private Vector3[] _vertices;
     private Vector3[] _originalVertices;
 
+
     // ── 콜라이더 딜레이 ───────────────────────────────────────────────────────
     private bool _colliderDirty = false;
     private float _colliderTimer = 0f;
@@ -116,12 +117,15 @@ public class SandDestructible : NetworkBehaviour
         }
 
         BroadcastHit_Rpc(worldHitPos);
+
+        //Debug.Log($"[SandDestructible] RegisterHit 호출 / IsServer:{IsServer} / hitCount:{_hitCount.Value}");
     }
 
     // ── RPC ──────────────────────────────────────────────────────────────────
     [Rpc(SendTo.ClientsAndHost)]
     private void BroadcastHit_Rpc(Vector3 worldHitPos)
     {
+        //Debug.Log($"[SandDestructible] BroadcastHit_Rpc 수신 / IsServer:{IsServer}");
         StartCoroutine(DeformMeshAnimated(worldHitPos));
         SpawnFragmentsLocally(worldHitPos);
         PlayParticle(worldHitPos);
@@ -196,6 +200,22 @@ public class SandDestructible : NetworkBehaviour
 
         _colliderDirty = true;
         _colliderTimer = 0f;
+
+       
+
+        // ★ 실제로 변형되는 버텍스가 있는지 확인
+        int changedCount = 0;
+        float maxChange = 0f;
+        for (int i = 0; i < startVertices.Length; i++)
+        {
+            float diff = Mathf.Abs(targetVertices[i].y - startVertices[i].y);
+            if (diff > 0.0001f)
+            {
+                changedCount++;
+                maxChange = Mathf.Max(maxChange, diff);
+            }
+        }
+        Debug.Log($"[SandDestructible] 변형 버텍스:{changedCount} / 최대변형량:{maxChange:F4} / localHit:{localHit}");
     }
 
     // 늦은 접속자용 즉시 변형 (애니메이션 없음)
@@ -268,11 +288,15 @@ public class SandDestructible : NetworkBehaviour
     {
         _colliderMesh.vertices = _mesh.vertices;
         _colliderMesh.triangles = _mesh.triangles;
-        _colliderMesh.RecalculateNormals();
+        // _colliderMesh.RecalculateNormals(); // <--- 이 줄을 주석 처리하거나 지우세요!
 
+        // 콜라이더를 갱신할 때 'Convex'를 살짝 켰다 꺼주면,
+        // 유니티가 면 노멀을 기준으로 더 로우폴리스러운 충돌체를 만듭니다.
+        _meshCollider.convex = true;
         _meshCollider.enabled = false;
         _meshCollider.sharedMesh = null;
         _meshCollider.sharedMesh = _colliderMesh;
+        _meshCollider.convex = false;
         _meshCollider.enabled = true;
     }
 

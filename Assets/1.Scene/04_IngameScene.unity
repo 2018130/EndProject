@@ -24564,23 +24564,35 @@ PrefabInstance:
       objectReference: {fileID: 1698942399}
     - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: rimHeight
-      value: 0.032
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: craterDepth
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformDepth
-      value: 0.48
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: noiseStrength
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: rimStartRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 358750169129403365, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: maxDeformDepth
-      value: 0.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 426257895546067273, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_LocalScale.x
@@ -24720,23 +24732,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: rimHeight
-      value: 0.032
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: craterDepth
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformDepth
-      value: 0.48
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: noiseStrength
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: rimStartRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2205395850451176700, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: maxDeformDepth
-      value: 0.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2437268968629777757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24784,23 +24808,35 @@ PrefabInstance:
       objectReference: {fileID: 6624926}
     - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: rimHeight
-      value: 0.032
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: craterDepth
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformDepth
-      value: 0.48
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: noiseStrength
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: rimStartRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704875149719883757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: maxDeformDepth
-      value: 0.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2826319428489233518, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_LocalScale.x
@@ -24888,23 +24924,35 @@ PrefabInstance:
       objectReference: {fileID: 1813777245}
     - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: rimHeight
-      value: 0.032
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: craterDepth
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformDepth
-      value: 0.48
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: noiseStrength
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: rimStartRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671652265912095975, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: maxDeformDepth
-      value: 0.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5728516627190267651, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24976,23 +25024,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: rimHeight
-      value: 0.032
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: craterDepth
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformDepth
-      value: 0.48
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: noiseStrength
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: rimStartRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7176335796836384706, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: maxDeformDepth
-      value: 0.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7228256972720302824, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_LocalScale.x
@@ -25016,23 +25076,35 @@ PrefabInstance:
       objectReference: {fileID: 1267778510}
     - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: rimHeight
-      value: 0.032
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: craterDepth
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformDepth
-      value: 0.48
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: deformRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: noiseStrength
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: rimStartRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: deformDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7495795641344142640, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: maxDeformDepth
-      value: 0.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7707590609849756030, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags
