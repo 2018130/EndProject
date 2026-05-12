@@ -29,30 +29,57 @@ public class BeachObjectPool : NetworkBehaviour
     private float _syncTimer = 0f;
     private readonly HashSet<int> _justWokeUp = new();
 
+    private int _readyCount = 0;
+    private bool _spawnStarted = false;
+
+    private Dictionary<int, BeachObject> _poolMap = new();
+
+    // GC 방지용 고정 배열 — OnNetworkSpawn에서 최대 크기로 미리 할당
+    private int[] _syncIds;
+    private Vector3[] _syncPositions;
+    private Quaternion[] _syncRotations;
+
     // ── 초기화 ───────────────────────────────────────────────────────────────
     public override void OnNetworkSpawn()
     {
-        Debug.Log($"[BeachObjectPool] OnNetworkSpawn 진입 / IsServer:{IsServer} / IsClient:{IsClient} / IsHost:{IsHost}");
+        // 최대 오브젝트 수 계산 후 배열 미리 할당
+        int maxCount = 0;
+        foreach (var entry in entries) maxCount += entry.count;
+
+        _syncIds = new int[maxCount];
+        _syncPositions = new Vector3[maxCount];
+        _syncRotations = new Quaternion[maxCount];
+
+        // 서버/클라이언트 모두 동일 순서로 풀 생성 → ObjectId 일치 보장
         foreach (var entry in entries)
         {
             for (int i = 0; i < entry.count; i++)
             {
-                BeachObject obj = Instantiate(entry.prefab, transform)
-                                    .GetComponent<BeachObject>();
-                obj.ObjectId = _pool.Count;
+                BeachObject obj = Instantiate(entry.prefab, transform).GetComponent<BeachObject>();
+                int id = _pool.Count;
+                obj.ObjectId = id;
                 obj.gameObject.SetActive(false);
                 _pool.Add(obj);
+                _poolMap[id] = obj; // 빠른 검색을 위해 등록
             }
         }
 
-        // ★ 풀 생성 완료 로그
-        Debug.Log($"[BeachObjectPool] OnNetworkSpawn 완료 / IsServer:{IsServer} / 풀:{_pool.Count}");
+        Debug.Log($"[BeachObjectPool] OnNetworkSpawn / IsServer:{IsServer} / 풀:{_pool.Count}");
 
         if (IsServer)
         {
+            _readyCount = 1;
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            StartCoroutine(InitialSpawn());
             StartCoroutine(BoundsCheckLoop());
+
+            // 클라이언트가 없으면 (서버 단독) 바로 스폰
+            if (NetworkManager.Singleton.ConnectedClientsList.Count <= 1)
+                StartCoroutine(InitialSpawn());
+        }
+        else
+        {
+            // 클라이언트: 풀 생성 완료 후 서버에 준비 완료 알림
+            NotifyReady_ServerRpc();
         }
     }
 
@@ -62,10 +89,29 @@ public class BeachObjectPool : NetworkBehaviour
             NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
     }
 
-    // ── 서버: 새 클라이언트 접속 시 현재 상태 전송 ───────────────────────────
-    private void OnClientConnected(ulong clientId)
+    // ── 클라이언트 준비 완료 수신 ────────────────────────────────────────────
+    [ServerRpc(RequireOwnership = false)]
+    private void NotifyReady_ServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (!IsServer || _objectMap.Count == 0) return;
+        _readyCount++;
+        ulong senderId = rpcParams.Receive.SenderClientId; // 발신자 ID 확보
+
+        if (_spawnStarted)
+        {
+            // 이미 게임이 진행 중인 경우, 새로 들어온 클라이언트에게만 현재 상태 전송
+            SendCurrentStateTo(senderId);
+            return;
+        }
+
+        int totalClients = NetworkManager.Singleton.ConnectedClientsList.Count;
+        if (_readyCount >= totalClients)
+            StartCoroutine(InitialSpawn());
+    }
+
+    // 특정 클라이언트에게 현재 활성 오브젝트 전체 전송
+    private void SendCurrentStateTo(ulong clientId)
+    {
+        if (_objectMap.Count == 0) return;
 
         var param = new ClientRpcParams
         {
@@ -82,14 +128,22 @@ public class BeachObjectPool : NetworkBehaviour
             );
         }
 
-        Debug.Log($"[BeachObjectPool] 새 클라이언트 {clientId}에 {_objectMap.Count}개 전송");
+        Debug.Log($"[BeachObjectPool] 클라이언트 {clientId}에 {_objectMap.Count}개 전송");
+    }
+
+    // 게임 중 새 클라이언트 합류 시
+    private void OnClientConnected(ulong clientId)
+    {
+        if (!IsServer) return;
+        if (_spawnStarted)
+            SendCurrentStateTo(clientId);
     }
 
     // ── 서버: 스폰 ───────────────────────────────────────────────────────────
     private IEnumerator InitialSpawn()
     {
-        // 클라이언트 OnNetworkSpawn 완료 대기
-        yield return new WaitForSeconds(1.0f);
+        _spawnStarted = true;
+        yield return new WaitForEndOfFrame();
 
         foreach (var obj in _pool)
         {
@@ -98,7 +152,6 @@ public class BeachObjectPool : NetworkBehaviour
         }
     }
 
-    // 특정 오브젝트를 지정해서 스폰 (최초/재스폰 공통)
     private void SpawnSpecific(BeachObject obj)
     {
         if (obj.gameObject.activeSelf) return;
@@ -117,7 +170,7 @@ public class BeachObjectPool : NetworkBehaviour
         _objectMap[obj.ObjectId] = obj;
         _activeObjects.Add(obj);
 
-        // 전체 클라이언트에 브로드캐스트
+        // 전체 브로드캐스트
         SpawnObject_ClientRpc(obj.ObjectId, spawnPos, obj.transform.rotation, default);
     }
 
@@ -136,28 +189,32 @@ public class BeachObjectPool : NetworkBehaviour
 
     private void BatchSyncAll()
     {
-        // Sleep 중이 아닌 오브젝트만 동기화
-        var moving = _activeObjects.FindAll(
-            o => o != null && o.gameObject.activeSelf && !o.IsSleeping);
+        int syncCount = 0;
+        int maxLimit = _syncIds.Length;
 
-        if (moving.Count == 0) return;
-
-        // 이번 프레임에 BroadcastObjectState로 이미 전송된 오브젝트 제외
-        var toSync = moving.FindAll(o => !_justWokeUp.Contains(o.ObjectId));
-        if (toSync.Count == 0) return;
-
-        var ids = new int[toSync.Count];
-        var positions = new Vector3[toSync.Count];
-        var rotations = new Quaternion[toSync.Count];
-
-        for (int i = 0; i < toSync.Count; i++)
+        // activeObjects가 수정되는 동안 에러를 방지하기 위해 
+        // 개수(Count)를 미리 확보하거나 역순 혹은 안전한 접근이 필요합니다.
+        for (int i = 0; i < _activeObjects.Count; i++)
         {
-            ids[i] = toSync[i].ObjectId;
-            positions[i] = toSync[i].transform.position;
-            rotations[i] = toSync[i].transform.rotation;
+            if (syncCount >= maxLimit) break;
+
+            BeachObject obj = _activeObjects[i];
+
+            // 중요: 리스트 순회 중 객체가 갑자기 제거되거나 Null이 될 가능성 체크
+            if (obj == null || !obj.gameObject.activeSelf) continue;
+
+            if (obj.IsSleeping) continue;
+            if (_justWokeUp.Contains(obj.ObjectId)) continue;
+
+            _syncIds[syncCount] = obj.ObjectId;
+            _syncPositions[syncCount] = obj.transform.position;
+            _syncRotations[syncCount] = obj.transform.rotation;
+            syncCount++;
         }
 
-        BatchSyncState_ClientRpc(ids, positions, rotations);
+        if (syncCount == 0) return;
+
+        BatchSyncState_ClientRpc(syncCount, _syncIds, _syncPositions, _syncRotations);
     }
 
     // Sleep 진입/해제 시 BeachObject에서 호출 → 즉시 위치 전송
@@ -220,16 +277,13 @@ public class BeachObjectPool : NetworkBehaviour
     // ── RPC ──────────────────────────────────────────────────────────────────
     [ClientRpc]
     private void SpawnObject_ClientRpc(
-    int objectId, Vector3 pos, Quaternion rot,
-    ClientRpcParams rpcParams = default)
+        int objectId, Vector3 pos, Quaternion rot,
+        ClientRpcParams rpcParams = default)
     {
         if (IsServer) return;
 
-        Debug.Log($"[BeachObjectPool] Client: SpawnObject_ClientRpc 수신 ObjectId:{objectId} / 풀:{_pool.Count}");
-
         if (_pool.Count == 0)
         {
-            Debug.LogWarning($"[BeachObjectPool] Client: 풀 미준비 → RetrySpawn ObjectId:{objectId}");
             StartCoroutine(RetrySpawn(objectId, pos, rot));
             return;
         }
@@ -237,7 +291,6 @@ public class BeachObjectPool : NetworkBehaviour
         DoSpawn(objectId, pos, rot);
     }
 
-    // 풀 미준비 시 대기 후 재시도
     private IEnumerator RetrySpawn(int objectId, Vector3 pos, Quaternion rot)
     {
         float timeout = 3f;
@@ -258,38 +311,33 @@ public class BeachObjectPool : NetworkBehaviour
         DoSpawn(objectId, pos, rot);
     }
 
-    // 실제 스폰 처리 (SpawnObject_ClientRpc / RetrySpawn 공통)
     private void DoSpawn(int objectId, Vector3 pos, Quaternion rot)
     {
-        BeachObject obj = _pool.Find(o => o.ObjectId == objectId);
-        if (obj == null)
+        if (!_poolMap.TryGetValue(objectId, out BeachObject obj))
         {
-            Debug.LogError($"[BeachObjectPool] Client: ObjectId {objectId} 찾기 실패 / 풀:{_pool.Count}");
-            return;
-        }
-        if (obj.gameObject.activeSelf)
-        {
-            Debug.LogWarning($"[BeachObjectPool] Client: ObjectId {objectId} 이미 활성화");
+            Debug.LogError($"[BeachObjectPool] Client: ObjectId {objectId} 가 풀에 존재하지 않음");
             return;
         }
 
-        obj.transform.position = pos;
-        obj.transform.rotation = rot;
+        if (obj.gameObject.activeSelf) return;
+
+        // 위치 설정 및 활성화 로직...
+        obj.transform.SetPositionAndRotation(pos, rot); // 성능상 이점
         obj.gameObject.SetActive(true);
         obj.Initialize(this);
 
         _objectMap[objectId] = obj;
         _activeObjects.Add(obj);
-
-        Debug.Log($"[BeachObjectPool] Client: ObjectId:{objectId} 등록 완료 / map:{_objectMap.Count}");
     }
 
+    // count만큼만 처리 → 고정 배열 재사용 가능
     [ClientRpc]
-    private void BatchSyncState_ClientRpc(int[] ids, Vector3[] positions, Quaternion[] rotations)
+    private void BatchSyncState_ClientRpc(
+        int count, int[] ids, Vector3[] positions, Quaternion[] rotations)
     {
         if (IsServer) return;
 
-        for (int i = 0; i < ids.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             if (!_objectMap.TryGetValue(ids[i], out BeachObject obj)) continue;
             obj.ApplyNetworkState(positions[i], rotations[i]);

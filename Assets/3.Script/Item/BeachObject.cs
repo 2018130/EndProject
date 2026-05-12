@@ -1,40 +1,37 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
-// °¢ BeachObject ÇÁ¸®ÆÕ¿¡ ºÎÂø
-// ¼­¹ö/Å¬¶óÀÌ¾ğÆ® ÆÇ´ÜÀ» _pool.IsServer·Î Á÷Á¢ ÂüÁ¶
-// ¡æ InitializeÀÇ ÆÄ¶ó¹ÌÅÍ Àü´Ş ½Ç¼ö·Î ÀÎÇÑ ¿Àµ¿ÀÛ ¿øÃµ Â÷´Ü
+// ê° BeachObject í”„ë¦¬íŒ¹ì— ë¶€ì°©
+// ì„œë²„/í´ë¼ì´ì–¸íŠ¸ íŒë‹¨ì„ _pool.IsServerë¡œ ì§ì ‘ ì°¸ì¡°
 public class BeachObject : MonoBehaviour
 {
-    [Header("¹°¸® ¼³Á¤")]
+    [Header("ë¬¼ë¦¬ ì„¤ì •")]
     [SerializeField] private float impactForceMultiplier = 3f;
     [SerializeField] private float sleepSpeedThreshold = 0.1f;
 
-    [Header("µ¿±âÈ­ ¼³Á¤")]
+    [Header("ë™ê¸°í™” ì„¤ì •")]
     [SerializeField] private float interpSpeed = 15f;
     [SerializeField] private float teleportThreshold = 3f;
 
-    // ¼­¹ö Àü¿ë
-    private Rigidbody _rb;
+Â  Â  // ì„œë²„ ì „ìš©
+Â  Â  private Rigidbody _rb;
     private bool _isSleeping;
     private float _aliveTime;
     private const float SleepCheckDelay = 1.5f;
 
-    // Å¬¶óÀÌ¾ğÆ® Àü¿ë
-    private Vector3 _targetPosition;
+Â  Â  // í´ë¼ì´ì–¸íŠ¸ ì „ìš©
+Â  Â  private Vector3 _targetPosition;
     private Quaternion _targetRotation;
     private bool _hasTarget;
 
-    // °ø¿ë
-    private BeachObjectPool _pool;
+Â  Â  // ê³µìš©
+Â  Â  private BeachObjectPool _pool;
 
-    // BeachObjectPoolÀÌ »ı¼º ¼ø¼­¿¡ µû¶ó ºÎ¿©ÇÏ´Â °íÁ¤ ½Äº°ÀÚ
     public int ObjectId { get; set; }
     public bool IsSleeping => _isSleeping;
 
-    // ¦¡¦¡ ÃÊ±âÈ­ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    // isServer ÆÄ¶ó¹ÌÅÍ ¾øÀÌ _pool.IsServer·Î Á÷Á¢ ÆÇ´Ü
-    public void Initialize(BeachObjectPool pool)
+Â  Â  // â”€â”€ ì´ˆê¸°í™” â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  public void Initialize(BeachObjectPool pool)
     {
         _pool = pool;
         _rb = GetComponent<Rigidbody>();
@@ -55,8 +52,8 @@ public class BeachObject : MonoBehaviour
         Debug.Log($"[BeachObject] {gameObject.name} Id:{ObjectId} IsServer:{_pool.IsServer}");
     }
 
-    // ¦¡¦¡ Å¬¶óÀÌ¾ğÆ®: À§Ä¡/È¸Àü ¼ö½Å ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    public void ApplyNetworkState(Vector3 pos, Quaternion rot)
+Â  Â  // â”€â”€ í´ë¼ì´ì–¸íŠ¸: ìœ„ì¹˜/íšŒì „ ìˆ˜ì‹  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  public void ApplyNetworkState(Vector3 pos, Quaternion rot)
     {
         if (_pool != null && _pool.IsServer) return;
 
@@ -65,38 +62,48 @@ public class BeachObject : MonoBehaviour
         _hasTarget = true;
     }
 
-    // ¦¡¦¡ Update ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    private void Update()
+Â  Â  // â”€â”€ Update â€” í´ë¼ì´ì–¸íŠ¸ ë³´ê°„ ì „ìš© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  private void Update()
     {
         if (_pool == null || !_pool.IsSpawned) return;
+        if (_pool.IsServer) return; // ì„œë²„ëŠ” FixedUpdateì—ì„œ ì²˜ë¦¬
 
-        if (_pool.IsServer)
-            ServerUpdate();
-        else
-            ClientUpdate();
+Â  Â  Â  Â  ClientUpdate();
     }
 
-    private void ServerUpdate()
+Â  Â  // â”€â”€ FixedUpdate â€” ì„œë²„ ë¬¼ë¦¬ ë¡œì§ ì „ìš© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  private void FixedUpdate()
     {
-        _aliveTime += Time.deltaTime;
+        if (_pool == null || !_pool.IsSpawned) return;
+        if (!_pool.IsServer) return;
 
-        // ½ºÆù Á÷ÈÄ ¹°¸® ºÒ¾ÈÁ¤ ±¸°£¿¡¼­ Sleep ÆÇÁ¤ ¹æÁö
+Â  Â  Â  Â  // aliveTimeì€ FixedUpdate ì£¼ê¸°ë¡œ ì¦ê°€
+Â  Â  Â  Â  _aliveTime += Time.fixedDeltaTime;
         if (_aliveTime < SleepCheckDelay) return;
 
-        bool shouldSleep = _rb.linearVelocity.magnitude < sleepSpeedThreshold
-                        && _rb.angularVelocity.magnitude < sleepSpeedThreshold;
+Â  Â  Â  Â  // Rigidbodyê°€ ì™¸ë¶€ í˜ì— ì˜í•´ ê¹¨ì–´ë‚œ ê²½ìš° í”Œë˜ê·¸ ë™ê¸°í™”
+Â  Â  Â  Â  if (_isSleeping && !_rb.IsSleeping())
+        {
+            _isSleeping = false;
+            _pool.BroadcastObjectState(this, transform.position, transform.rotation);
+            return;
+        }
+
+Â  Â  Â  Â  // sqrMagnitude ì‚¬ìš© â€” sqrt ì—°ì‚° ì—†ìŒ
+Â  Â  Â  Â  float thresholdSqr = sleepSpeedThreshold * sleepSpeedThreshold;
+        bool shouldSleep = _rb.linearVelocity.sqrMagnitude < thresholdSqr
+                 && _rb.angularVelocity.sqrMagnitude < thresholdSqr;
 
         if (shouldSleep && !_isSleeping)
         {
             _rb.Sleep();
             _isSleeping = true;
-
-            // BatchSyncAll¿¡¼­ Á¦¿ÜµÇ¹Ç·Î ¸¶Áö¸· À§Ä¡ °­Á¦ Àü¼Û
             _pool.BroadcastObjectState(this, transform.position, transform.rotation);
         }
     }
 
-    private void ClientUpdate()
+Â  Â  // â”€â”€ í´ë¼ì´ì–¸íŠ¸ ë³´ê°„ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  private void ClientUpdate()
     {
         if (!_hasTarget) return;
 
@@ -104,21 +111,20 @@ public class BeachObject : MonoBehaviour
 
         if (dist > teleportThreshold)
         {
-            // °Å¸®°¡ ³Ê¹« ¸Ö¸é Áï½Ã ÀÌµ¿ (º¸°£ Áö¿¬ ¹æÁö)
-            transform.position = _targetPosition;
-            transform.rotation = _targetRotation;
+Â  Â  Â  Â  Â  Â  // ê±°ë¦¬ ì°¨ì´ê°€ í¬ë©´ ì¦‰ì‹œ ì´ë™
+Â  Â  Â  Â  Â  Â  transform.SetPositionAndRotation(_targetPosition, _targetRotation);
         }
         else
         {
             transform.position = Vector3.Lerp(
-                transform.position, _targetPosition, interpSpeed * Time.deltaTime);
+              transform.position, _targetPosition, interpSpeed * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(
-                transform.rotation, _targetRotation, interpSpeed * Time.deltaTime);
+              transform.rotation, _targetRotation, interpSpeed * Time.deltaTime);
         }
     }
 
-    // ¦¡¦¡ Ãæµ¹ °¨Áö ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    private void OnTriggerEnter(Collider other)
+Â  Â  // â”€â”€ ì¶©ëŒ ê°ì§€ (ì„œë²„ ì „ìš©) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  private void OnTriggerEnter(Collider other)
     {
         if (_pool == null || !_pool.IsServer) return;
 
@@ -146,7 +152,6 @@ public class BeachObject : MonoBehaviour
         _isSleeping = false;
         _rb.AddForce(force, ForceMode.Impulse);
 
-        // Sleep »óÅÂ¿¡¼­ ±ú¾î³­ °æ¿ì Áï½Ã µ¿±âÈ­
         if (wasSleeping)
             _pool.BroadcastObjectState(this, transform.position, transform.rotation);
     }
@@ -160,8 +165,8 @@ public class BeachObject : MonoBehaviour
         _pool.BroadcastObjectState(this, transform.position, transform.rotation);
     }
 
-    // ¦¡¦¡ Ç® ¹İÈ¯ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    public void ReturnToPool()
+Â  Â  // â”€â”€ í’€ ë°˜í™˜ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Â  Â  public void ReturnToPool()
     {
         if (_pool != null && _pool.IsServer && _rb != null)
         {
@@ -176,15 +181,24 @@ public class BeachObject : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // SetActive Á÷ÈÄ ¹°¸® ÃÊ±âÈ­ ¿Ï·á ÈÄ WakeUp
-    private IEnumerator WakeUpNextFrame()
+Â  Â  // SetActive ì§í›„ ë¬¼ë¦¬ ì´ˆê¸°í™” ì™„ë£Œ í›„ WakeUp
+Â  Â  private IEnumerator WakeUpNextFrame()
     {
+Â  Â  Â  Â  // ì´ì „ í”„ë ˆì„ì˜ ë¬¼ë¦¬ ì”ì¬ ì œê±°
+Â  Â  Â  Â  if (_rb != null)
+        {
+            _rb.linearVelocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+            _rb.isKinematic = false;
+        }
+
         yield return new WaitForFixedUpdate();
+
         if (_rb != null)
         {
-            _rb.isKinematic = false;
             _rb.WakeUp();
-            _rb.AddForce(Vector3.down * 0.01f, ForceMode.Impulse);
+Â  Â  Â  Â  Â  Â  // ë¬¼ë¦¬ ì—”ì§„ì— 'í™œì„± ìƒíƒœ'ì„ì„ ê°•ì œë¡œ ì•Œë¦¼ (ì•½í•œ ì¤‘ë ¥ ë°©í–¥ í˜)
+Â  Â  Â  Â  Â  Â  _rb.AddForce(Vector3.down * 0.01f, ForceMode.Impulse);
         }
     }
 }
