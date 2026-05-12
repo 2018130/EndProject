@@ -11,7 +11,7 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
     {
         try
         {
-            TcpClient client = new TcpClient("13.125.234.11", 7777);
+            TcpClient client = new TcpClient("52.79.239.40", 7777);
             NetworkStream stream = client.GetStream();
             byte[] data = Encoding.UTF8.GetBytes(msg);
             stream.Write(data, 0, data.Length);

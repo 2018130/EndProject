@@ -67,13 +67,12 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         driverRef.OnValueChanged -= OnDriverChanged;
         if (passengerRefs != null) passengerRefs.OnListChanged -= OnpassengerChanged;
 
-        //if (driver != null)
-        //{
-        //    SetupDriverPhysics(driver, false);
-        //}
-
-        //터져서 모든 승객들 날라감
-        //if (IsServer) KickAllPassengers();
+    if (driver != null)
+    {
+        Collider col = driver.GetComponent<Collider>();
+        if (col != null) col.isTrigger = false;
+        driver = null;
+    }
     }
 
     private void OnIsMovingChanged(bool previous, bool current)
@@ -274,8 +273,8 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         {
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.Alive;
             driver.EnableInputOnLandClientRpc();
-            driver.ApplyKnockback_ClientRpc(Vector3.zero);
-
+            Vector3 kickDir = driver.transform.up;
+            driver.ApplyKnockback_ClientRpc(kickDir * knockbackPower);
             driver = null;
         }
 
@@ -283,6 +282,8 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         {
             if (passengers[i] == null) continue;
 
+            passengers[i].GetComponent<Collider>().isTrigger = false;
+            ResetCollider_ClientRpc(passengers[i].NetworkObject);
             Vector3 flyingDir = (passengers[i].transform.position - transform.position).normalized;
             flyingDir.y = 1f;
 
@@ -294,6 +295,13 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         }
 
         if (IsServer) passengerRefs.Clear();
+    }
+
+    [ClientRpc]
+    private void ResetCollider_ClientRpc(NetworkObjectReference playerRef)
+    {
+        if (playerRef.TryGet(out NetworkObject obj))
+            obj.GetComponent<Collider>().isTrigger = false;
     }
 
     private void ApplyBumperRecoil(Vector3 hitPoint)
