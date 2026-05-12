@@ -30,7 +30,7 @@ public class SharkTube : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         SkillEffectPool.Instance.Get(spawnEffectPrefab, transform.position, Quaternion.identity);
-
+        AudioManager.Instance.PlaySFX("start_shark");
         rb = GetComponent<Rigidbody>();
 
         driverRef.OnValueChanged += OnDriverChanged;
@@ -39,10 +39,13 @@ public class SharkTube : NetworkBehaviour
         {
             SetupDriverPhysics(driverNetObj.GetComponent<PlayerNetwork>(), true);
         }
+
+        isMoving.OnValueChanged += OnIsMovingChanged;
     }
 
     public override void OnNetworkDespawn()
     {
+        isMoving.OnValueChanged -= OnIsMovingChanged;
         driverRef.OnValueChanged -= OnDriverChanged;
 
         if (driver != null)
@@ -52,6 +55,12 @@ public class SharkTube : NetworkBehaviour
 
             driver = null;
         }
+    }
+
+    private void OnIsMovingChanged(bool previous, bool current)
+    {
+        if (current) AudioManager.Instance.PlaySFX("tube", loop: true);
+        else AudioManager.Instance.StopSFX();
     }
 
     private void OnDriverChanged(NetworkObjectReference previous, NetworkObjectReference current)
@@ -188,6 +197,7 @@ public class SharkTube : NetworkBehaviour
         if (!IsServer) yield break;
 
         isMoving.Value = false;
+        PlayDespawnSFX_ClientRpc();
 
         if (driver != null)
         {
@@ -206,4 +216,12 @@ public class SharkTube : NetworkBehaviour
 
         GetComponent<NetworkObject>().Despawn();
     }
+
+    [ClientRpc]
+    private void PlayDespawnSFX_ClientRpc()
+    {
+        AudioManager.Instance.PlaySFX("end_shark");
+    }
+
+
 }

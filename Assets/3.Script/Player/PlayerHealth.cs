@@ -18,6 +18,7 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private float downedHpDrain = 10f; // 기절 중 초당 체력 감소
     [SerializeField] private GameObject actionZone;     // 처형, 살리기 존
     [SerializeField] private ParticleSystem hitParticlePrefab;
+    [SerializeField] private ParticleSystem respawnEffectPrefab;
 
     private Coroutine downedCoroutine;
 
@@ -221,6 +222,7 @@ public class PlayerHealth : NetworkBehaviour
             GameManager.Instance.AddKill(LastDownedByClientId);
 
         OnDead?.Invoke(this);
+        StartCoroutine(RespawnRoutine());
     }
 
     private IEnumerator RespawnRoutine()
@@ -234,12 +236,19 @@ public class PlayerHealth : NetworkBehaviour
     {
         if (!IsServer) return;
         if (State.Value != PlayerState.Dead) return; // Dead일 때만
+
+        Faction faction = (Faction)PlayerFactionInt.Value;
+        Vector3 spawnPos = GameManager.Instance.SceneContext
+            .SpawnAreaManager.GetSpawnPosition(faction);
+
         Hp.Value = maxHp;
         State.Value = PlayerState.Alive;
+
+        TeleportToSpawnClientRpc(spawnPos, true);
     }
 
     [ClientRpc]
-    public void TeleportToSpawnClientRpc(Vector3 spawnPos)
+    public void TeleportToSpawnClientRpc(Vector3 spawnPos, bool playSound = false)
     {
         Debug.Log($"Spawn : {gameObject}");
         transform.position = spawnPos;
@@ -252,6 +261,14 @@ public class PlayerHealth : NetworkBehaviour
         {
             rb.detectCollisions = true;
             rb.linearVelocity = Vector3.zero;
+        }
+
+        if (IsOwner && playSound)
+        {
+            AudioManager.Instance.PlaySFX("respawn_sound");
+            ParticleSystem effect = Instantiate(respawnEffectPrefab, spawnPos + Vector3.up * 2f, Quaternion.identity);
+            effect.Play();
+            Destroy(effect.gameObject, effect.main.duration);
         }
     }
 

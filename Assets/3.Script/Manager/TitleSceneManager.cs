@@ -8,6 +8,7 @@ public class TitleSceneManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        AudioManager.Instance.PlayBGM("BGM01");
 #if UNITY_SERVER
         SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.RoomScene);
 #else
