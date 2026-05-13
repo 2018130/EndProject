@@ -70,15 +70,16 @@ public class AimRigController : NetworkBehaviour
             weaponController.OnWeaponRegistered -= OnWeaponRegistered;
     }
 
-    // WeaponController.RegisterWeapon()이 호출될 때마다 실행
     private void OnWeaponRegistered(BaseWeapon weapon)
     {
-        // GunAlignToHand에 HandBone 주입
         var align = weapon.GetComponent<GunAlignToHand>();
         if (align != null && _handBone != null)
+        {
             align.SetHandBone(_handBone);
+            // ★ AimTarget과 AimController도 함께 주입
+            align.SetAimInfo(aimTarget, aimController);
+        }
 
-        // ★ GripTargetAim에 AimTarget 주입
         var gripAim = weapon.GetComponentInChildren<GripTargetAim>();
         if (gripAim != null && aimTarget != null)
             gripAim.Initialize(aimTarget, aimController);
@@ -175,7 +176,9 @@ public class AimRigController : NetworkBehaviour
             Debug.LogWarning($"[AimRigController] {current.name}에 GripTarget이 없습니다.");
         }
     }
+
 }
+
 
 private IEnumerator RebuildSequence()
 {
