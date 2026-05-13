@@ -58,6 +58,7 @@ public class PlayerNetwork : NetworkBehaviour
     private GameObject jetpackEffectParticle;
     [SerializeField]
     private ParticleSystem upperHitEffect;
+    private bool isKillEffectPlaying = false;
 
     private void Awake()
     {
@@ -725,7 +726,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void KillEffect_Kick()
     {
-        if (aimedDownPlayer == null)
+        if (aimedDownPlayer == null || isKillEffectPlaying)
         {
             return;
         }
@@ -751,6 +752,8 @@ public class PlayerNetwork : NetworkBehaviour
                 StartCoroutine(PlaySwingAnimation(target));
             }
         }
+
+        isKillEffectPlaying = true;
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
@@ -874,6 +877,8 @@ public class PlayerNetwork : NetworkBehaviour
             virtualCam.Target.TrackingTarget = cameraPivot;
             virtualCam.Target.LookAtTarget = cameraPivot;
         }
+
+        isKillEffectPlaying = false;
     }
 
 
