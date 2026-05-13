@@ -60,36 +60,32 @@ public class Projectile : NetworkBehaviour
         if (!IsServer) return;
         if (isHit) return;
 
-        // 모래성 체크 먼저
+        // ★ damage 파라미터 추가
         if (other.TryGetComponent(out SandDestructible sand))
         {
-            Debug.Log($"모래성이닷!");
-            sand.RegisterHit(other.ClosestPoint(transform.position));
+            sand.RegisterHit(
+                other.ClosestPoint(transform.position),
+                projectileData.Damage          // weaponData.Damage에서 넘어온 값
+            );
             isHit = true;
             GetComponent<NetworkObject>().Despawn();
             return;
         }
-        // ★ BeachObject 체크 — isHit 처리 안 함 (관통)
-        if (other.TryGetComponent(out BeachObject beachObj))
-        {
-            // BeachObject는 OnTriggerEnter에서 자체적으로 힘 처리
-            // Projectile은 계속 날아감 (return 안 함)
-            return;
-        }
-        Debug.Log($"충돌: {other.gameObject.name}, 레이어: {LayerMask.LayerToName(other.gameObject.layer)}");
 
         PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
+        if (playerHealth == null) return;
+        if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return;
 
-        if (playerHealth == null) return; // 플레이어 아니면 무시
-
-        if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return; // 자기 자신 무시
-        Debug.Log($"적 때린 거 맞음");
         isHit = true;
-
-        playerHealth.TakeDamage(projectileData.Damage, projectileData.OwnerFaction, projectileData.OwnerClientId, other.ClosestPoint(transform.position), transform.position);
+        playerHealth.TakeDamage(
+            projectileData.Damage,
+            projectileData.OwnerFaction,
+            projectileData.OwnerClientId,
+            other.ClosestPoint(transform.position),
+            transform.position
+        );
         GetComponent<NetworkObject>().Despawn();
     }
-
     public void Initialize(ProjectileData projectileData)
     {
         this.projectileData = projectileData;
