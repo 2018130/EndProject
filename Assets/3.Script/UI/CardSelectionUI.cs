@@ -53,6 +53,7 @@ public class CardSelectionUI : MonoBehaviour, IContextListener
 
         currentCardIds = cardIds;
         panel.SetActive(true);
+        AudioManager.Instance.PlaySFX("Start_skill_card");
 
         for (int i = 0; i < cardSlots.Length; i++)
         {
