@@ -2439,11 +2439,11 @@ MonoBehaviour:
     SkillType: 1
     CardIcon: {fileID: 21300000, guid: 4db4701e0532b0c4ab195b151e2d195c, type: 3}
     SkillIcon: {fileID: 21300000, guid: 6c079cca5a322294cbd185afd4a84d5e, type: 3}
-    Cooldown: 20
+    Cooldown: 3
     Duration: -1
     Damage: 65
     Range: 1
-    Speed: 10
+    Speed: 3
     SkillPrefab: {fileID: 5645175605407491184, guid: ac0df89e83ee01749bccf00ae366b1bd, type: 3}
 --- !u!4 &263370921
 Transform:

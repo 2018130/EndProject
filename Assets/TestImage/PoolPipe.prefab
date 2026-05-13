@@ -42,6 +42,8 @@ GameObject:
   m_Component:
   - component: {fileID: 670081775567199851}
   - component: {fileID: 3526136193133077146}
+  - component: {fileID: 2529165377447915735}
+  - component: {fileID: 75156592328338447}
   m_Layer: 0
   m_Name: Pipe03
   m_TagString: Untagged
@@ -96,6 +98,39 @@ MonoBehaviour:
   sphereColliders: []
   capsuleColliders: []
   panelColliders: []
+--- !u!65 &2529165377447915735
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1537933947060743268}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0017347102, y: 0.009159117, z: 0.002396566}
+  m_Center: {x: 0.00022687904, y: -0.00048517704, z: 0.000076248725}
+--- !u!114 &75156592328338447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1537933947060743268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79b42bcf9bb934e93984d29e03604e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MalangBongHitbox
 --- !u!1 &1740638926659403400
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +141,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7184428591882360291}
   - component: {fileID: 8224103289432422124}
+  - component: {fileID: 6932504275185995887}
+  - component: {fileID: 5297709051449331761}
   m_Layer: 0
   m_Name: Pipe04
   m_TagString: Untagged
@@ -160,6 +197,39 @@ MonoBehaviour:
   sphereColliders: []
   capsuleColliders: []
   panelColliders: []
+--- !u!65 &6932504275185995887
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740638926659403400}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0017347102, y: 0.009054457, z: 0.002396566}
+  m_Center: {x: 0.00022687904, y: 0.0001460587, z: 0.000076248725}
+--- !u!114 &5297709051449331761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740638926659403400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79b42bcf9bb934e93984d29e03604e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MalangBongHitbox
 --- !u!1 &1798743681926448361
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,6 +240,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5114508918391285286}
   - component: {fileID: 6504503481578989529}
+  - component: {fileID: 7931924512573617932}
+  - component: {fileID: 1064098000419244221}
   m_Layer: 0
   m_Name: Pipe05
   m_TagString: Untagged
@@ -224,6 +296,39 @@ MonoBehaviour:
   sphereColliders: []
   capsuleColliders: []
   panelColliders: []
+--- !u!65 &7931924512573617932
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798743681926448361}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0017347102, y: 0.0086372215, z: 0.002396566}
+  m_Center: {x: 0.00022687904, y: 0.00037454258, z: 0.000076248725}
+--- !u!114 &1064098000419244221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798743681926448361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79b42bcf9bb934e93984d29e03604e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MalangBongHitbox
 --- !u!1 &2399716423303642204
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,6 +339,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6038295234349398457}
   - component: {fileID: 3557377605638741950}
+  - component: {fileID: 4368825268638215412}
+  - component: {fileID: 7533599512299603631}
   m_Layer: 0
   m_Name: Pipe02
   m_TagString: Untagged
@@ -288,6 +395,39 @@ MonoBehaviour:
   sphereColliders: []
   capsuleColliders: []
   panelColliders: []
+--- !u!65 &4368825268638215412
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2399716423303642204}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0017347102, y: 0.008248436, z: 0.002396566}
+  m_Center: {x: 0.00022687904, y: 0.0005222942, z: 0.000076248725}
+--- !u!114 &7533599512299603631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2399716423303642204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79b42bcf9bb934e93984d29e03604e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MalangBongHitbox
 --- !u!1 &5645175605407491184
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,8 +584,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MalangBong
   ShowTopMostFoldoutHeaderGroup: 1
-  attackCollider: {fileID: 0}
-  animator: {fileID: 0}
+  hitStartDelay: 0.2
+  hitActiveDuration: 0.3
 --- !u!1 &6212496990954967919
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,6 +595,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7326666486228651866}
+  - component: {fileID: 3507253942684900355}
+  - component: {fileID: 4118131146487813816}
   m_Layer: 0
   m_Name: Pipe05.end
   m_TagString: Untagged
@@ -477,6 +619,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5114508918391285286}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3507253942684900355
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6212496990954967919}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0017347102, y: 0.007974957, z: 0.002396566}
+  m_Center: {x: 0.00022687904, y: 0.0014134311, z: 0.000076248725}
+--- !u!114 &4118131146487813816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6212496990954967919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79b42bcf9bb934e93984d29e03604e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MalangBongHitbox
 --- !u!1 &6878352922299964097
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,6 +662,8 @@ GameObject:
   m_Component:
   - component: {fileID: 219572436534752828}
   - component: {fileID: 4872780946941522260}
+  - component: {fileID: 1602219027441756550}
+  - component: {fileID: 8638352310513875673}
   m_Layer: 0
   m_Name: Pipe01
   m_TagString: Untagged
@@ -541,6 +718,39 @@ MonoBehaviour:
   sphereColliders: []
   capsuleColliders: []
   panelColliders: []
+--- !u!65 &1602219027441756550
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6878352922299964097}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0017347102, y: 0.008599445, z: 0.002396566}
+  m_Center: {x: 0.00022687904, y: 0.0020422284, z: 0.000076248725}
+--- !u!114 &8638352310513875673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6878352922299964097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac79b42bcf9bb934e93984d29e03604e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MalangBongHitbox
 --- !u!1 &7938648542596055416
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,6 +9,10 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     private PlayerNetwork[] passengers;
     [SerializeField] private float knockbackPower = 3f;
     [SerializeField] private float bumperPower = 10f;
+    [Header("Exit Knockback Tuning")]
+    [SerializeField] private float driverExitForceMultiplier = 0.15f;
+    [SerializeField] private float passengerExitUpFactor = 2.2f;
+    [SerializeField] private float passengerExitForceMultiplier = 2.0f;
 
     private PlayerNetwork driver;
     [SerializeField] GameObject driverPos;
@@ -31,6 +35,9 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     private NetworkVariable<NetworkObjectReference> driverRef =
         new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private NetworkList<NetworkObjectReference> passengerRefs;
+
+    private bool isEnded = false;
+    private bool isShuttingDown = false;
 
     private void Awake()
     {
@@ -63,16 +70,21 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        if(IsServer && !isEnded)
+        {
+            KickAllPassengers();
+        }
+
         isMoving.OnValueChanged -= OnIsMovingChanged;
         driverRef.OnValueChanged -= OnDriverChanged;
         if (passengerRefs != null) passengerRefs.OnListChanged -= OnpassengerChanged;
 
-    if (driver != null)
-    {
-        Collider col = driver.GetComponent<Collider>();
-        if (col != null) col.isTrigger = false;
-        driver = null;
-    }
+        if (driver != null)
+        {
+            Collider col = driver.GetComponent<Collider>();
+            if (col != null) col.isTrigger = false;
+            driver = null;
+        }
     }
 
     private void OnIsMovingChanged(bool previous, bool current)
@@ -120,6 +132,10 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             driver = driverNetObj.GetComponent<PlayerNetwork>();
             driver.GetComponent<Collider>().isTrigger = true;
         }
+        else
+        {
+            driver = null;
+        }
     }
 
     //private void SetupDriverPhysics(PlayerNetwork targetDriver, bool isInside)
@@ -155,6 +171,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             this.driver = driver;
             driverRef.Value = new NetworkObjectReference(driver.NetworkObject);
             driver.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
+            driver.SetPassengerMode_ClientRpc(true);
             isMoving.Value = true;
             SyncStats_ClientRpc(duration, moveSpeed);
         }
@@ -184,7 +201,6 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
         moveInput = driver.netMoveInput.Value;
 
-        // PlayerNetwork�� ������ ī�޶� ���� �̵� ����
         Vector3 camForward = Camera.main.transform.forward;
         Vector3 camRight = Camera.main.transform.right;
         camForward.y = 0; camForward.Normalize();
@@ -212,13 +228,52 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
                 SkillEffectPool.Instance.Get(effectPrefab, effectPos.position, Quaternion.identity);
             }
         }
+
+        if (!IsServer || isEnded || driver == null) return;
+
+        PlayerHealth driverHealth = driver.GetComponent<PlayerHealth>();
+        if (driverHealth == null) return;
+
+        //if(driverHealth.State.Value == PlayerState.Dead || driverHealth.State.Value == PlayerState.Down)
+        //{
+        //    StopAllCoroutines();
+        //    StartCoroutine(ForceEndVehicle_Co());
+        //}
+
+        if(!isShuttingDown && (driverHealth.State.Value == PlayerState.Dead || driverHealth.State.Value == PlayerState.Down))
+        {
+            isShuttingDown = true;
+            StopAllCoroutines();
+            StartCoroutine(ForceEndVehicle_Co());
+        }
+    }
+
+    private IEnumerator ForceEndVehicle_Co()
+    {
+        // 전용 서버에서도 탑승 트리거가 다시 작동하지 않도록 로컬에서도 비활성화
+        DisableBoatLocal();
+        DisableBoat_ClientRpc();
+        yield return new WaitForSeconds(0.05f);
+
+        KickAllPassengers();
+
+        yield return new WaitForSeconds(0.1f);
+
+        rb.useGravity = true;
+        rb.constraints = RigidbodyConstraints.None;
+
+        PlayDespawnSFX_ClientRpc();
+        GetComponent<NetworkObject>().Despawn();
     }
 
     private void LateUpdate()
     {
+        Quaternion vehicleRot = transform.rotation;
+
         if (driver != null)
         {
             driver.transform.position = driverPos.transform.position;
+            driver.transform.rotation = vehicleRot;
         }
 
         for (int i = 0; i < seatNumb; i++)
@@ -226,6 +281,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
             if (passengers[i] != null)
             {
                 passengers[i].transform.position = seats[i].transform.position;
+                passengers[i].transform.rotation = vehicleRot;
             }
         }
     }
@@ -253,7 +309,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
                 if (!alreadyIn)
                 {
                     passenger.GetComponent<PlayerHealth>().State.Value = PlayerState.OnVehicle;
-                    passenger.SetPassengerMode_ClientRpc(true); // ����/��ų ����
+                    passenger.SetPassengerMode_ClientRpc(true);
                     passengerRefs.Add(new NetworkObjectReference(passenger.NetworkObject));
                 }
             }
@@ -266,15 +322,37 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
     private void KickAllPassengers()
     {
+        if (isEnded) return;
+        isEnded = true;
+
         int currentCount = seatNumb;
         seatNumb = 0;
 
         if (driver != null)
         {
-            driver.GetComponent<PlayerHealth>().State.Value = PlayerState.Alive;
+            PlayerHealth driverHealth = driver.GetComponent<PlayerHealth>();
+
+            if (driverHealth != null)
+            {
+                // 이동은 PlayerNetwork가 State==OnVehicle이면 막고,
+                // 스킬 재사용도 UseSkill_ServerRpc가 OnVehicle이면 막는다.
+                // 특정 종료 타이밍에 OnVehicle이 남아버리는 케이스를 차단하기 위해
+                // Dead만 제외하고 강제로 Alive로 복구한다.
+                if (driverHealth.State.Value != PlayerState.Dead)
+                    driverHealth.State.Value = PlayerState.Alive;
+            }
+
+            driver.SetPassengerMode_ClientRpc(false);
+            driver.ForceExitVehicleState_ClientRpc();
             driver.EnableInputOnLandClientRpc();
-            Vector3 kickDir = driver.transform.up;
-            driver.ApplyKnockback_ClientRpc(kickDir * knockbackPower);
+
+            Collider driverCol = driver.GetComponent<Collider>();
+            if (driverCol != null) driverCol.isTrigger = false;
+            ResetCollider_ClientRpc(driver.NetworkObject);
+
+            // driver는 "제자리에서 천천히 떨어지는" 느낌:
+            // 수평 밀림 없이 아주 약한 위쪽 임펄스만 주고, 이후 중력으로 자연스럽게 낙하.
+            driver.ApplyKnockback_ClientRpc(Vector3.up * (knockbackPower * driverExitForceMultiplier));
             driver = null;
         }
 
@@ -284,17 +362,33 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
             passengers[i].GetComponent<Collider>().isTrigger = false;
             ResetCollider_ClientRpc(passengers[i].NetworkObject);
-            Vector3 flyingDir = (passengers[i].transform.position - transform.position).normalized;
-            flyingDir.y = 1f;
 
-            passengers[i].GetComponent<PlayerHealth>().State.Value = PlayerState.Alive;
-            passengers[i].EnableInputOnLandClientRpc(); // ����/��ų �ٽ� ���
-            passengers[i].ApplyKnockback_ClientRpc(flyingDir * knockbackPower);
+            // passenger는 대각선 위 방향으로 높게 날아가게(상승량↑)
+            Vector3 flyingDir = (passengers[i].transform.position - transform.position);
+            flyingDir.y = 0f;
+            flyingDir = flyingDir.sqrMagnitude < 0.0001f ? transform.forward : flyingDir.normalized;
+            flyingDir = (flyingDir + Vector3.up * passengerExitUpFactor).normalized;
+
+            PlayerHealth passengerHealth = passengers[i].GetComponent<PlayerHealth>();
+
+            if (passengerHealth != null && passengerHealth.State.Value != PlayerState.Dead)
+            {
+                passengerHealth.State.Value = PlayerState.Alive;
+            }
+
+            passengers[i].SetPassengerMode_ClientRpc(false);
+            passengers[i].ForceExitVehicleState_ClientRpc();
+            passengers[i].EnableInputOnLandClientRpc();
+            passengers[i].ApplyKnockback_ClientRpc(flyingDir * (knockbackPower * passengerExitForceMultiplier));
 
             passengers[i] = null;
         }
 
-        if (IsServer) passengerRefs.Clear();
+        if (IsServer)
+        {
+            driverRef.Value = default;
+            passengerRefs.Clear();
+        }
     }
 
     [ClientRpc]
@@ -329,6 +423,11 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
     [ClientRpc]
     private void DisableBoat_ClientRpc()
     {
+        DisableBoatLocal();
+    }
+
+    private void DisableBoatLocal()
+    {
         Collider[] boatCols = GetComponentsInChildren<Collider>();
         foreach (Collider col in boatCols)
         {
@@ -341,6 +440,10 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
         yield return new WaitForSeconds(duration);
         if (IsServer)
         {
+            isShuttingDown = true;
+
+            // 전용 서버에서도 탑승 트리거가 다시 작동하지 않도록 로컬에서도 비활성화
+            DisableBoatLocal();
             DisableBoat_ClientRpc();
 
             yield return new WaitForSeconds(0.05f);
@@ -349,7 +452,7 @@ public class ShipDuckNotSsipDuck : NetworkBehaviour
 
             yield return new WaitForSeconds(0.1f);
 
-            rb.useGravity = true;                      
+            rb.useGravity = true;
             rb.constraints = RigidbodyConstraints.None;
 
             PlayDespawnSFX_ClientRpc();
