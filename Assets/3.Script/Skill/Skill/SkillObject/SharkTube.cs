@@ -39,10 +39,13 @@ public class SharkTube : NetworkBehaviour
         {
             SetupDriverPhysics(driverNetObj.GetComponent<PlayerNetwork>(), true);
         }
+
+        isMoving.OnValueChanged += OnIsMovingChanged;
     }
 
     public override void OnNetworkDespawn()
     {
+        isMoving.OnValueChanged -= OnIsMovingChanged;
         driverRef.OnValueChanged -= OnDriverChanged;
 
         if (driver != null)
@@ -52,6 +55,12 @@ public class SharkTube : NetworkBehaviour
 
             driver = null;
         }
+    }
+
+    private void OnIsMovingChanged(bool previous, bool current)
+    {
+        if (current) AudioManager.Instance.PlaySFX("tube", loop: true);
+        else AudioManager.Instance.StopSFX();
     }
 
     private void OnDriverChanged(NetworkObjectReference previous, NetworkObjectReference current)

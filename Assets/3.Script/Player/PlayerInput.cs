@@ -55,7 +55,9 @@ public class PlayerInput : MonoBehaviour
         inputActions.Player.Move.performed += context =>
         {
             network.SendMoveInput(context.ReadValue<Vector2>());
-            AudioManager.Instance.PlaySFX("Player_walk", loop: true);
+
+            if (!IsPassenger && network.GetComponent<PlayerHealth>().State.Value != PlayerState.OnVehicle)
+                AudioManager.Instance.PlaySFX("Player_walk", loop: true);
         };
 
         inputActions.Player.Move.canceled += context =>

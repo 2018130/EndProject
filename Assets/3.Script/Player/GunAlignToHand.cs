@@ -3,28 +3,38 @@ using Unity.Netcode;
 
 public class GunAlignToHand : NetworkBehaviour
 {
-    [Header("오프셋 (총 모델에 맞게 조정)")]
+    [Header("오프셋")]
     [SerializeField] private Vector3 localPositionOffset = Vector3.zero;
     [SerializeField] private Vector3 localRotationOffset = Vector3.zero;
 
+    [Header("조준 설정")]
+    [SerializeField] private float aimRotationSpeed = 8f;
+
     private Transform _handBone;
+    private Transform _aimTarget;
+    private AimController _aimController;
     private bool _isAligning = false;
 
-    // ★ 런타임에 AimRigController가 호출해서 주입
-    public void SetHandBone(Transform handBone)
+    // 비조준 시 기본 회전 저장
+    private Quaternion _defaultLocalRotation;
+    private bool _defaultSaved = false;
+
+    public void SetHandBone(Transform handBone) => _handBone = handBone;
+
+    public void SetAimInfo(Transform aimTarget, AimController aimController)
     {
-        _handBone = handBone;
+        _aimTarget = aimTarget;
+        _aimController = aimController;
     }
 
     public void StartAlign()
     {
         if (_handBone == null)
         {
-            Debug.LogWarning($"[GunAlignToHand] {gameObject.name}: handBone이 없습니다. Initialize()가 먼저 호출되어야 합니다.");
+            Debug.LogWarning($"[GunAlignToHand] {gameObject.name}: handBone 없음");
             return;
         }
         _isAligning = true;
-        Debug.Log($"[GunAlignToHand] {gameObject.name}: StartAlign");
     }
 
     public void StopAlign() => _isAligning = false;
@@ -33,9 +43,36 @@ public class GunAlignToHand : NetworkBehaviour
     {
         if (!_isAligning || _handBone == null) return;
 
-        // ★ 위치만 복사, 회전은 건드리지 않음
+        // 위치: HandBone 위치로 고정
         transform.position = _handBone.position
             + _handBone.TransformDirection(localPositionOffset);
 
+        // 기본 회전 저장 (최초 1회)
+        if (!_defaultSaved)
+        {
+            _defaultLocalRotation = Quaternion.Euler(localRotationOffset);
+            _defaultSaved = true;
+        }
+
+        if (_aimController != null && _aimController.GetIsAiming() && _aimTarget != null)
+        {
+            // 조준 시: AimTarget 방향으로 총 회전
+            Vector3 dir = (_aimTarget.position - transform.position).normalized;
+            if (dir.sqrMagnitude > 0.001f)
+            {
+                Quaternion aimRot = Quaternion.LookRotation(dir)
+                                  * Quaternion.Euler(localRotationOffset);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation, aimRot, aimRotationSpeed * Time.deltaTime);
+            }
+        }
+        else
+        {
+            // 비조준 시: HandBone 회전 + 기본 오프셋으로 복원
+            Quaternion defaultRot = _handBone.rotation
+                                  * Quaternion.Euler(localRotationOffset);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, defaultRot, aimRotationSpeed * Time.deltaTime);
+        }
     }
 }

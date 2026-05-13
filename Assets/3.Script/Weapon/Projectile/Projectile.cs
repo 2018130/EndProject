@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -60,24 +60,30 @@ public class Projectile : NetworkBehaviour
         if (!IsServer) return;
         if (isHit) return;
 
-        // ¸ğ·¡¼º Ã¼Å© ¸ÕÀú
+        // ëª¨ë˜ì„± ì²´í¬ ë¨¼ì €
         if (other.TryGetComponent(out SandDestructible sand))
         {
-            Debug.Log($"¸ğ·¡¼ºÀÌ´å!");
+            Debug.Log($"ëª¨ë˜ì„±ì´ë‹·!");
             sand.RegisterHit(other.ClosestPoint(transform.position));
             isHit = true;
             GetComponent<NetworkObject>().Despawn();
             return;
         }
-
-        Debug.Log($"Ãæµ¹: {other.gameObject.name}, ·¹ÀÌ¾î: {LayerMask.LayerToName(other.gameObject.layer)}");
+        // â˜… BeachObject ì²´í¬ â€” isHit ì²˜ë¦¬ ì•ˆ í•¨ (ê´€í†µ)
+        if (other.TryGetComponent(out BeachObject beachObj))
+        {
+            // BeachObjectëŠ” OnTriggerEnterì—ì„œ ìì²´ì ìœ¼ë¡œ í˜ ì²˜ë¦¬
+            // Projectileì€ ê³„ì† ë‚ ì•„ê° (return ì•ˆ í•¨)
+            return;
+        }
+        Debug.Log($"ì¶©ëŒ: {other.gameObject.name}, ë ˆì´ì–´: {LayerMask.LayerToName(other.gameObject.layer)}");
 
         PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
 
-        if (playerHealth == null) return; // ÇÃ·¹ÀÌ¾î ¾Æ´Ï¸é ¹«½Ã
+        if (playerHealth == null) return; // í”Œë ˆì´ì–´ ì•„ë‹ˆë©´ ë¬´ì‹œ
 
-        if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return; // ÀÚ±â ÀÚ½Å ¹«½Ã
-        Debug.Log($"Àû ¶§¸° °Å ¸ÂÀ½");
+        if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return; // ìê¸° ìì‹  ë¬´ì‹œ
+        Debug.Log($"ì  ë•Œë¦° ê±° ë§ìŒ");
         isHit = true;
 
         playerHealth.TakeDamage(projectileData.Damage, projectileData.OwnerFaction, projectileData.OwnerClientId, other.ClosestPoint(transform.position), transform.position);
@@ -90,14 +96,14 @@ public class Projectile : NetworkBehaviour
 
         startPosition = transform.position;
 
-        // ¹ß»çÀÚ ÇÃ·¹ÀÌ¾î Äİ¶óÀÌ´õ ¹«½Ã
+        // ë°œì‚¬ì í”Œë ˆì´ì–´ ì½œë¼ì´ë” ë¬´ì‹œ
         if (NetworkManager.Singleton.ConnectedClients
             .TryGetValue(projectileData.OwnerClientId, out var client))
         {
             Collider myCollider = GetComponent<Collider>();
             if (myCollider == null) return;
 
-            // ¹ß»çÀÚÀÇ ¸ğµç Äİ¶óÀÌ´õ ¹«½Ã
+            // ë°œì‚¬ìì˜ ëª¨ë“  ì½œë¼ì´ë” ë¬´ì‹œ
             Collider[] ownerColliders = client.PlayerObject.GetComponentsInChildren<Collider>();
             foreach (Collider col in ownerColliders)
             {

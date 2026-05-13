@@ -12,8 +12,12 @@ public class TitleSceneManager : MonoBehaviour
 #if UNITY_SERVER
         SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.RoomScene);
 #else
-        SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.SignScene);
+        //SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.SignScene);
 #endif
     }
 
+    public void StartGame()
+    {
+        SceneChangeManager.Instance.ChangeSceneForSinglePlay(SceneType.SignScene);
+    }
 }

@@ -77,6 +77,11 @@ public class RangedWeapon : BaseWeapon
 
         if (DateTime.Now.Subtract(lastShootTime) >= TimeSpan.FromSeconds(1 / weaponData.FireRate))
         {
+            AudioManager.Instance.PlaySFX("gun_shoot");
+
+            PlayerNetwork playerNetwork = GetComponentInParent<PlayerNetwork>();
+            playerNetwork?.PlayShootSFX_ClientRpc("gun_shoot");
+
             AimController aimController = GetComponentInParent<AimController>();
             Vector3 shootDir = transform.forward;
 
