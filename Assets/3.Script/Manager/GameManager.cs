@@ -190,7 +190,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         foreach (var p in allPlayers)
         {
             if ((Faction)p.PlayerFactionInt.Value == winner)
-                ParticleManager.Instance.PlayWinParticle(p.transform);
+                ParticleManager.Instance.PlayWin(p.transform.position);
         }
 
 
