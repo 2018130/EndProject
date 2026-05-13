@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class MalangBong : NetworkBehaviour
 {
-    [SerializeField] private Collider attackCollider;
+    //[SerializeField] private Collider attackCollider;
+    private readonly List<Collider> _pipeColliders = new List<Collider>();
     private Animator playerAnimator;
 
     private float damage;
@@ -23,12 +24,14 @@ public class MalangBong : NetworkBehaviour
 
     private HashSet<ulong> hitThisSwing = new HashSet<ulong>();
 
+    [SerializeField] private float hitStartDelay = 0.2f;  // 스윙 시작 후 콜라이더 ON까지 대기
+    [SerializeField] private float hitActiveDuration = 0.3f;  // 콜라이더 켜져 있는 시간
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
-        if (attackCollider != null)
-            attackCollider.enabled = false;
+        DisableAllColliders();
     }
 
     // PlayerNetwork에서 스폰 직후 호출하여 CardData 값 주입
@@ -36,13 +39,37 @@ public class MalangBong : NetworkBehaviour
     {
         damage = cardDamage;
         attackCooldown = cardSpeed;
-        this.ownerClientId = ownerId;
-        this.playerAnimator = playerAni;
+        ownerClientId = ownerId;
+        playerAnimator = playerAni;
 
-        if (attackCollider != null)
-            attackCollider.enabled = false;
-        //if (animator == null)
-        //    animator = GetComponent<Animator>();
+        // 서버에서만 히트박스 세팅 (OnTriggerEnter 처리는 서버에서만 하므로 충분)
+        if (IsServer)
+        {
+            SetupHitboxes();
+        }
+    }
+
+    private void SetupHitboxes()
+    {
+        _pipeColliders.Clear();
+
+        Collider[] allChildColliders = GetComponentsInChildren<Collider>(includeInactive: true);
+        foreach (Collider col in allChildColliders)
+        {
+            if (col.gameObject == gameObject) continue;
+
+            col.isTrigger = true;
+            col.enabled = false;
+
+            MalangBongHitbox hitbox = col.gameObject.GetComponent<MalangBongHitbox>();
+            if (hitbox == null)
+                hitbox = col.gameObject.AddComponent<MalangBongHitbox>();
+
+            hitbox.Setup(this);
+            _pipeColliders.Add(col);
+        }
+
+        Debug.Log($"[MalangBong] 히트박스 설정 완료: {_pipeColliders.Count}개 파이프 콜라이더");
     }
 
     public void SetFollowTarget(Transform target)
@@ -91,7 +118,19 @@ public class MalangBong : NetworkBehaviour
         _canAttack.Value = false;
         hitThisSwing.Clear();
 
-        yield return new WaitForSeconds(attackCooldown);
+        yield return new WaitForSeconds(hitStartDelay);
+
+        foreach (Collider col in _pipeColliders)
+            if (col != null) col.enabled = true;
+
+        yield return new WaitForSeconds(hitActiveDuration);
+
+        foreach (Collider col in _pipeColliders)
+            if (col != null) col.enabled = false;
+
+        float remaining = attackCooldown - hitStartDelay - hitActiveDuration;
+        if (remaining > 0f)
+            yield return new WaitForSeconds(remaining);
 
         _canAttack.Value = true;
     }
@@ -99,7 +138,6 @@ public class MalangBong : NetworkBehaviour
     [ClientRpc]
     private void PlayAttackAnimator_ClientRpc(ulong playerNetworkObjectId)
     {
-        // SpawnManager.SpawnedObjects는 서버·클라이언트 모두에서 사용 가능
         if (playerAnimator == null)
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects
@@ -115,38 +153,32 @@ public class MalangBong : NetworkBehaviour
         }
         else
         {
-            Debug.Log($"{ownerClientId} player Animator is null");
+            Debug.LogWarning($"[MalangBong] {ownerClientId} player Animator is null");
         }
     }
 
-    public void EnableAttackCollider()//휘두르는 프레임 시작 시 이벤트 호출
+    private void DisableAllColliders()
     {
-        if (IsServer && attackCollider != null)
-            attackCollider.enabled = true;
+        foreach (Collider col in _pipeColliders)
+        {
+            if (col != null) col.enabled = false;
+        }
     }
 
-    public void DisableAttackCollider()//휘두르는 프레임 종료 시 이벤트 호출
-    {
-        if (IsServer && attackCollider != null)
-            attackCollider.enabled = false;
-    }
-
-    private void OnTriggerEnter(Collider other)
+    public void OnHitboxTriggerEnter(Collider other)
     {
         if (!IsServer) return;
 
         if (other.TryGetComponent(out Combat targetCombat))
         {
-            // 자신을 때리는 것 방지
             if (other.TryGetComponent(out NetworkObject targetNetObj))
             {
-                if (targetNetObj.OwnerClientId == OwnerClientId) return;
+                if (targetNetObj.OwnerClientId == ownerClientId) return;
                 if (hitThisSwing.Contains(targetNetObj.OwnerClientId)) return;
                 hitThisSwing.Add(targetNetObj.OwnerClientId);
             }
 
-            // 소유자(공격자)의 Combat 컴포넌트 찾기
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(OwnerClientId, out var client))
+            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(ownerClientId, out var client))
             {
                 if (client.PlayerObject.TryGetComponent(out Combat myCombat))
                 {

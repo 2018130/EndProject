@@ -76,7 +76,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (!IsPassenger && !IsDown)
             {
-                isFiring = true;          
+                isFiring = true;
                 OnFirePerformed?.Invoke();
             }
         };
@@ -106,11 +106,12 @@ public class PlayerInput : MonoBehaviour
 
         // Á¡ÇÁ
         inputActions.Player.Jump.performed += context =>
-        { if (!IsDown) network.SendJumpInput(); };
+        { if (!IsPassenger && !IsDown) network.SendJumpInput(); };
 
         // Á¦Æ®ÆÑ
-        inputActions.Player.JetPack.performed += context => {
-            if (!IsDown) network.SendJetpackInput(true);
+        inputActions.Player.JetPack.performed += context =>
+        {
+            if (!IsPassenger && !IsDown) network.SendJetpackInput(true);
         };
 
         inputActions.Player.JetPack.canceled += context =>
@@ -119,14 +120,17 @@ public class PlayerInput : MonoBehaviour
         // ´ë½¬
         inputActions.Player.Dash.performed += context =>
         {
-            if (!IsDown) network.SendDashInput();
+            if (!IsPassenger && !IsDown) network.SendDashInput();
         };
 
         // ÁÜ
         inputActions.Player.Zoom.performed += context =>
         {
-            isZooming = true;
-            OnZoomPerformed?.Invoke();
+            if (!IsPassenger && !IsDown)
+            {
+                isZooming = true;
+                OnZoomPerformed?.Invoke();
+            }
         };
         inputActions.Player.Zoom.canceled += context =>
         {
