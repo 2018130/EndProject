@@ -4,28 +4,17 @@ using UnityEngine;
 
 public class SandDestructible : NetworkBehaviour
 {
-    [Header("Visual")]
-    [SerializeField] private MeshFilter visualMeshFilter;
-
-    [Header("Stage Meshes")]
-    [SerializeField] private Mesh[] stageMeshes;
-
-    [Header("Stage Colliders")]
-    [SerializeField] private GameObject[] stageColliderRoots;
+    [Header("Stage Objects")]
+    [Tooltip("0 = pristine / 마지막 = 완전 파괴")]
+    [SerializeField] private GameObject[] stageObjects;
 
     [Header("Durability")]
     [SerializeField] private float maxHp = 100f;
 
     [SerializeField] private float despawnDelay = 2f;
 
-    [Header("Optimization")]
+    [Header("FX")]
     [SerializeField] private float effectCullDistance = 80f;
-
-    [SerializeField] private bool useDeferredStageApply = true;
-
-    // ─────────────────────────────
-    // Network
-    // ─────────────────────────────
 
     private NetworkVariable<byte> _stage = new(
         0,
@@ -33,17 +22,11 @@ public class SandDestructible : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
-    // ─────────────────────────────
-    // Runtime
-    // ─────────────────────────────
-
     private float _hp;
 
-    private byte _currentStage = 255;
+    private int _currentStage = -1;
 
     private bool _destroyed;
-
-    private Coroutine _stageRoutine;
 
     private Camera _mainCamera;
 
@@ -53,11 +36,6 @@ public class SandDestructible : NetworkBehaviour
 
     private void Awake()
     {
-        if (visualMeshFilter == null)
-        {
-            visualMeshFilter = GetComponent<MeshFilter>();
-        }
-
         _mainCamera = Camera.main;
     }
 
@@ -71,7 +49,7 @@ public class SandDestructible : NetworkBehaviour
             _stage.Value = 0;
         }
 
-        ForceApplyStage(_stage.Value);
+        ApplyStage(_stage.Value);
     }
 
     public override void OnNetworkDespawn()
@@ -90,21 +68,21 @@ public class SandDestructible : NetworkBehaviour
 
         if (_destroyed)
             return;
-
+        Debug.Log($"RegisterHit / IsServer:{IsServer}");
         _hp = Mathf.Max(_hp - damage, 0f);
 
         byte newStage = CalculateStage(_hp);
 
-        // 매 피격 FX
+        // 피격 FX
         PlayHitEffect_ClientRpc(hitPoint);
 
-        // Stage 변경
+        // 단계 변경
         if (newStage != _stage.Value)
         {
             _stage.Value = newStage;
         }
 
-        // Destroy
+        // 파괴
         if (_hp <= 0f)
         {
             _destroyed = true;
@@ -121,86 +99,45 @@ public class SandDestructible : NetworkBehaviour
 
     private byte CalculateStage(float hp)
     {
+        if (stageObjects == null || stageObjects.Length == 0)
+            return 0;
+
         float ratio = hp / maxHp;
 
+        int stageCount = stageObjects.Length;
+
         return (byte)Mathf.Clamp(
-            Mathf.FloorToInt((1f - ratio) * 5f),
+            Mathf.FloorToInt((1f - ratio) * stageCount),
             0,
-            4
+            stageCount - 1
         );
     }
 
     private void OnStageChanged(byte previous, byte current)
     {
-        if (useDeferredStageApply)
-        {
-            if (_stageRoutine != null)
-            {
-                StopCoroutine(_stageRoutine);
-            }
-
-            _stageRoutine =
-                StartCoroutine(DeferredApplyStage(current));
-        }
-        else
-        {
-            ForceApplyStage(current);
-        }
+        ApplyStage(current);
     }
 
-    private IEnumerator DeferredApplyStage(byte stage)
-    {
-        yield return null;
-
-        ForceApplyStage(stage);
-    }
-
-    // ─────────────────────────────
-    // Apply
-    // ─────────────────────────────
-
-    private void ForceApplyStage(byte stage)
+    private void ApplyStage(int stage)
     {
         if (_currentStage == stage)
             return;
 
         _currentStage = stage;
 
-        ApplyMesh(stage);
-
-        ApplyCollider(stage);
-    }
-
-    private void ApplyMesh(byte stage)
-    {
-        if (stageMeshes == null)
+        if (stageObjects == null)
             return;
 
-        if (stage >= stageMeshes.Length)
-            return;
-
-        Mesh targetMesh = stageMeshes[stage];
-
-        if (targetMesh == null)
-            return;
-
-        visualMeshFilter.sharedMesh = targetMesh;
-    }
-
-    private void ApplyCollider(byte stage)
-    {
-        if (stageColliderRoots == null)
-            return;
-
-        for (int i = 0; i < stageColliderRoots.Length; i++)
+        for (int i = 0; i < stageObjects.Length; i++)
         {
-            GameObject root = stageColliderRoots[i];
-
-            if (root == null)
+            if (stageObjects[i] == null)
                 continue;
 
-            root.SetActive(i == stage);
+            stageObjects[i].SetActive(i == stage);
         }
+
+        Debug.Log($"[SandDestructible] Stage Changed → {stage}");
+        Debug.Log(stageObjects.Length);
     }
 
     // ─────────────────────────────
@@ -240,15 +177,14 @@ public class SandDestructible : NetworkBehaviour
         }
 
         float sqrDistance =
-            (_mainCamera.transform.position - worldPos)
-            .sqrMagnitude;
+            (_mainCamera.transform.position - worldPos).sqrMagnitude;
 
         return sqrDistance <=
                effectCullDistance * effectCullDistance;
     }
 
     // ─────────────────────────────
-    // Despawn
+    // Destroy
     // ─────────────────────────────
 
     private IEnumerator DespawnAfterDelay()
