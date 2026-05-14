@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,13 +6,19 @@ public struct ProjectileData
 {
     public ulong OwnerClientId;
     public Faction OwnerFaction;
+
     public int MaxHitCountPerShot;
+
     public float BulletSpeed;
     public float GravityStartDistance;
-    public float Damage;
+    public float LiftForce; //조준선 보정용, 위로 힘을 줌
+    public float AirResistance; // 탄환 감속량 (0이면 저격총처럼 무한 직선)
 
+    public float Damage;
 }
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))]
 public class Projectile : NetworkBehaviour
 {
     private ProjectileData projectileData;
@@ -22,98 +26,173 @@ public class Projectile : NetworkBehaviour
     private Rigidbody rb;
 
     private Vector3 startPosition;
-    private bool gravityEnabled = false;
 
+    private bool gravityEnabled = false;
     private bool isHit = false;
+
+    // ─────────────────────────────
+    // Unity
+    // ─────────────────────────────
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+
         rb.useGravity = false;
+        rb.collisionDetectionMode =
+            CollisionDetectionMode.ContinuousDynamic;
     }
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
+        if (!IsServer)
+            return;
+
         StartCoroutine(AutoDespawn());
     }
 
     private void Update()
     {
-        if (gravityEnabled) return;
+        if (gravityEnabled)
+            return;
 
-        if (Vector3.Distance(startPosition, transform.position) >= projectileData.GravityStartDistance)
+        if (Vector3.Distance(startPosition, transform.position)
+            >= projectileData.GravityStartDistance)
         {
             rb.useGravity = true;
             gravityEnabled = true;
         }
     }
 
-    private IEnumerator AutoDespawn()
-    {
-        yield return new WaitForSeconds(20f);
-        GetComponent<NetworkObject>().Despawn();
-    }
+    // ─────────────────────────────
+    // Trigger
+    // ─────────────────────────────
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return;
-        if (isHit) return;
+        if (!IsServer)
+            return;
 
-        // 모래성 체크 먼저
-        if (other.TryGetComponent(out SandDestructible sand))
+        if (isHit)
+            return;
+
+        Debug.Log($"[Projectile] Trigger Hit : {other.name}");
+
+        // ─────────────────────────────
+        // Sand Destructible
+        // ─────────────────────────────
+
+        SandDestructible sand =
+            other.GetComponentInParent<SandDestructible>();
+
+        if (sand != null)
         {
-            Debug.Log($"모래성이닷!");
-            sand.RegisterHit(other.ClosestPoint(transform.position));
+            Debug.Log("[Projectile] SandDestructible Hit");
+
+            sand.RegisterHit(
+                other.ClosestPoint(transform.position),
+                projectileData.Damage
+            );
+
             isHit = true;
+
             GetComponent<NetworkObject>().Despawn();
+
             return;
         }
-        // ★ BeachObject 체크 — isHit 처리 안 함 (관통)
-        if (other.TryGetComponent(out BeachObject beachObj))
-        {
-            // BeachObject는 OnTriggerEnter에서 자체적으로 힘 처리
-            // Projectile은 계속 날아감 (return 안 함)
+
+        // ─────────────────────────────
+        // Player
+        // ─────────────────────────────
+
+        PlayerHealth playerHealth =
+            other.GetComponentInParent<PlayerHealth>();
+
+        if (playerHealth == null)
             return;
-        }
-        Debug.Log($"충돌: {other.gameObject.name}, 레이어: {LayerMask.LayerToName(other.gameObject.layer)}");
 
-        PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
+        if (playerHealth.OwnerClientId
+            == projectileData.OwnerClientId)
+            return;
 
-        if (playerHealth == null) return; // 플레이어 아니면 무시
-
-        if (playerHealth.OwnerClientId == projectileData.OwnerClientId) return; // 자기 자신 무시
-        Debug.Log($"적 때린 거 맞음");
         isHit = true;
 
-        playerHealth.TakeDamage(projectileData.Damage, projectileData.OwnerFaction, projectileData.OwnerClientId, other.ClosestPoint(transform.position), transform.position);
+        playerHealth.TakeDamage(
+            projectileData.Damage,
+            projectileData.OwnerFaction,
+            projectileData.OwnerClientId,
+            other.ClosestPoint(transform.position),
+            transform.position
+        );
+
         GetComponent<NetworkObject>().Despawn();
     }
+
+    // ─────────────────────────────
+    // Init
+    // ─────────────────────────────
 
     public void Initialize(ProjectileData projectileData)
     {
         this.projectileData = projectileData;
-
         startPosition = transform.position;
 
-        // 발사자 플레이어 콜라이더 무시
-        if (NetworkManager.Singleton.ConnectedClients
-            .TryGetValue(projectileData.OwnerClientId, out var client))
-        {
-            Collider myCollider = GetComponent<Collider>();
-            if (myCollider == null) return;
+        // 저격총 데이터에서 이 값을 0으로 보내면 속도가 전혀 줄지 않습니다.
+        rb.linearDamping = projectileData.AirResistance;
 
-            // 발사자의 모든 콜라이더 무시
-            Collider[] ownerColliders = client.PlayerObject.GetComponentsInChildren<Collider>();
-            foreach (Collider col in ownerColliders)
-            {
-                Physics.IgnoreCollision(myCollider, col);
-            }
+        IgnoreOwnerCollision();
+    }
+
+    private void IgnoreOwnerCollision()
+    {
+        if (!NetworkManager.Singleton.ConnectedClients
+            .TryGetValue(projectileData.OwnerClientId,
+                out var client))
+            return;
+
+        Collider myCollider = GetComponent<Collider>();
+
+        if (myCollider == null)
+            return;
+
+        Collider[] ownerColliders =
+            client.PlayerObject
+                .GetComponentsInChildren<Collider>();
+
+        foreach (Collider col in ownerColliders)
+        {
+            Physics.IgnoreCollision(myCollider, col);
         }
     }
 
+    // ─────────────────────────────
+    // Movement
+    // ─────────────────────────────
+
     public void AddForce(Vector3 dir)
     {
-        rb.AddForce(dir.normalized * projectileData.BulletSpeed);
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        // 조준 방향(dir)에 위쪽 방향(Vector3.up) 보정치를 더합니다.
+        // liftForce가 0.1이라면 위쪽으로 약 5.7도 정도 더 들어올려 발사합니다.
+        Vector3 correction = Vector3.up * projectileData.LiftForce;
+        Vector3 finalDir = (dir.normalized + correction).normalized;
+
+        rb.linearVelocity = finalDir * projectileData.BulletSpeed;
+    }
+
+    // ─────────────────────────────
+    // Lifetime
+    // ─────────────────────────────
+
+    private IEnumerator AutoDespawn()
+    {
+        yield return new WaitForSeconds(20f);
+
+        if (!IsSpawned)
+            yield break;
+
+        GetComponent<NetworkObject>().Despawn();
     }
 }

@@ -373,7 +373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3894898679
+  GlobalObjectIdHash: 2418676885
   InScenePlacedSourceGlobalObjectIdHash: 3894898679
   DeferredDespawnTick: 0
   Ownership: 1
@@ -432,6 +432,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   localPositionOffset: {x: 0, y: 0, z: 0}
   localRotationOffset: {x: 0, y: 0, z: 0}
+  aimRotationSpeed: 8
 --- !u!114 &-6991540804634029191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,6 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GripTargetAim
   rotationOffset: {x: 0, y: 0, z: 0}
+  aimLerpSpeed: 8
 --- !u!1001 &6990484328311800581
 PrefabInstance:
   m_ObjectHideFlags: 0

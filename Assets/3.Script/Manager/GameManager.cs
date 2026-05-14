@@ -166,6 +166,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private void OnPlayerDead(PlayerHealth health)
     {
+        ParticleManager.Instance.PlayKill(health.transform);
         StartCoroutine(RespawnRoutine(health));
     }
 
@@ -178,21 +179,34 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void EndGame()
     {
+        // 1. 승리 팀 판별
         Faction winner = GameTimerNetwork.Instance.TeamAKills.Value >=
                          GameTimerNetwork.Instance.TeamBKills.Value
                          ? Faction.TeamA : Faction.TeamB;
 
         Debug.Log($"End game!!! winner : {winner.ToString()}");
 
+        // 2. UI 표시
         GameUIManager.Instance.SetActiveEndingText(true);
 
+        // 3. 파티클 연출 분기
         PlayerHealth[] allPlayers = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
         foreach (var p in allPlayers)
         {
-            if ((Faction)p.PlayerFactionInt.Value == winner)
-                ParticleManager.Instance.PlayWinParticle(p.transform);
-        }
+            // 해당 플레이어의 진영 확인
+            Faction playerFaction = (Faction)p.PlayerFactionInt.Value;
 
+            if (playerFaction == winner)
+            {
+                // 승리 팀원들에게만 Win 파티클 재생
+                ParticleManager.Instance.PlayWin(p.transform);
+            }
+            else
+            {
+                // 패배 팀원들에게는 아무것도 하지 않음(TODO: 패배 추가)
+                Debug.Log($"{p.gameObject.name}은(는) 패배 진영입니다.");
+            }
+        }
 
         OnEndGame?.Invoke(winner);
     }
