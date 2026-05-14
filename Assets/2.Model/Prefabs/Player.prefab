@@ -720,7 +720,7 @@ MonoBehaviour:
   normalFOV: 60
   zoomFOV: 40
   normalOffset: {x: 0, y: -0.5, z: -1}
-  zoomOffset: {x: 1, y: -1.5, z: -1}
+  zoomOffset: {x: 1, y: -1, z: 0}
   lerpSpeed: 8
   isEnding: 0
   isKillEffectPlaying: 0
