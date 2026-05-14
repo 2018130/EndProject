@@ -39,7 +39,7 @@ public class EndingController : MonoBehaviour
                 }
                 else
                 {
-                    if(idx >= playerSpawnPoint.Count)
+                    if (idx >= playerSpawnPoint.Count)
                     {
                         Debug.LogWarning($"배열 범위를 초과했습니다.");
                         return;
@@ -47,6 +47,7 @@ public class EndingController : MonoBehaviour
 
                     playerCharacter.transform.position = playerSpawnPoint[idx++].position;
                 }
+
             }
         }
 
@@ -80,5 +81,6 @@ public class EndingController : MonoBehaviour
         {
             Debug.LogWarning("로컬 플레이어의 PlayerCameraController를 찾을 수 없습니다.");
         }
+
     }
 }

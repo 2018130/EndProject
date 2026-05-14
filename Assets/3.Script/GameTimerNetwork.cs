@@ -83,7 +83,7 @@ public class GameTimerNetwork : NetworkBehaviour
             .TryGetValue(killerNetworkObjectId, out var netObj)) return;
 
         AudioManager.Instance.PlaySFX("Yipee");
-        ParticleManager.Instance.PlayKill(netObj.transform.position);
+        ParticleManager.Instance.PlayKill(netObj.transform);
 
     }
 
