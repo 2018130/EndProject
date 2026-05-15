@@ -5233,7 +5233,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6376010804386586972, guid: 7c1b3aa32dd98b04d8feb8f5d0f52504, type: 3}
       propertyPath: maxPlayer
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6376010804386586972, guid: 7c1b3aa32dd98b04d8feb8f5d0f52504, type: 3}
       propertyPath: roomCanvas
