@@ -26376,7 +26376,7 @@ MonoBehaviour:
   mapCenter: {x: 0, y: 0, z: 0}
   mapRangeX: 150
   mapRangeZ: 200
-  spawnHeight: 15
+  spawnHeight: 50
   boundsBuffer: 2
   enableRespawn: 1
   respawnDelay: 5
@@ -26391,7 +26391,7 @@ Transform:
   m_GameObject: {fileID: 1809999942}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.69912, y: 4.31154, z: 62.16457}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
