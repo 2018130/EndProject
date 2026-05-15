@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: 8d2e14f22f66d43448fcfd29cc1f89de
+  m_OcclusionCullingData: {fileID: 36300000, guid: 26ed63ba0d919ad42b224cd0e206451b, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -4580,6 +4580,10 @@ PrefabInstance:
     - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
       propertyPath: m_Name
       value: Sand_Castle_Small (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9705,7 +9709,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &827801706
 Transform:
@@ -12568,6 +12572,10 @@ PrefabInstance:
     - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
       propertyPath: m_Name
       value: Sand_Castle_Small (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15723,6 +15731,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sand_Castle_Small (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16860,7 +16872,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1146710580
 Transform:
@@ -17436,7 +17448,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1194975988
 Transform:
@@ -21068,7 +21080,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1455866932
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23061,6 +23073,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sand_Castle_Small (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23556,6 +23572,10 @@ PrefabInstance:
     - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
       propertyPath: m_Name
       value: Sand_Castle_Small (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25573,6 +25593,10 @@ PrefabInstance:
     - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
       propertyPath: m_Name
       value: Sand_Castle_Small (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344491469732937741, guid: b7043c129a707e04297a2783d82a9a05, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -28752,6 +28776,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2356911658827342002, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -36.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356911658827342002, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.18
+      objectReference: {fileID: 0}
     - target: {fileID: 2437268968629777757, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -29105,6 +29137,10 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5778448504464707816, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5952207164879091013, guid: e23cf336cf7909846a1239488ad74b74, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -31296,7 +31332,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2092662233
 Transform:
