@@ -606,8 +606,8 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   maxWater: 100
   jetpackDrain: 20
-  rechargeRate: 10
-  rechargeDelay: 1
+  rechargeRate: 15
+  rechargeDelay: 0.5
   Water:
     m_InternalValue: 100
 --- !u!114 &8811993559645148064

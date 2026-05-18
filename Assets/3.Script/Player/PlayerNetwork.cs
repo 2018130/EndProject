@@ -58,6 +58,7 @@ public class PlayerNetwork : NetworkBehaviour
     private GameObject jetpackEffectParticle;
     [SerializeField]
     private ParticleSystem upperHitEffect;
+    private bool isKillEffectPlaying = false;
 
     private void Awake()
     {
@@ -119,6 +120,25 @@ public class PlayerNetwork : NetworkBehaviour
         spawnEffect.Play();
     }
 
+    //[Rpc(SendTo.ClientsAndHost)]
+    //public void SetOnVehicleState_Rpc(bool isOnVehicle, ulong targetClientId)
+    //{
+    //    if (OwnerClientId != targetClientId) return;
+
+    //    var health = GetComponent<PlayerHealth>();
+    //    if (health == null) return;
+
+    //    if(isOnVehicle)
+    //    {
+    //        health.State.Value = PlayerState.OnVehicle;
+    //    }
+    //    else
+    //    {
+    //        if (health.State.Value == PlayerState.OnVehicle)
+    //            health.State.Value = PlayerState.Alive;
+    //    }
+    //}
+
     private void OnPlayerStateChanged(PlayerState oldState, PlayerState newState)
     {
         switch (newState)
@@ -127,7 +147,11 @@ public class PlayerNetwork : NetworkBehaviour
                 animator.SetBool("IsCrawling", true);
                 // Down 상태 이동속도 감소
                 moveSpeed = baseMoveSpeed * 0.4f;
-                if (IsOwner) playerInput.IsDown = true;
+                if (IsOwner)
+                {
+                    playerInput.IsDown = true;
+                    playerInput.IsPassenger = false;
+                }
                 break;
 
             case PlayerState.Alive:
@@ -136,14 +160,26 @@ public class PlayerNetwork : NetworkBehaviour
                 if (IsOwner)
                 {
                     playerInput.IsDown = false;
+                    playerInput.IsPassenger = false;
                     PlayerEffectUI.Instance?.SetGrayscale(false);
+                }
+                break;
+
+            case PlayerState.OnVehicle:
+                animator.SetBool("IsCrawling", false);
+                animator.SetFloat("X", 0);
+                animator.SetFloat("Y", 0);
+                if (IsOwner)
+                {
+                    playerInput.IsPassenger = true;
                 }
                 break;
 
             case PlayerState.Dead:
                 animator.SetBool("IsCrawling", false);
                 AudioManager.Instance.PlaySFX("Dead");
-                if (IsOwner) {
+                if (IsOwner)
+                {
                     playerInput.IsDown = true;
                     PlayerEffectUI.Instance?.SetGrayscale(true);
                 }
@@ -250,6 +286,9 @@ public class PlayerNetwork : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!IsOwner) return;
+
+        PlayerHealth ph = GetComponent<PlayerHealth>();
+        if (ph != null && ph.State.Value == PlayerState.OnVehicle) return;
 
         Vector3 camForward = Camera.main.transform.forward;
         Vector3 camRight = Camera.main.transform.right;
@@ -434,7 +473,7 @@ public class PlayerNetwork : NetworkBehaviour
             layerMask
         );
 
-        Debug.Log($"IsGrounded: {grounded} / 거리: {hit.distance}");
+        //Debug.Log($"IsGrounded: {grounded} / 거리: {hit.distance}");
         return grounded;
     }
 
@@ -463,6 +502,9 @@ public class PlayerNetwork : NetworkBehaviour
         //    Debug.Log("[PlayerNetwork] 말랑봉 장착 중 스킬 사용 불가");
         //    return;
         //}
+
+        var health = GetComponent<PlayerHealth>();
+        if (health.State.Value == PlayerState.OnVehicle || health.State.Value == PlayerState.Down) return;
 
         CardData card = GameManager.Instance.SceneContext
                             .GameDataManager.GetCardData(cardId);
@@ -521,32 +563,35 @@ public class PlayerNetwork : NetworkBehaviour
             case CardType.MalrangBong:
                 if (TryGetComponent(out WeaponController weaponController))
                 {
-                    // 1. 기존 말랑봉 디스폰 (중복 스폰 방지)
-
                     AimRigController arc = GetComponent<AimRigController>();
-                    Transform spawnAnchor = (arc != null && arc.HandBone != null) ? arc.HandBone :weaponPivot;
-                    Debug.Log((arc != null && spawnAnchor == arc.HandBone) ? "HandBone 사용" : "weaponPivot 사용");
+                    Transform spawnAnchor = (arc != null && arc.HandBone != null) ? arc.HandBone : weaponPivot;
 
                     weaponController.DespawnMalrangBongOnServer();
 
-                    // 2. 새 말랑봉 스폰
                     GameObject mbObj = Instantiate(card.SkillPrefab, spawnAnchor.position, spawnAnchor.rotation);
                     NetworkObject mbNo = mbObj.GetComponent<NetworkObject>();
                     mbNo.SpawnWithOwnership(OwnerClientId);
 
-                    // 3. 서버에서 초기화
                     MalangBong mb = mbObj.GetComponent<MalangBong>();
                     mb.Initialize(card.Damage, card.Speed, OwnerClientId, animator);
 
-                    // 4. WeaponController에 장착 알림 → 기존 무기 SetActive(false) 트리거
-                    //weaponController.SetMalrangBongEquipped(mbNo);
+                    weaponController.SetMalrangBongEquipped(mbNo);
 
-                    // 5. 모든 클라이언트에서 weaponPivot follow 설정
-                    //    (RPC가 스폰보다 먼저 도착할 수 있어 코루틴으로 대기)
                     AttachMalrangBongToHand_ClientRpc(mbNo.NetworkObjectId);
                 }
                 break;
         }
+    }
+
+    [ClientRpc]
+    public void ForceExitVehicleState_ClientRpc()
+    {
+        if (!IsOwner) return;
+        var pi = GetComponent<PlayerInput>();
+        if (pi == null) return;
+        pi.enabled = true;
+        pi.IsPassenger = false;
+        pi.IsDown = false;
     }
 
     [ClientRpc]
@@ -577,7 +622,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (mbNetObj.TryGetComponent(out MalangBong mb))
         {
             AimRigController arc = GetComponent<AimRigController>();
-            if(arc != null && arc.HandBone != null)
+            if (arc != null && arc.HandBone != null)
             {
                 mb.SetFollowTarget(arc.HandBone);
             }
@@ -725,7 +770,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void KillEffect_Kick()
     {
-        if (aimedDownPlayer == null)
+        if (aimedDownPlayer == null || isKillEffectPlaying)
         {
             return;
         }
@@ -736,13 +781,13 @@ public class PlayerNetwork : NetworkBehaviour
 
         float distToTarget = Vector3.Distance(target.transform.position, transform.position);
         Debug.Log($"Target to dist : " + distToTarget);
-        if(distToTarget >= 3f)
+        if (distToTarget >= 3f)
         {
             StartCoroutine(PlayKickAnimation(target));
         }
         else
         {
-            if(UnityEngine.Random.Range(0, 2) == 0)
+            if (UnityEngine.Random.Range(0, 2) == 0)
             {
                 StartCoroutine(PlayUppercutAnimation(target));
             }
@@ -751,6 +796,8 @@ public class PlayerNetwork : NetworkBehaviour
                 StartCoroutine(PlaySwingAnimation(target));
             }
         }
+
+        isKillEffectPlaying = true;
     }
 
     private IEnumerator PlayKickAnimation(PlayerHealth otherPlayer)
@@ -874,6 +921,8 @@ public class PlayerNetwork : NetworkBehaviour
             virtualCam.Target.TrackingTarget = cameraPivot;
             virtualCam.Target.LookAtTarget = cameraPivot;
         }
+
+        isKillEffectPlaying = false;
     }
 
 

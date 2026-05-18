@@ -154,9 +154,12 @@ public class SharkTube : NetworkBehaviour
 
     private void LateUpdate()
     {
+        Quaternion vehicleRot = transform.rotation;
+
         if (driver != null)
         {
             driver.transform.position = driverPos.transform.position;
+            driver.transform.rotation = vehicleRot;
         }
     }
 
