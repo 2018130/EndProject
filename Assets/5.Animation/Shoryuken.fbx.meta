@@ -26,7 +26,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -298,6 +298,11 @@ ModelImporter:
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.000000037748947, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
+    - name: RigLLegPlatform
+      parentName: Shoryuken(Clone)
+      position: {x: -0.030209677, y: 0.060116097, z: 0.017549995}
+      rotation: {x: 0.70710695, y: -0.000000094156945, z: -0.70710665, w: -0.00000009415698}
+      scale: {x: 1, y: 0.99999994, z: 1}
     - name: RigPelvis
       parentName: Shoryuken(Clone)
       position: {x: -0.0000000018626451, y: 0.29148853, z: 0.00000008161142}
@@ -326,7 +331,7 @@ ModelImporter:
     - name: RigRLeg1
       parentName: RigPelvis
       position: {x: 0.00000040531157, y: -0.0000000667572, z: -0.19752544}
-      rotation: {x: -0.09054271, y: -0.9818119, z: 0.12632164, w: 0.10904243}
+      rotation: {x: -0.09054272, y: -0.9818119, z: 0.12632166, w: 0.10904243}
       scale: {x: 0.99999994, y: 1, z: 1}
     - name: RigRLeg2
       parentName: RigRLeg1
@@ -371,7 +376,7 @@ ModelImporter:
     - name: RigLArm1
       parentName: RigLArmCollarbone
       position: {x: -0.217819, y: -0.000000094175334, z: 0.00000011801719}
-      rotation: {x: -0.089950345, y: -0.033331223, z: 0.036330517, w: 0.9947251}
+      rotation: {x: -0.08962224, y: -0.03781887, z: 0.03132324, w: 0.99476457}
       scale: {x: 1.0000001, y: 1, z: 1}
     - name: RigLArm2
       parentName: RigLArm1
@@ -383,6 +388,21 @@ ModelImporter:
       position: {x: -0.18897846, y: 0.000000019073486, z: 0.000000019073486}
       rotation: {x: -0.7069232, y: -0.0035080905, z: 0.029110326, w: 0.7066823}
       scale: {x: 1, y: 1, z: 0.99999994}
+    - name: RigNeck1
+      parentName: RigRibcage
+      position: {x: -0.023452338, y: -0.0056801173, z: 0.000000028610229}
+      rotation: {x: 0.0041650636, y: 0.021811502, z: -0.030277032, w: 0.9992949}
+      scale: {x: 1, y: 0.9999999, z: 0.9999998}
+    - name: RigNeck2
+      parentName: RigNeck1
+      position: {x: -0.05064663, y: -0.000000014305114, z: 0.000000019073486}
+      rotation: {x: 0.002895009, y: 0.022006525, z: 0.03913455, w: 0.99898744}
+      scale: {x: 1, y: 1, z: 1}
+    - name: RigHead
+      parentName: RigNeck2
+      position: {x: -0.056212585, y: -0.0000001335144, z: -0.000000038146972}
+      rotation: {x: 0.027585201, y: 0.073502354, z: 0.106964216, w: 0.9911585}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
     - name: RigRArmCollarbone
       parentName: RigRibcage
       position: {x: -0.000000028610229, y: 0.000000047683713, z: -0.03934765}
@@ -403,26 +423,6 @@ ModelImporter:
       position: {x: -0.18897855, y: 0.000000059604645, z: -0.00000014066696}
       rotation: {x: 0.95918477, y: -0.07887957, z: -0.040183943, w: 0.26856625}
       scale: {x: 1, y: 1.0000001, z: 1}
-    - name: RigNeck1
-      parentName: RigRibcage
-      position: {x: -0.023452338, y: -0.0056801173, z: 0.000000028610229}
-      rotation: {x: 0.0041650636, y: 0.021811502, z: -0.030277032, w: 0.9992949}
-      scale: {x: 1, y: 0.9999999, z: 0.9999998}
-    - name: RigNeck2
-      parentName: RigNeck1
-      position: {x: -0.05064663, y: -0.000000014305114, z: 0.000000019073486}
-      rotation: {x: 0.002895009, y: 0.022006525, z: 0.03913455, w: 0.99898744}
-      scale: {x: 1, y: 1, z: 1}
-    - name: RigHead
-      parentName: RigNeck2
-      position: {x: -0.056212585, y: -0.0000001335144, z: -0.000000038146972}
-      rotation: {x: 0.027585201, y: 0.073502354, z: 0.106964216, w: 0.9911585}
-      scale: {x: 0.99999994, y: 1, z: 0.99999994}
-    - name: RigLLegPlatform
-      parentName: Shoryuken(Clone)
-      position: {x: -0.030209677, y: 0.060116097, z: 0.017549995}
-      rotation: {x: 0.70710695, y: -0.000000094156945, z: -0.70710665, w: -0.00000009415698}
-      scale: {x: 1, y: 0.99999994, z: 1}
     - name: RigRLegPlatform
       parentName: Shoryuken(Clone)
       position: {x: -0.037818838, y: 0.11350523, z: 0.048372414}
