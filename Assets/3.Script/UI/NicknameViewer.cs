@@ -93,7 +93,7 @@ public class NicknameViewer : NetworkBehaviour
         if(owner != null)
         {
             transform.position = isEnding? owner.transform.position + endOffset : owner.transform.position + offset;
-            Quaternion rot = owner.GetComponent<PlayerNetwork>().Model.rotation;
+            Quaternion rot = Camera.main.transform.rotation;
             transform.rotation = rot;
 
             if (owner.TryGetComponent(out PlayerHealth playerHealth))
