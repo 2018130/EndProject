@@ -32,7 +32,7 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
 
     private void ProcessMessage(string msg)
     {
-        switch(msg)
+        switch (msg)
         {
             case "SUCCESS_ID_CHECK":
                 SignSceneUIManager.Instance.SetInteractIdInputField(false);
