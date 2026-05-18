@@ -73,6 +73,16 @@ public class PlayerNetwork : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        // 1. 모든 클라이언트에서 공통으로 처리해야 할 작업 (상태 변경 이벤트 구독, 이펙트 등)
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.State.OnValueChanged += OnPlayerStateChanged;
+        }
+
+        if (spawnEffect != null) spawnEffect.Play();
+
+        // 2. 오너(로컬 플레이어)만 처리해야 할 작업
         if (!IsOwner) return;
 
         SpawnPlayerCall_Rpc(OwnerClientId);
@@ -110,14 +120,6 @@ public class PlayerNetwork : NetworkBehaviour
                 }
             };
         }
-
-        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
-        if (playerHealth != null)
-        {
-            playerHealth.State.OnValueChanged += OnPlayerStateChanged;
-        }
-
-        spawnEffect.Play();
     }
 
     //[Rpc(SendTo.ClientsAndHost)]
@@ -261,8 +263,12 @@ public class PlayerNetwork : NetworkBehaviour
         {
             playerHealth.State.OnValueChanged -= OnPlayerStateChanged;
         }
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        
+        if (IsOwner)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     private void Update()
