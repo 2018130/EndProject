@@ -11,7 +11,10 @@ public class CustomSceneManager : NetworkBehaviour
     public static CustomSceneManager Instance { get; set; }
 
     [SerializeField]
-    private NetworkObject playerPrefab;
+    private NetworkObject teamAPlayerPrefab;
+
+    [SerializeField]
+    private NetworkObject teamBPlayerPrefab;
 
     public event Action<string, ulong> OnSceneChanged;
 
@@ -59,7 +62,17 @@ public class CustomSceneManager : NetworkBehaviour
                     foreach (ulong clientId in sceneEvent.ClientsThatCompleted)
                     {
                         // 플레이어 생성 및 위치 잡기 (필요시 위치 수정)
-                        NetworkObject player = Instantiate(playerPrefab);
+                        Faction faction = (clientId % 2 == 0) ? Faction.TeamA : Faction.TeamB;
+                        NetworkObject player;
+
+                        if(faction == Faction.TeamA)
+                        {
+                            player = Instantiate(teamAPlayerPrefab);
+                        }
+                        else
+                        {
+                            player = Instantiate(teamBPlayerPrefab);
+                        }
 
                         // 해당 클라이언트에게 소유권 부여하며 스폰
                         player.SpawnAsPlayerObject(clientId);
