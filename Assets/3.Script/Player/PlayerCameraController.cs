@@ -24,8 +24,8 @@ public class PlayerCameraController : NetworkBehaviour
     [SerializeField] private float zoomFOV = 40f;
 
     [Space]
-    [SerializeField] private Vector3 normalOffset = new Vector3(0, -0.5f, -1);
-    [SerializeField] private Vector3 zoomOffset = new Vector3(1f, -1.5f, -1f);
+    [SerializeField] private Vector3 normalOffset = new Vector3(1f, -0.5f, -1);
+    [SerializeField] private Vector3 zoomOffset = new Vector3(1f, -1f, 0f);
 
     [SerializeField] private float lerpSpeed = 8f;
 

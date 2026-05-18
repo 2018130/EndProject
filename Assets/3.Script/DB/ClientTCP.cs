@@ -11,7 +11,7 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
     {
         try
         {
-            TcpClient client = new TcpClient("52.79.239.40", 7777);
+            TcpClient client = new TcpClient("13.124.238.219", 7777);
             NetworkStream stream = client.GetStream();
             byte[] data = Encoding.UTF8.GetBytes(msg);
             stream.Write(data, 0, data.Length);
@@ -32,7 +32,7 @@ public class ClientTCP : SingletonBehaviour<ClientTCP>
 
     private void ProcessMessage(string msg)
     {
-        switch(msg)
+        switch (msg)
         {
             case "SUCCESS_ID_CHECK":
                 SignSceneUIManager.Instance.SetInteractIdInputField(false);

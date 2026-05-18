@@ -98,8 +98,8 @@ public class RangedWeapon : BaseWeapon
 
     private void Shoot(Vector3 shootDir)
     {
-        Debug.Log("Shoot 호출!");
-        Debug.Log($"shootDir: {shootDir}");
+        //Debug.Log("Shoot 호출!");
+        //Debug.Log($"shootDir: {shootDir}");
 
         PlayerWater playerWater = GetComponentInParent<PlayerWater>();
         Debug.Log($"PlayerWater 찾음: {playerWater != null}");
@@ -139,14 +139,16 @@ public class RangedWeapon : BaseWeapon
 
         // 초기화
         Projectile spawn = projectile.GetComponent<Projectile>();
-        spawn.Initialize(new ProjectileData() { BulletSpeed = weaponData.BulletSpeed, 
-            MaxHitCountPerShot = weaponData.MaxHitCountPerShot, 
-            OwnerClientId = shooterClientId, 
+        spawn.Initialize(new ProjectileData()
+        {
+            BulletSpeed = weaponData.BulletSpeed,
+            MaxHitCountPerShot = weaponData.MaxHitCountPerShot,
+            OwnerClientId = shooterClientId,
             OwnerFaction = ownerFaction,
-            Damage = weaponData.Damage
+            Damage = weaponData.Damage,
+            LiftForce = weaponData.LiftForce
         });
-        Debug.Log($"Damage 값: {weaponData.Damage}");
-        // 발사
+        //발사
         spawn.AddForce(shootDir);
     }
 }

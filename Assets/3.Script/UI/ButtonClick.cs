@@ -8,9 +8,9 @@ public class ButtonSFX : MonoBehaviour
 
     private void Awake()
     {
-        GetComponent<Button>().onClick.AddListener(() =>
+        GetComponent<Button>()?.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlaySFX(sfxKey);
+            AudioManager.Instance?.PlaySFX(sfxKey);
         });
     }
 }
