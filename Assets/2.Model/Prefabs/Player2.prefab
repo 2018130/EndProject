@@ -426,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3408418859
+  GlobalObjectIdHash: 2840825238
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -573,6 +573,8 @@ MonoBehaviour:
   actionZone: {fileID: 7912213531098341626}
   hitParticlePrefab: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}
   respawnEffectPrefab: {fileID: 19850470, guid: b11265faa0a0e7244ae420ca453a276a, type: 3}
+  shakeIntensity: 0.1
+  shakeDuration: 0.05
   Hp:
     m_InternalValue: 100
   State:

@@ -20,6 +20,12 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private ParticleSystem hitParticlePrefab;
     [SerializeField] private ParticleSystem respawnEffectPrefab;
 
+    [Header("피격 카메라 설정")]
+    [SerializeField] private float shakeIntensity = 0.5f;
+    [SerializeField] private float shakeDuration = 0.15f;
+    [SerializeField] private float shakeCooldown = 0.1f;
+    private float lastShakeTime = 0f;
+
     private Coroutine downedCoroutine;
 
     public event Action<PlayerHealth> OnDead;
@@ -71,7 +77,23 @@ public class PlayerHealth : NetworkBehaviour
 
     private void onHPChanged(float oldVal, float newVal)
     {
-        // HP UI 업데이트
+        // HP UI 업데이트(TODO)
+        if (IsOwner)
+        {
+            if (newVal < oldVal && State.Value == PlayerState.Alive)
+            {
+                if (Time.time - lastShakeTime >= shakeCooldown)
+                {
+                    // 본인 컴포넌트에서 카메라 제어 스크립트를 가져옵니다.
+                    if (TryGetComponent<PlayerCameraController>(out var cameraController))
+                    {
+                        cameraController.Shake(shakeIntensity, shakeDuration);
+
+                        lastShakeTime = Time.time;
+                    }
+                }
+            }
+        }
     }
 
     private void OnStateChanged(PlayerState oldState, PlayerState newState)

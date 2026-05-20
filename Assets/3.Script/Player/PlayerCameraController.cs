@@ -111,6 +111,7 @@ public class PlayerCameraController : NetworkBehaviour
     {
         if (multiChannelPerlin == null) return;
 
+        // 시네머신의 기본 노이즈 크기(AmplitudeGain)를 전달받은 흔들림 세기(intensity)로 변경하여 카메라를 흔들기 시작합니다.
         multiChannelPerlin.AmplitudeGain = intensity;
 
         StartCoroutine(StopShake(time));
